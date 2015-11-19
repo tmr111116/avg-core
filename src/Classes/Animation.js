@@ -108,8 +108,10 @@ class Animation extends PIXI.Sprite {
     }
 
     updateTransform(){
-        if(!this.playing)
+        if(!this.playing){
+            super.updateTransform();
             return;
+        }
         let delta = Date.now() - this.m_lastTime;
         if(delta < this.interval)
             return;
@@ -188,6 +190,7 @@ class Animation extends PIXI.Sprite {
                 this.texture = this.textures[this.currentFrame];
                 break;
         }
+        super.updateTransform();
     }
 
 

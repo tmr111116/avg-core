@@ -243,7 +243,7 @@ class Iceleaf {
             tw.setBackgroundColor(fileOrColor);
         else if(fileOrColor)
             tw.setBackgroundFile(fileOrColor);
-        
+
         if(typeof opacity !== 'undefined') tw.setOpacity(opacity);
     }
 
@@ -282,6 +282,14 @@ class Iceleaf {
             return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
         tw.setVisible(false);
+    }
+
+    text(text){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.drawText(text);
     }
 
 }
