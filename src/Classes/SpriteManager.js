@@ -10,7 +10,7 @@ class SpriteManager {
     }
 
     static insert(index,sprite){
-        console.log()
+        sprite.index = index;
         return SpriteManager.sprites[index] = sprite;
     }
 

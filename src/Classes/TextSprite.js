@@ -9,6 +9,7 @@ class TextSprite extends PIXI.Text {
 		});
 
 		this.m_style = {};
+		this.zorder = 0;
 	}
 
 	setIndex(index){

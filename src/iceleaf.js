@@ -3,6 +3,7 @@ var fps = require('./Utils/fps.js');
 
 var Sprite = require('./Classes/Sprite');
 var TextSprite = require('./Classes/TextSprite');
+var TextWindow = require('./Classes/TextWindow');
 var SpriteManager = require('./Classes/SpriteManager');
 var SoundManager = require('./Classes/SoundManager');
 var Animation = require('./Classes/Animation');
@@ -13,6 +14,15 @@ class Iceleaf {
         this.renderer = new PIXI.WebGLRenderer(1280, 720);
         view.appendChild(this.renderer.view);
         this.stage = new PIXI.Container();
+        SpriteManager.insert(-1,this.stage);
+
+        let tw = new TextWindow();
+        tw.setIndex(-2);
+        SpriteManager.insert(-2,tw);
+        this.textWindowIndex = -2;
+        this.textwindow(0x0,1.0,[0,0],[0,0,1180,620],0,12);
+        this.stage.addChild(tw);
+        SpriteManager.setZorder(-2,50);
     }
 
     update(){
@@ -210,7 +220,6 @@ class Iceleaf {
     //文本类
     textsprite(index,text,color=0xffffff,size=24,font="sans-serif",width=-1,height=-1,xinterval=0,yinterval=3,extrachar="...",bold=false,italic=false,strike=false,under=false,shadow=false,shadowcolor=0x0,stroke=false,strokecolor=0x0){
         var tsp = new TextSprite();
-        console.log(tsp.setIndex(index))
         tsp.setIndex(index).setText(text).setColor(color).setSize(size).setFont(font)
            .setTextWidth(width).setTextHeight(height).setXInterval(xinterval).setYInterval(yinterval)
            .setExtraChar(extrachar).setBold(bold).setItalic(italic)/*.setStrike(strike).setUnder(under)*/
@@ -218,6 +227,63 @@ class Iceleaf {
            .exec();
         SpriteManager.insert(index,tsp);
     }
+
+    textwindow(fileOrColor,opacity,pos,rect,xInterval,yInterval) {
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+
+        if(typeof pos !== 'undefined') tw.setPosition(pos);
+        if(typeof rect !== 'undefined') tw.setTextRectangle(rect);
+        if(typeof xInterval !== 'undefined') tw.setXInterval(xInterval);
+        if(typeof yInterval !== 'undefined') tw.setYInterval(yInterval);
+
+        if(typeof fileOrColor === 'number')
+            tw.setBackgroundColor(fileOrColor);
+        else if(fileOrColor)
+            tw.setBackgroundFile(fileOrColor);
+        
+        if(typeof opacity !== 'undefined') tw.setOpacity(opacity);
+    }
+
+    messagelayer(index,active=true){
+        let currentWindow = SpriteManager.fromIndex(this.textWindowIndex);
+        let targetWindow = SpriteManager.fromIndex(index);
+        if(!targetWindow || targetWindow.name!='TextWindow')    //未找到文字框或不是文字框
+        {
+            if(targetWindow) targetWindow.destroy();
+            let tw = currentWindow.clone();
+            tw.setIndex(index);
+            tw.clearText();
+            SpriteManager.insert(index,tw);
+            this.textWindowIndex = index;
+
+            this.stage.addChild(tw);
+            SpriteManager.setZorder(index,tw.zorder);
+        }
+
+        if(active){
+            this.textWindowIndex = index;
+        }
+    }
+
+    texton(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.setVisible(true);
+    }
+
+    textoff(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.setVisible(false);
+    }
+
 }
 
 

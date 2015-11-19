@@ -108,5 +108,8 @@ iceleaf.stage.addChild(ani);
 iceleaf.textsprite(100,"测a试.内容sdfsdf",0xffcc00,20,"思源黑体 CN Light");
 iceleaf.addto(100,-1,100,[500,600],255)
 
+iceleaf.textwindow(0x333333,0.8,[50,50]);
+iceleaf.texton();
+
 
 

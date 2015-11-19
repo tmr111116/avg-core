@@ -196,7 +196,6 @@ class Animation extends PIXI.Sprite {
         let tex = PIXI.Texture.fromImage(file);
         let textures = [];
         tex.update();
-        console.log(tex.width)
         let deltaX = tex.width/frame;
         let deltaY = tex.height/row;
         for (var j = 0; j < row; j++)
