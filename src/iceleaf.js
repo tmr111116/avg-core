@@ -292,6 +292,31 @@ class Iceleaf {
         tw.drawText(text);
     }
 
+    textstyle({name,size,color,bold,italic,strike,underline,shadow,shadowColor,stroke,strokeColor}){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        if(typeof name !== 'undefined') tw.setTextFont(name);
+        if(typeof size !== 'undefined') tw.setTextSize(size);
+        if(typeof color !== 'undefined') tw.setTextColor(color);
+        if(typeof bold !== 'undefined') tw.setTextBold(bold);
+        if(typeof italic !== 'undefined') tw.setTextItalic(italic);
+        if(typeof strike !== 'undefined') tw.setTextStrike(strike);
+        if(typeof underline !== 'undefined') tw.setTextUnderline(underline);
+        if(typeof shadow !== 'undefined') tw.setTextShadow(shadow,shadowColor);
+        if(typeof stroke !== 'undefined') tw.setTextStroke(stroke,strokeColor);
+    }
+
+    textspeed(value){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        // 0-100 线性转换到 1字/s - 立刻显示 非线性映射…………真是够了
+        tw.setTextSpeed(value===100?Infinity:(10/(1-value/100)));
+    }
+
 }
 
 

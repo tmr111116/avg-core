@@ -28,11 +28,19 @@ class TextWindow extends PIXI.Container {
             font: "sans-serif",
             size: 24,
             color: "#ffffff",
+            bold: false,
+            italic: false,
+            strike: false,
+            underline: false,
+            shadow: false,
+            shadowColor: "#000000",
+            stroke: false,
+            strokeColor: "#000000",
             xInterval: 0,
             yInterval: 12,
         }
 
-        this.textSpeed = 50;    // 字/秒
+        this.textSpeed = 20;    // 字/秒
 
         this.m_currentTextWidth = 0;
         this.m_currentTextHeight = 0;
@@ -101,6 +109,49 @@ class TextWindow extends PIXI.Container {
 
     setVisible(value){
         this.visible = !!value;
+        return this;
+    }
+
+    setTextSize(value){
+        this.style.size = value;
+    }
+
+    setTextFont(name){
+        this.style.font = name;
+    }
+
+    setTextColor(color){
+        this.style.color = color;
+    }
+
+    setTextBold(bool){
+        this.style.bold = !!bool;
+    }
+
+    setTextItalic(bool){
+        this.style.italic = !!bool;
+    }
+
+    setTextStrike(bool){
+        this.style.strike = !!bool;
+    }
+
+    setTextUnderline(bool){
+        this.style.underline = !!bool;
+    }
+
+    setTextShadow(bool,color){
+        this.style.shadow = !!bool;
+        this.style.shadowColor = color || this.style.shadowColor || '#000000';
+    }
+
+    setTextStroke(bool,color){
+        this.style.stroke = !!bool;
+        this.style.strokeColor = color || this.style.strokeColor || '#000000';
+    }
+
+    setTextSpeed(value){
+        this.textSpeed = value;
     }
 
     clone(){
@@ -125,14 +176,36 @@ class TextWindow extends PIXI.Container {
         this.textCanvas.height = this.textRectangle[3] * this.resolution;
         // this.textContext.clear();
 
+        //文字样式设定
         this.textContext.textBaseline = 'top';
-        this.textContext.font = 'normal ' + this.style.size*this.resolution + 'px ' + this.style.font;
-        this.textContext.fillStyle = this.style.color.replace('0x',"#");
+        { 
+        let style = "";
+        if(this.style.bold) style += "bold ";
+        if(this.style.italic) style += "italic ";
+        if(!style.length) style = "normal ";
+        this.textContext.font = style + this.style.size*this.resolution + 'px ' + this.style.font;
+        }
+        this.textContext.fillStyle = (typeof this.style.color === 'number')?('#'+this.style.color.toString(16)):this.style.color;
 
+        if(this.style.shadow) {
+            this.textContext.shadowBlur = 0;
+            this.textContext.shadowOffsetX = this.style.size*this.resolution/12*0.414;
+            this.textContext.shadowOffsetY = this.style.size*this.resolution/12*0.414;
+            this.textContext.shadowColor = (typeof this.style.shadowColor === 'number')?('#'+this.style.shadowColor.toString(16)):this.style.shadowColor;
+        }
+
+        if(this.style.stroke){
+            this.textContext.strokeStyle = (typeof this.style.strokeColor === 'number')?('#'+this.style.strokeColor.toString(16)):this.style.strokeColor;
+            this.textContext.lineWidth = this.style.size*this.resolution/24;
+        }
+
+        //状态重置
         this.textIndex = 0;
         this.textRendering = true;
-
         this.m_lastTime = Date.now();
+
+        this.m_currentTextWidth = this.textRectangle[0];
+        this.m_currentTextHeight = this.textRectangle[1];
     }
 
 
@@ -151,15 +224,20 @@ class TextWindow extends PIXI.Container {
 
         this.m_lastTime = Date.now();
 
-        var count = (delta/1000 * this.textSpeed) << 0;
+        var count = Math.floor(delta/1000 * this.textSpeed);
+
+        if(this.textIndex+count>=this.text.length-1)
+            count = this.text.length - this.textIndex;
+
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
-            let width = this.textContext.measureText(this.text[i]).width;
-            this.m_currentTextWidth += width + this.style.xInterval;
-            if(this.m_currentTextWidth+width>=this.textRectangle[2])
+            if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
+            let width = this.textContext.measureText(this.text[i]).width;   //字号已经*this.resolution，无需再乘
+            this.m_currentTextWidth += width + this.style.xInterval*this.resolution;
+            if(this.m_currentTextWidth+width>=this.textRectangle[2]*this.resolution)
             {
-                this.m_currentTextWidth = 0;
-                this.m_currentTextHeight += this.style.size + this.style.yInterval;
+                this.m_currentTextWidth = this.textRectangle[0];
+                this.m_currentTextHeight += this.style.size*this.resolution + this.style.yInterval*this.resolution;
             }
         };
 
@@ -170,8 +248,9 @@ class TextWindow extends PIXI.Container {
         super.updateTransform();
 
         // stop condition
-        if(this.textIndex>=this.text.length-1)
+        if(this.textIndex>=this.text.length-1){
             this.textRendering = false;
+        }
 
     }
 

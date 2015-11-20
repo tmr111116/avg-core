@@ -4,8 +4,92 @@
 		"selected_items":
 		[
 			[
+				"text",
+				"textContext"
+			],
+			[
+				"fill",
+				"fillText"
+			],
+			[
+				"tex",
+				"textContext"
+			],
+			[
+				"upda",
+				"updateTransform"
+			],
+			[
+				"upd",
+				"updateTexture"
+			],
+			[
+				"textc",
+				"textCanvas"
+			],
+			[
+				"m_curr",
+				"m_currrentTextHeight"
+			],
+			[
+				"m_cu",
+				"m_currrentTextHeight"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"spri",
+				"SpriteManager"
+			],
+			[
 				"Text",
-				"TextSprite"
+				"TextWindow"
+			],
+			[
+				"tar",
+				"targetWindow"
+			],
+			[
+				"file",
+				"fileOrColor"
+			],
+			[
+				"sprite",
+				"SpriteManager"
+			],
+			[
+				"get",
+				"generator	ES6 Generator"
+			],
+			[
+				"Tex",
+				"TextWindow"
+			],
+			[
+				"spr",
+				"SpriteManager"
+			],
+			[
+				"Sprit",
+				"SpriteManager"
+			],
+			[
+				"stro",
+				"strokecolor"
+			],
+			[
+				"strok",
+				"stroke"
+			],
+			[
+				"shad",
+				"shadowcolor"
+			],
+			[
+				"sha",
+				"shadow"
 			],
 			[
 				"m_",
@@ -24,10 +108,6 @@
 				"m_fontSize"
 			],
 			[
-				"tex",
-				"textures"
-			],
-			[
 				"ins",
 				"insert"
 			],
@@ -42,10 +122,6 @@
 			[
 				"m_d",
 				"m_delta"
-			],
-			[
-				"for",
-				"forward"
 			],
 			[
 				"loop",
@@ -70,10 +146,6 @@
 			[
 				"load",
 				"loadMultifiles"
-			],
-			[
-				"text",
-				"textures"
 			],
 			[
 				"delt",
@@ -128,18 +200,6 @@
 				"removeRecursive"
 			],
 			[
-				"spr",
-				"Sprite"
-			],
-			[
-				"spri",
-				"SpriteManager"
-			],
-			[
-				"tar",
-				"tarSp"
-			],
-			[
 				"inde",
 				"indexOrSprite"
 			],
@@ -150,10 +210,6 @@
 			[
 				"cons",
 				"console"
-			],
-			[
-				"file",
-				"filename"
 			],
 			[
 				"mar",
@@ -174,10 +230,6 @@
 			[
 				"pad",
 				"padding"
-			],
-			[
-				"get",
-				"guideContent"
 			],
 			[
 				"rgb",
@@ -462,58 +514,6 @@
 			[
 				"q",
 				"query"
-			],
-			[
-				"requ",
-				"request"
-			],
-			[
-				"mob",
-				"mobile"
-			],
-			[
-				"base",
-				"baseModel"
-			],
-			[
-				"res",
-				"res"
-			],
-			[
-				"co",
-				"console"
-			],
-			[
-				"userga",
-				"usergames"
-			],
-			[
-				"user",
-				"userGames"
-			],
-			[
-				"us",
-				"usergames"
-			],
-			[
-				"_us",
-				"_usergames"
-			],
-			[
-				"lis",
-				"list-toolbar"
-			],
-			[
-				"btn",
-				"btn-toolbar"
-			],
-			[
-				"pub",
-				"publicKey"
-			],
-			[
-				"no",
-				"nodeRSA"
 			]
 		]
 	},
@@ -523,27 +523,48 @@
 			"file": "src/entry.js",
 			"settings":
 			{
-				"buffer_size": 2347,
+				"buffer_size": 2655,
 				"line_ending": "Windows",
 				"name": "document.write(\"It works.\");"
 			}
 		},
 		{
-			"contents": "var PIXI = require('./Library/pixi.js/src/index');\nvar fps = require('./Utils/fps.js');\n\nvar Sprite = require('./Classes/Sprite');\nvar TextSprite = require('./Classes/Sprite');\nvar SpriteManager = require('./Classes/SpriteManager');\nvar SoundManager = require('./Classes/SoundManager');\nvar Animation = require('./Classes/Animation');\nvar Err = require('./Classes/ErrorHandler');\n\nclass Iceleaf {\n    constructor(view){\n        this.renderer = new PIXI.WebGLRenderer(1280, 720);\n        view.appendChild(this.renderer.view);\n        this.stage = new PIXI.Container();\n    }\n\n    update(){\n        window.requestAnimationFrame(this.update.bind(this));\n        this.renderer.render(this.stage);\n    }\n\n    // test(){\n    //     // PIXI.loader.add('asserts/res/bg1.png').load((loader, resources) => {\n    //     //     var bg = new PIXI.Sprite(resources[\"asserts/res/bg1.png\"].texture);\n    //     //     this.stage.addChild(bg);\n    //     // });\n    //     let bg = new Sprite();\n    //     bg.file('asserts/res/bg1.png').execSync();\n    //     this.stage.addChild(bg);\n    // }\n\n    start(){\n        fps.installFPSView(this.stage);\n        this.update();\n    }\n\n\n    //精灵类\n    //此处rect与bke不同，默认值为null，bke默认值为[0,0,0,0]\n    sprite(index,file,rect=null){\n        let sp = new Sprite();\n        sp.setFile(file).setIndex(index).setRect(rect).execSync();\n        SpriteManager.insert(index,sp);\n    }\n    addto(index,target,zorder=0,pos=[0,0],opacity=255,modal=false){\n        let srcSp = SpriteManager.fromIndex(index);\n        if(!srcSp)\n            return Err.warn(\"源精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        let tarSp = (target===-1)?this.stage:SpriteManager.fromIndex(target);\n        if(!tarSp)\n            return Err.warn(\"目标精灵(index=\"+target+\")不存在，此命令忽略执行\");\n        srcSp.x = pos[0];\n        srcSp.y = pos[1];\n        srcSp.alpha = opacity/255;\n        /*modal 未能实现*/\n        tarSp.addChild(srcSp);\n        SpriteManager.setZorder(index,zorder);\n    }\n    layer(index,width,height,color=0xffffff,opacity=0){\n\n    }\n    remove(index,_delete=false){\n        let sp = SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        let parent = sp.parent;\n        if(!parent)\n            return Err.warn(\"精灵(index=\"+index+\")不在屏幕上，此命令忽略执行\");\n        parent.removeChild(sp);\n        if(_delete){\n            SpriteManager.remove(index);\n        }\n    }\n    removeall(index,_delete=false,recursive=false){\n        let sp = (index===-1)?this.stage:SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        removeRecursive(sp);\n        sp.removeChildren();\n    }\n    info(file,get){\n\n    }\n    infoex(file,get){\n\n    }\n    anchor_set(index,set,keep=false){\n        let sp = SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        if(typeof set==='string')\n            switch(set){\n                case 'center': set=[0.5,0.5];break;\n                case 'topleft': set=[0,0];break;\n                case 'topright': set=[1,0];break;\n                case 'topcenter': set=[0.5,0];break;\n                case 'leftcenter': set=[0,0.5];break;\n                case 'rightcenter': set=[1,0.5];break;\n                case 'bottomcenter': set=[0.5,1];break;\n                case 'bottomleft': set=[0,1];break;\n                case 'bottomright': set=[1,1];break;\n            }\n        else\n            set = [set[0]/sp.width,set[1]/sp.height]\n        sp.anchor = new PIXI.Point(set[0],set[1]);\n        /*keep未实现*/\n    }\n    zorder_set(index,set){\n\n    }\n    spriteopt(index,disable,recursive=true){\n\n    }\n\n    //音频类\n    bgm(file,loop=true,vol=100,fadein=0,loopto=0){\n        let query = SoundManager.file(-1,file).loop(-1,loop).volume(-1,0).autoPlay(-1,false)\n        if(loopto&&loop){\n            let firstLoop = true;\n            query.onEnd(-1,() => {\n                if(firstLoop)\n                    firstLoop = false;\n                else\n                    SoundManager.setPosition(-1,loopto/1000);\n            });\n        }\n        query.exec(-1);\n        SoundManager.play(-1);\n        SoundManager.fadeTo(-1,vol/100,fadein);\n\n    }\n    se(file,channel=0,loop=false,vol=100,fadein=0){\n        SoundManager.file(channel,file).loop(channel,loop).volume(channel,0).autoPlay(channel,false).exec(channel);\n        SoundManager.play(channel);\n        SoundManager.fadeTo(channel,vol/100,fadein);\n    }\n    voice(file,vol=100){\n        SoundManager.file(-2,file).loop(-2,false).volume(-2,vol/100).autoPlay(-2,true).exec(-2);\n    }\n    stop(channel,fadeout=0){\n        if(typeof channel==='undefined')\n            SoundManager.stopAll();\n        else\n            SoundManager.fadeTo(channel,0,fadeout,()=>{\n                SoundManager.stop(channel);\n            })\n    }\n    volume_set(channel,set){\n        SoundManager.setVolume(channel,set/100);\n    }\n    pause(channel){\n        if(SoundManager.status(channel)==='play')\n            SoundManager.pause(channel);\n    }\n    resume(channel){\n        if(SoundManager.status(channel)==='pause')\n            SoundManager.pause(channel);\n    }\n    fade(channel,time,to,stop=false){\n        if(stop)\n            SoundManager.fadeTo(channel,to/100,time,()=>SoundManager.stop(channel));\n        else\n            SoundManager.fadeTo(channel,to/100,time);\n    }\n\n    //动画类\n    animate_horizontal(index,file,frame,row=1,interval=33,loop='forward'){\n        let ani = new Animation();\n        ani.setType('horizontal').setIndex(index).setFile(file)\n           .setFrame(frame).setRow(row).setInterval(interval)\n           .setLoopType(loop)\n           .exec();\n        SpriteManager.insert(index,ani);\n    }\n    animate_vertical(index,file,frame,column=1,interval=33,loop='forward'){\n        let ani = new Animation();\n        ani.setType('vertical').setIndex(index).setFile(file)\n           .setFrame(frame).setColumn(column).setInterval(interval)\n           .setLoopType(loop)\n           .exec();\n        SpriteManager.insert(index,ani);\n    }\n    animate_multifiles(index,files,interval=33,loop=true,delay=0){\n        let ani = new Animation();\n        ani.setType('multifiles').setIndex(index).setFile(files)\n           .setInterval(interval).setLoop(loop).setDelay(delay)\n           .exec();\n        SpriteManager.insert(index,ani);\n    }\n    animate_start(index){\n        let sp = SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        sp.start();\n    }\n    animate_cell(index,frame){\n        let sp = SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        sp.cell(frame);\n    }\n    animate_stop(index){\n        let sp = SpriteManager.fromIndex(index);\n        if(!sp)\n            return Err.warn(\"精灵(index=\"+index+\")不存在，此命令忽略执行\");\n        sp.stop();\n    }\n\n    //文本类\n    textsprite(index,text,color=){\n        SpriteManager.insert(index,sp);\n    }\n}\n\n\nfunction removeRecursive(sprite){\n    for (var i = sprite.children.length - 1; i >= 0; i--) {\n        removeRecursive(sprite.children[i])\n    };\n    SpriteManager.remove(sprite.index);\n}\n\n\nconst Y = f =>\n    (x => f(y => x(x)(y)))\n    (x => f(y => x(x)(y)))\n\n\nmodule.exports = Iceleaf;",
 			"file": "src/iceleaf.js",
-			"file_size": 7833,
-			"file_write_time": 130917131936334211,
 			"settings":
 			{
-				"buffer_size": 7283,
+				"buffer_size": 10558,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/docs/dev.md",
+			"file": "src/index.html",
 			"settings":
 			{
-				"buffer_size": 38,
+				"buffer_size": 172,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Classes/SpriteManager.js",
+			"settings":
+			{
+				"buffer_size": 1012,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Classes/TextWindow.js",
+			"settings":
+			{
+				"buffer_size": 5283,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/webpack.config.js",
+			"settings":
+			{
+				"buffer_size": 469,
 				"line_ending": "Windows"
 			}
 		},
@@ -551,23 +572,7 @@
 			"file": "src/Classes/Animation.js",
 			"settings":
 			{
-				"buffer_size": 7078,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/Classes/TextSprite.js",
-			"settings":
-			{
-				"buffer_size": 2453,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/Classes/Sprite.js",
-			"settings":
-			{
-				"buffer_size": 589,
+				"buffer_size": 7128,
 				"line_ending": "Windows"
 			}
 		}
@@ -656,25 +661,28 @@
 	],
 	"file_history":
 	[
+		"/C/workspace/BKEngine-iceleaf/src/docs/dev.md",
+		"/C/workspace/BKEngine-iceleaf/src/Classes/Sprite.js",
+		"/C/workspace/BKEngine-iceleaf/src/Classes/TextSprite.js",
+		"/C/workspace/BKEngine-iceleaf/src/Classes/Animation.js",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/SpriteManager.js",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/SoundManager.js",
+		"/C/workspace/BKEngine-iceleaf/src/webpack.config.js",
+		"/C/workspace/BKEngine-iceleaf/src/.babelrc",
 		"/C/workspace/BKEngine-iceleaf/src/Library/pixi.js/src/core/sprites/Sprite.js",
 		"/C/workspace/BKEngine-iceleaf/src/Library/pixi.js/node_modules/jsdoc/node_modules/catharsis/node_modules/underscore-contrib/test/vendor/jquery.js",
 		"/C/workspace/BKEngine-iceleaf/src/bundle.js",
 		"/C/workspace/BKEngine-iceleaf/src/Library/howler.js/howler.js",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/ErrorHandler.js",
 		"/C/workspace/BKEngine-iceleaf/src/SharedVariables.js",
-		"/C/workspace/BKEngine-iceleaf/src/Classes/Sprite.js",
 		"/C/workspace/BKEngine-iceleaf/src/Utils/fps.js",
 		"/C/Users/威/Documents/Tencent Files/523063148/FileRecv/DiscussListInfo.java",
 		"/C/Users/威/Documents/Tencent Files/523063148/FileRecv/MainItemListInfo.java",
 		"/C/workspace/BKEngine/BKEngine/Classes/Node/LayerShader.h",
 		"/C/workspace/BKEngine-iceleaf/src/index.html",
 		"/C/workspace/BKEngine-iceleaf/src/asserts/css/style.css",
-		"/C/workspace/BKEngine-iceleaf/src/webpack.config.js",
 		"/C/workspace/BKEngine-iceleaf/新建文件夹/bundle.js",
 		"/C/workspace/pixi.js/src/index.js",
-		"/C/workspace/BKEngine-iceleaf/src/docs/dev.md",
 		"/C/workspace/Bakery-BKEngine/download.html",
 		"/C/workspace/Bakery-BKEngine/about.html",
 		"/C/workspace/Bakery-BKEngine/license.html",
@@ -780,14 +788,11 @@
 		"/D/Dev/Qt5.3.2/5.3/Src/a.txt",
 		"/D/Dev/Qt5.3.2/5.3/Src/README",
 		"/D/workspace/bkeCloud/views/gameMaker/sidebar.jade",
-		"/D/workspace/bkeCloud/views/gameMaker/gamemain.jade",
-		"/D/workspace/bkeCloud/views/gameMaker/mygames_edit.jade",
-		"/D/workspace/bkeCloud/views/gameMaker/mygames.jade",
-		"/D/workspace/bkeCloud/views/gameMaker/index.jade"
+		"/D/workspace/bkeCloud/views/gameMaker/gamemain.jade"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 36.0
 	},
 	"find_in_files":
 	{
@@ -803,6 +808,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"addChild",
+			"m_currrentTextHeight",
+			"m_currentTextHeight",
+			"console",
+			"this.text[i]",
+			"ba",
+			"m_texture",
+			"canvas",
+			"console",
+			"tw instanceof TextWindow",
+			"tw.name!='TextWindow'",
+			"TextSprite",
+			"this.style",
+			"paddin",
 			";",
 			"X",
 			"xInterval",
@@ -916,21 +935,7 @@
 			"bgTexture",
 			"AlphaMaskFilter",
 			" \\n",
-			"\\n\"",
-			"v_texCoord",
-			"\\n\"",
-			"\"",
-			"    \"src/pixi/filters/",
-			"\"src/pixi/",
-			".js",
-			"AbstractFilter",
-			"sepia",
-			"bunny",
-			"this",
-			"_Array",
-			"key",
-			"cry",
-			"nodeRSA"
+			"\\n\""
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -959,7 +964,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -968,15 +973,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2347,
+						"buffer_size": 2655,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2296,
-								2296
+								2508,
+								2508
 							]
 						],
 						"settings":
@@ -986,10 +991,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1331.0,
+						"translation.y": 1662.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -998,15 +1003,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7283,
+						"buffer_size": 10558,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6987,
-								6987
+								2845,
+								2597
 							]
 						],
 						"settings":
@@ -1016,32 +1021,32 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3544.0,
+						"translation.y": 3480.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "src/docs/dev.md",
+					"file": "src/index.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 38,
+						"buffer_size": 172,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								38,
-								38
+								172,
+								70
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+							"syntax": "Packages/HTML/HTML.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1052,19 +1057,19 @@
 				},
 				{
 					"buffer": 3,
-					"file": "src/Classes/Animation.js",
+					"file": "src/Classes/SpriteManager.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7078,
+						"buffer_size": 1012,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								51,
-								0
+								330,
+								330
 							]
 						],
 						"settings":
@@ -1074,7 +1079,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 324.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
@@ -1082,28 +1087,28 @@
 				},
 				{
 					"buffer": 4,
-					"file": "src/Classes/TextSprite.js",
+					"file": "src/Classes/TextWindow.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2453,
+						"buffer_size": 5283,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1310,
-								1310
+								53,
+								53
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"translate_tabs_to_spaces": true
 						},
-						"translation.x": -0.0,
-						"translation.y": 972.0,
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -1111,31 +1116,62 @@
 				},
 				{
 					"buffer": 5,
-					"file": "src/Classes/Sprite.js",
-					"semi_transient": false,
+					"file": "src/webpack.config.js",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 589,
+						"buffer_size": 469,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								344,
-								344
+								33,
+								38
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/Classes/Animation.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7128,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1769,
+								1769
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1120.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1143,7 +1179,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 34.0
+		"height": 28.0
 	},
 	"input":
 	{
@@ -1184,7 +1220,7 @@
 	"project": "proj.sublime-project",
 	"replace":
 	{
-		"height": 62.0
+		"height": 52.0
 	},
 	"save_all_on_build": true,
 	"select_file":
