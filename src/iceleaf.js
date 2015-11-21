@@ -175,7 +175,7 @@ class Iceleaf {
     }
 
     //动画类
-    animate_horizontal(index,file,frame,row=1,interval=33,loop='forward'){
+    animate_horizontal({index,file,frame,row=1,interval=33,loop='forward'}){
         let ani = new Animation();
         ani.setType('horizontal').setIndex(index).setFile(file)
            .setFrame(frame).setRow(row).setInterval(interval)
@@ -183,7 +183,7 @@ class Iceleaf {
            .exec();
         SpriteManager.insert(index,ani);
     }
-    animate_vertical(index,file,frame,column=1,interval=33,loop='forward'){
+    animate_vertical({index,file,frame,column=1,interval=33,loop='forward'}){
         let ani = new Animation();
         ani.setType('vertical').setIndex(index).setFile(file)
            .setFrame(frame).setColumn(column).setInterval(interval)
@@ -191,7 +191,7 @@ class Iceleaf {
            .exec();
         SpriteManager.insert(index,ani);
     }
-    animate_multifiles(index,files,interval=33,loop=true,delay=0){
+    animate_multifiles({index,files,interval=33,loop=true,delay=0}){
         let ani = new Animation();
         ani.setType('multifiles').setIndex(index).setFile(files)
            .setInterval(interval).setLoop(loop).setDelay(delay)
@@ -315,6 +315,76 @@ class Iceleaf {
 
         // 0-100 线性转换到 1字/s - 立刻显示 非线性映射…………真是够了
         tw.setTextSpeed(value===100?Infinity:(10/(1-value/100)));
+    }
+
+    textcursor({index,follow,pos}){
+        let sp = SpriteManager.fromIndex(index);
+        if(!sp)
+            return Err.warn("精灵(index="+index+")不存在，此命令忽略执行");
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.setTextCursor(sp,follow,pos);
+    }
+
+    locate({x,y}){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.relocate({
+            x: x,
+            y: y
+        });
+    }
+
+    i(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.styleSwitch({i:true});
+    }
+
+    b(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.styleSwitch({b:true});
+    }
+
+    s(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.styleSwitch({s:true});
+    }
+
+    u(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.styleSwitch({u:true});
+    }
+
+    r(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.newline();
+    }
+
+    er(){
+        let tw = SpriteManager.fromIndex(this.textWindowIndex);
+        if(!tw || !(tw instanceof TextWindow))
+            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
+
+        tw.clearText();
     }
 
 }

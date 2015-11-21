@@ -158,9 +158,41 @@ class TextWindow extends PIXI.Container {
         return clone(this);
     }
 
+    setTextCursor(sprite,follow,pos){
+        this.textCursor = sprite;
+        this.addChildAt(this.textCursor,this.children.length);
+        this.textCursorFollow = !!follow;
+        if(!follow) {
+            sprite.x = pos[0];
+            sprite.y = pos[1];
+        }
+    }
+
+    relocate({x,y}) {
+        this.m_currentTextWidth = x || this.m_currentTextWidth;
+        this.m_currentTextHeight = y || this.m_currentTextHeight;
+
+        if(this.textCursor && this.textCursorFollow) {
+                this.textCursor.x = this.m_currentTextWidth;
+                this.textCursor.y = this.m_currentTextHeight;
+            }
+    }
+
+    styleSwitch({i,b,s,u}){
+        if(i) this.style.italic = !this.style.italic;
+        if(b) this.style.bold = !this.style.bold;
+        if(s) this.style.strike = !this.style.strike;
+        if(u) this.style.underline = !this.style.underline;
+    }
+
+
 
     //文字相关
 
+    newline(){
+        this.m_currentTextWidth = this.textRectangle[0];
+        this.m_currentTextHeight += this.style.size*this.resolution + this.style.yInterval*this.resolution;
+    }
 
     drawText(text){
         this.text = text;
@@ -204,8 +236,8 @@ class TextWindow extends PIXI.Container {
         this.textRendering = true;
         this.m_lastTime = Date.now();
 
-        this.m_currentTextWidth = this.textRectangle[0];
-        this.m_currentTextHeight = this.textRectangle[1];
+        this.m_currentTextWidth = this.textRectangle[0]*this.resolution;
+        this.m_currentTextHeight = this.textRectangle[1]*this.resolution;
     }
 
 
@@ -230,6 +262,10 @@ class TextWindow extends PIXI.Container {
             count = this.text.length - this.textIndex;
 
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
+            //关闭光标（如果有）
+            if(this.textCursor)
+                this.textCursor.visible = false;
+            //绘制文字，计算偏移
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             let width = this.textContext.measureText(this.text[i]).width;   //字号已经*this.resolution，无需再乘
@@ -250,6 +286,13 @@ class TextWindow extends PIXI.Container {
         // stop condition
         if(this.textIndex>=this.text.length-1){
             this.textRendering = false;
+            //移动光标（如果有）
+            if(this.textCursor && this.textCursorFollow) {
+                this.textCursor.x = this.m_currentTextWidth;
+                this.textCursor.y = this.m_currentTextHeight;
+            }
+            if(this.textCursor)
+                this.textCursor.visible = true; //恢复显示
         }
 
     }

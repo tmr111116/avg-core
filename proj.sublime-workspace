@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"texts",
+				"textSpeed"
+			],
+			[
+				"m_",
+				"m_currentTextHeight"
+			],
+			[
+				"textc",
+				"textCanvas"
+			],
+			[
+				"shad",
+				"shadowColor"
+			],
+			[
+				"und",
+				"undefined"
+			],
+			[
+				"shaodw",
+				"shadowcolor"
+			],
+			[
+				"stroke",
+				"strokeColor"
+			],
+			[
 				"text",
 				"textContext"
 			],
@@ -22,10 +50,6 @@
 			[
 				"upd",
 				"updateTexture"
-			],
-			[
-				"textc",
-				"textCanvas"
 			],
 			[
 				"m_curr",
@@ -84,16 +108,8 @@
 				"stroke"
 			],
 			[
-				"shad",
-				"shadowcolor"
-			],
-			[
 				"sha",
 				"shadow"
-			],
-			[
-				"m_",
-				"m_fontSize"
 			],
 			[
 				"m_fo",
@@ -498,22 +514,6 @@
 			[
 				"rec",
 				"recordModel"
-			],
-			[
-				"fn",
-				"function"
-			],
-			[
-				"mo",
-				"mobile"
-			],
-			[
-				"mobi",
-				"mobile"
-			],
-			[
-				"q",
-				"query"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "src/entry.js",
 			"settings":
 			{
-				"buffer_size": 2655,
+				"buffer_size": 1709,
 				"line_ending": "Windows",
 				"name": "document.write(\"It works.\");"
 			}
@@ -532,7 +532,15 @@
 			"file": "src/iceleaf.js",
 			"settings":
 			{
-				"buffer_size": 10558,
+				"buffer_size": 11850,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Classes/TextWindow.js",
+			"settings":
+			{
+				"buffer_size": 7816,
 				"line_ending": "Windows"
 			}
 		},
@@ -549,14 +557,6 @@
 			"settings":
 			{
 				"buffer_size": 1012,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/Classes/TextWindow.js",
-			"settings":
-			{
-				"buffer_size": 5283,
 				"line_ending": "Windows"
 			}
 		},
@@ -661,6 +661,8 @@
 	],
 	"file_history":
 	[
+		"/C/workspace/BKEngine-iceleaf/src/bundle.js",
+		"/C/workspace/BKEngine-iceleaf/src/release.js",
 		"/C/workspace/BKEngine-iceleaf/src/docs/dev.md",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/Sprite.js",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/TextSprite.js",
@@ -671,7 +673,6 @@
 		"/C/workspace/BKEngine-iceleaf/src/.babelrc",
 		"/C/workspace/BKEngine-iceleaf/src/Library/pixi.js/src/core/sprites/Sprite.js",
 		"/C/workspace/BKEngine-iceleaf/src/Library/pixi.js/node_modules/jsdoc/node_modules/catharsis/node_modules/underscore-contrib/test/vendor/jquery.js",
-		"/C/workspace/BKEngine-iceleaf/src/bundle.js",
 		"/C/workspace/BKEngine-iceleaf/src/Library/howler.js/howler.js",
 		"/C/workspace/BKEngine-iceleaf/src/Classes/ErrorHandler.js",
 		"/C/workspace/BKEngine-iceleaf/src/SharedVariables.js",
@@ -787,8 +788,7 @@
 		"/C/Users/Icemic/Desktop/test/BKE_systemdemo/iceLib_Sys_Menu.bkscr",
 		"/D/Dev/Qt5.3.2/5.3/Src/a.txt",
 		"/D/Dev/Qt5.3.2/5.3/Src/README",
-		"/D/workspace/bkeCloud/views/gameMaker/sidebar.jade",
-		"/D/workspace/bkeCloud/views/gameMaker/gamemain.jade"
+		"/D/workspace/bkeCloud/views/gameMaker/sidebar.jade"
 	],
 	"find":
 	{
@@ -808,6 +808,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"setTextSpeed",
+			"asserts",
+			"stroke",
+			"shadow",
+			"Shadow",
+			"shadow",
+			"6e3",
+			"测试",
 			"addChild",
 			"m_currrentTextHeight",
 			"m_currentTextHeight",
@@ -927,15 +935,7 @@
 			"outTex",
 			"CrossFadeFilter",
 			" \\n",
-			"container",
-			"stage",
-			" \\n",
-			"CrossFadeFilter",
-			"BlurXFilter",
-			"bgTexture",
-			"AlphaMaskFilter",
-			" \\n",
-			"\\n\""
+			"container"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -964,7 +964,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -973,15 +973,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2655,
+						"buffer_size": 1709,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2508,
-								2508
+								1521,
+								1521
 							]
 						],
 						"settings":
@@ -991,10 +991,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1662.0,
+						"translation.y": 1020.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1003,15 +1003,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10558,
+						"buffer_size": 11850,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2845,
-								2597
+								11524,
+								11532
 							]
 						],
 						"settings":
@@ -1021,14 +1021,43 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3480.0,
+						"translation.y": 5820.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/Classes/TextWindow.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7816,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5608,
+								5608
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3978.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "src/index.html",
 					"semi_transient": false,
 					"settings":
@@ -1040,8 +1069,8 @@
 						"selection":
 						[
 							[
-								172,
-								70
+								122,
+								122
 							]
 						],
 						"settings":
@@ -1052,11 +1081,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "src/Classes/SpriteManager.js",
 					"semi_transient": false,
 					"settings":
@@ -1068,43 +1097,14 @@
 						"selection":
 						[
 							[
-								330,
-								330
+								92,
+								92
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/Classes/TextWindow.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5283,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								53,
-								53
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -1117,7 +1117,7 @@
 				{
 					"buffer": 5,
 					"file": "src/webpack.config.js",
-					"semi_transient": true,
+					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 469,
@@ -1127,8 +1127,8 @@
 						"selection":
 						[
 							[
-								33,
-								38
+								307,
+								307
 							]
 						],
 						"settings":
@@ -1141,7 +1141,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1171,7 +1171,7 @@
 						"translation.y": 1120.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]

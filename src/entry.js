@@ -29,26 +29,22 @@ iceleaf.bgm('assets/res/op_cut.mp3',true,50,0,5000);
 
 PIXI.loader.add('animate', 'assets/res/LineBreak_a.png').load((loader,resources)=>{
 
-let Animation = require('./Classes/Animation');
+iceleaf.animate_horizontal({
+    index: 91,
+    file: 'assets/res/LineBreak_a.png',
+    frame: 16,
+    loop: 'bouncing',
+    interval: 33
+});
 
-let ani = new Animation();
-
-ani
-// .setFile(["assets/res/ch-1.png","assets/res/ch-2.png","assets/res/ch-3.png"])
-// .setType('multifiles')
-.setFile('assets/res/LineBreak_a.png')
-.setType('horizontal')
-.setFrame(16)
-.setLoopType('bouncing')
-.setInterval(33)
-.setIndex(100)
-.setLoop(true)
-//.setDelay(2000)
-.exec();
-
-
-iceleaf.stage.addChild(ani);
+iceleaf.addto(91,-1);
     
+iceleaf.textcursor({
+    index: 91,
+    follow: true,
+    pos: [0,0]
+});
+
 })
 
 iceleaf.sprite(90,"assets/res/BG32a_1280.jpg");
@@ -76,9 +72,16 @@ iceleaf.textstyle({
 
 iceleaf.text('你好，世界！');
 
-iceleaf.textspeed(100)
+// iceleaf.locate({
+//     x: 20,
+//     y: 200
+// })
 
-iceleaf.text('abcde,ABCD, 这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。');
+
+iceleaf.textspeed(50);
+
+
+//iceleaf.text('abcde,ABCD, 这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。');
 
 
 
