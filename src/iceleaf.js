@@ -4,16 +4,23 @@ var fps = require('./Utils/fps.js');
 var Sprite = require('./Classes/Sprite');
 var TextSprite = require('./Classes/TextSprite');
 var TextWindow = require('./Classes/TextWindow');
+var Action = require('./Classes/Action');
 var SpriteManager = require('./Classes/SpriteManager');
 var SoundManager = require('./Classes/SoundManager');
+import ActionManager from './Classes/ActionManager';
 var Animation = require('./Classes/Animation');
 var Err = require('./Classes/ErrorHandler');
+
+let ActMgr = ActionManager.instance();
 
 class Iceleaf {
     constructor(view){
         this.renderer = new PIXI.WebGLRenderer(1280, 720);
         view.appendChild(this.renderer.view);
         this.stage = new PIXI.Container();
+
+        
+
         SpriteManager.insert(-1,this.stage);
 
         let tw = new TextWindow();
@@ -25,9 +32,10 @@ class Iceleaf {
         SpriteManager.setZorder(-2,50);
     }
 
-    update(){
+    update(time){
         window.requestAnimationFrame(this.update.bind(this));
         this.renderer.render(this.stage);
+        ActMgr.update(time);
     }
 
     // test(){
@@ -386,6 +394,36 @@ class Iceleaf {
 
         tw.clearText();
     }
+
+
+    // 动作类
+    // action_queue(){
+    //     ActionManager.queue();
+    // }
+
+    // action_parallel(){
+    //     ActionManager.parallel();
+    // }
+
+    // action_end({target,times}){
+    //     let sp;
+    //     if(typeof target !== 'undefined')
+    //         sp = SpriteManager.fromIndex(target);
+    //     ActionManager.end(sp,times);
+    // }
+
+    // action_moveby({pos,time=0,target,ease}){
+    //     let sp;
+    //     if(typeof target !== 'undefined')
+    //         sp = SpriteManager.fromIndex(target);
+    //     let action = new Action({
+    //         mode: "moveby",
+    //         pos: pos,
+    //         target: sp,
+    //         ease: ease
+    //     })
+    //     ActionManager.add(action);
+    // }
 
 }
 

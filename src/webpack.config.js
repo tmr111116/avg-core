@@ -16,5 +16,11 @@ module.exports = {
             { test: /\.json$/, loader: 'json-loader'},
 
         ]
+    },
+    devServer: {
+        historyApiFallback: true,
+        hot: true,
+        inline: true,
+        progress: true,
     }
 };

@@ -1,6 +1,6 @@
 
 
-class ErrorHandler {
+export default class ErrorHandler {
 	constructor(args) {
 		// code
 	}

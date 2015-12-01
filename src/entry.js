@@ -1,4 +1,5 @@
 require("./assets/css/style.css");
+require("babel-polyfill");
 
 var Iceleaf = require('./iceleaf');
 var iceleaf = new Iceleaf(document.body);
@@ -51,7 +52,7 @@ iceleaf.sprite(90,"assets/res/BG32a_1280.jpg");
 iceleaf.addto(90,-1);
 
 
-iceleaf.textsprite(100,"TextSprite 测试",0xffcc00,20,"思源黑体 CN Light");
+iceleaf.textsprite(100,"TextSprite 测试",0xffcc00,20,"思源黑体 Regular");
 iceleaf.addto(100,-1,100,[745,25],255)
 
 iceleaf.textwindow("assets/res/textwindow.png",0.8,[126,450],[20,55,1008,231]);
@@ -59,15 +60,14 @@ iceleaf.textwindow("assets/res/textwindow.png",0.8,[126,450],[20,55,1008,231]);
 iceleaf.texton();
 
 iceleaf.textstyle({
-    name: "思源黑体 CN Regular",
+    name: "思源黑体 Regular",
     size: 24,
     color: 0x000000,
     bold: false,
     italic: false,
     shadow: false,
     shadowColor: 0xffffff,
-    stroke: false
-
+    stroke: false,
 })
 
 iceleaf.text('你好，世界！');
@@ -83,5 +83,23 @@ iceleaf.textspeed(50);
 
 //iceleaf.text('abcde,ABCD, 这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。');
 
+var SpriteManager = require('./Classes/SpriteManager');
+// var ActionManager = require('./Classes/ActionManager');
+import ActionManager from './Classes/ActionManager';
+
+let ActMgr = ActionManager.instance();
+
+ActMgr.moveBy({
+    deltaX: 30,
+    deltaY: 50,
+    duration: 3000,
+    target: SpriteManager.fromIndex(100)
+})
+
+ActMgr.end({})
+
+ActMgr.start({
+    times: 3
+})
 
 
