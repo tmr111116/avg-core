@@ -52,7 +52,7 @@ iceleaf.sprite(90,"assets/res/BG32a_1280.jpg");
 iceleaf.addto(90,-1);
 
 
-iceleaf.textsprite(100,"TextSprite 测试",0xffcc00,20,"思源黑体 Regular");
+iceleaf.textsprite(100,"TextSprite 测试",0xffcc00,20,"思源黑体 Regular,思源黑体");
 iceleaf.addto(100,-1,100,[745,25],255)
 
 iceleaf.textwindow("assets/res/textwindow.png",0.8,[126,450],[20,55,1008,231]);
@@ -60,7 +60,7 @@ iceleaf.textwindow("assets/res/textwindow.png",0.8,[126,450],[20,55,1008,231]);
 iceleaf.texton();
 
 iceleaf.textstyle({
-    name: "思源黑体 Regular",
+    name: "思源黑体 Regular,思源黑体",
     size: 24,
     color: 0x000000,
     bold: false,

@@ -31,7 +31,7 @@ class TextSprite extends PIXI.Text {
 	setSize(size){
 		let yInterval = this.m_style.lineHeight-this.m_fontSize;
 		this.m_fontSize = size;
-		this.m_style.font = this.m_fontStyle + this.m_fontSize + ' ' + this.m_font;
+		this.m_style.font = this.m_fontStyle + this.m_fontSize + 'px ' + this.m_font;
 		this.setYInterval(yInterval);
 		this.m_style.dropShadowDistance = this.m_fontSize/12;
 		return this;
@@ -39,7 +39,7 @@ class TextSprite extends PIXI.Text {
 
 	setFont(font){
 		this.m_font = font;
-		this.m_style.font = this.m_fontStyle + this.m_fontSize + ' ' + this.m_font;
+		this.m_style.font = this.m_fontStyle + this.m_fontSize + 'px ' + this.m_font;
 		return this;
 	}
 
@@ -79,7 +79,7 @@ class TextSprite extends PIXI.Text {
 			this.m_fontStyle += "italic ";
 		if(!this.m_bold&&!this.m_italic)
 			this.m_fontStyle = "normal ";
-		this.m_style.font = this.m_fontStyle + this.m_fontSize + ' ' + this.m_font;
+		this.m_style.font = this.m_fontStyle + this.m_fontSize + 'px ' + this.m_font;
 		return this;
 	}
 
@@ -92,7 +92,7 @@ class TextSprite extends PIXI.Text {
 			this.m_fontStyle += "italic ";
 		if(!this.m_bold&&!this.m_italic)
 			this.m_fontStyle = "normal ";
-		this.m_style.font = this.m_fontStyle + this.m_fontSize + ' ' + this.m_font;
+		this.m_style.font = this.m_fontStyle + this.m_fontSize + 'px ' + this.m_font;
 		return this;
 	}
 
@@ -128,6 +128,7 @@ class TextSprite extends PIXI.Text {
 
 	exec(){
 		this.style = this.m_style;
+		console.log(this.style)
 	}
 
 
