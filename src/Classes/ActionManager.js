@@ -86,15 +86,95 @@ export default class ActionManager {
 			target: target
 		});
 		if(this.currentNodeType==='queue') this.currentDelay += duration;
-		
 		this.currentActionList.push(action);
-		
+	}
+	
+	
+	moveTo({targetX,targetY,duration=0,target,ease}){
+		let action = new Action.MoveToAction({
+			duration: duration,
+			delay: this.currentDelay,
+			targetX: targetX,
+			targetY: targetY,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	fadeTo({targetOpacity,duration=0,target,ease}){
+		let action = new Action.FadeToAction({
+			duration: duration,
+			delay: this.currentDelay,
+			targetOpacity: targetOpacity,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	// deltaScaleX deltaScaleY 取值 [0-1]
+	scaleBy({deltaScaleX,deltaScaleY,duration=0,target,ease}){
+		let action = new Action.ScaleByAction({
+			duration: duration,
+			delay: this.currentDelay,
+			deltaScaleX: deltaScaleX,
+			deltaScaleY: deltaScaleY,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	// targetScaleX targetScaleY 取值 [0-1]
+	scaleTo({targetScaleX,targetScaleY,duration=0,target,ease}){
+		let action = new Action.ScaleToAction({
+			duration: duration,
+			delay: this.currentDelay,
+			targetScaleX: targetScaleX,
+			targetScaleY: targetScaleY,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	// deltaScaleX deltaScaleY 取值 [0-1]
+	rotateBy({deltaRadians,duration=0,target,ease}){
+		let action = new Action.RotateByAction({
+			duration: duration,
+			delay: this.currentDelay,
+			deltaRadians: deltaRadians,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	// targetScaleX targetScaleY 取值 [0-1]
+	rotateTo({targetRadians,duration=0,target,ease}){
+		let action = new Action.RotateToAction({
+			duration: duration,
+			delay: this.currentDelay,
+			targetRadians: targetRadians,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		this.currentActionList.push(action);
 	}
 	
 	start({target,times}){ 
 		this.forcedTarget = target;
 		this.forcedTimes = times;
 		this.finished = false;
+		
+		console.log(this.topNode)
 	}
 	
 	update(time){
@@ -110,12 +190,12 @@ export default class ActionManager {
 		let finished = true;
 		for(let action of actionList){
 			if(action.type === 'queue')
-				finished = finished && this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes);
+				finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes) && finished;
 			else if(action.type === 'parallel')
-				finished = finished && this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes)
+				finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes) && finished;
 			else
 			{
-				finished = finished && action.update(time,target || this.forcedTarget, times || this.forcedTimes);
+				finished = action.update(time,target || this.forcedTarget, times || this.forcedTimes) && finished;
 			}
 		}
 		return finished;

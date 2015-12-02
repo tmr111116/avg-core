@@ -10,17 +10,10 @@ export default class MoveByAction extends AbstractAction{
 		
 	}
 	
-	initAction(time,target){
-		super.initAction(time,target);
-		
-		this.originX = target.x;
-		this.originY = target.y;
-		
-	}
-	
-	updateTransform(progress,target){
-		target.x = this.originX + this.deltaX * progress;
-		target.y = this.originY + this.deltaY * progress;
+	updateTransform(progress,lastProgress,target){
+		let deltaProgress = progress - lastProgress;
+		target.x += this.deltaX * deltaProgress;
+		target.y += this.deltaY * deltaProgress;
 	}
 	
 	

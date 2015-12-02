@@ -128,7 +128,6 @@ class TextSprite extends PIXI.Text {
 
 	exec(){
 		this.style = this.m_style;
-		console.log(this.style)
 	}
 
 

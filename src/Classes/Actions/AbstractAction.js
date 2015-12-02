@@ -10,7 +10,7 @@ import {ErrorHandler as Err} from '../ErrorHandler';
 
 export default class AbstractAction {
 	constructor(duration,delay=0,target) {
-		this.delay = 0;
+		this.delay = delay;
 		this.duration = duration;
 		this.finished = false;
 		this.target = target;
@@ -19,6 +19,7 @@ export default class AbstractAction {
 	
 	initAction(time,target){
 		this.startTime = time + this.delay;
+		this.lastProgress = 0;
 	}
 	
 	reset(){
@@ -45,7 +46,9 @@ export default class AbstractAction {
 			this.finished = true;
 		}
 
-		this.updateTransform(progress,this.target || target);
+		this.updateTransform(progress,this.lastProgress,this.target || target);
+		
+		this.lastProgress = progress;
 		
 		if(this.finished && (this.times < times))
 		{
@@ -57,7 +60,7 @@ export default class AbstractAction {
 
 	}
 	
-	updateTransform(progress,target){
+	updateTransform(progress,lastProgress,target){
 		
 	}
 

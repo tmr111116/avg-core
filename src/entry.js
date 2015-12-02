@@ -89,9 +89,31 @@ import ActionManager from './Classes/ActionManager';
 
 let ActMgr = ActionManager.instance();
 
+
+ActMgr.parallel();
+
+ActMgr.moveTo({
+    targetX: 500,
+    targetY: 140,
+    duration: 3000,
+    target: SpriteManager.fromIndex(100)
+});
+
+ActMgr.queue();
+ActMgr.rotateBy({
+    deltaRadians: Math.PI/2,
+    duration: 1500,
+    target: SpriteManager.fromIndex(100)
+});
+ActMgr.rotateBy({
+    deltaRadians: -Math.PI/2,
+    duration: 1500,
+    target: SpriteManager.fromIndex(100)
+});
+ActMgr.end({});
 ActMgr.moveBy({
-    deltaX: 30,
-    deltaY: 50,
+    deltaX: 1000,
+    deltaY: 0,
     duration: 3000,
     target: SpriteManager.fromIndex(100)
 })
@@ -99,7 +121,7 @@ ActMgr.moveBy({
 ActMgr.end({})
 
 ActMgr.start({
-    times: 3
+    times: 1
 })
 
 
