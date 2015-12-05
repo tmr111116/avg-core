@@ -4,18 +4,25 @@ import Action from './Action';
 
 export default class ActionManager {
 	constructor(args) {
-		this.topNode = {type:'parallel',actions:[]};
+		this.topNode = {type:'parallel',actions:[],times:1,currentTimes:1};
 		this.nodeStack = [];
 		this.delayStack = [];
+		this.layerDelayStack = [];
 		this.currentActionList = this.topNode.actions;
 		this.currentNodeType = 'parallel';
-		this.currentDelay = 0;
+		this.currentDelay = 0;	//当前级别的delay
+		this.currentLayerDelay = 0;
 		
 		this.nodeStack.push(this.topNode);
 		
 		this.finished = true;
 		
 		this.forcedTarget = null;
+		
+		this.timesStackInUpdate = [];
+		this.totalTimesStackInUpdate = [];
+		this.currentNodeTotalTimes = 0;
+		this.currentNodeTimes = 0;
 	}
 
 	static instance(){
@@ -39,11 +46,15 @@ export default class ActionManager {
 			type: 'queue',
 			actions: [],
 			target: null,
-			times: null
+			times: 1,
+			currentTimes: 1
 		}
 		this.nodeStack.push(map);
 		this.currentNodeType = 'queue';
 		this.delayStack.push(this.currentDelay);
+		this.layerDelayStack.push(this.currentLayerDelay);
+		this.currentDelay += this.currentLayerDelay;
+		this.currentLayerDelay = 0;
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
@@ -53,19 +64,23 @@ export default class ActionManager {
 			type: 'parallel',
 			actions: [],
 			target: null,
-			times: null
+			times: 1,
+			currentTimes: 1
 		}
 		this.nodeStack.push(map);
 		this.currentNodeType = 'parallel';
 		this.delayStack.push(this.currentDelay);
+		this.layerDelayStack.push(this.currentLayerDelay);
+		this.currentDelay += this.currentLayerDelay;
+		this.currentLayerDelay = 0;
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
 	
-	end({target,times}){
+	end({target,times=1}){
 		if(this.nodeStack.length===1){
 			ErrorHandler.error('【ActionManager】已到达最外层，此命令忽略。')
-			return
+			return false;
 		}
 		
 		let map = this.nodeStack.pop();
@@ -73,19 +88,22 @@ export default class ActionManager {
 		map.times = times;
 		this.currentNodeType = map.type;
 		this.currentDelay = this.delayStack.pop();
+		this.currentLayerDelay = this.layerDelayStack.pop() + this.currentLayerDelay*times;
 		this.currentActionList = this.nodeStack[this.nodeStack.length-1].actions;
+		return !!(this.nodeStack.length-1);
 	}
 	
 	moveBy({deltaX,deltaY,duration=0,target,ease}){
 		let action = new Action.MoveByAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			deltaX: deltaX,
 			deltaY: deltaY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -94,12 +112,13 @@ export default class ActionManager {
 		let action = new Action.MoveToAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			targetX: targetX,
 			targetY: targetY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -107,11 +126,12 @@ export default class ActionManager {
 		let action = new Action.FadeToAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			targetOpacity: targetOpacity,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -120,12 +140,13 @@ export default class ActionManager {
 		let action = new Action.ScaleByAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			deltaScaleX: deltaScaleX,
 			deltaScaleY: deltaScaleY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -134,12 +155,13 @@ export default class ActionManager {
 		let action = new Action.ScaleToAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			targetScaleX: targetScaleX,
 			targetScaleY: targetScaleY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -148,11 +170,12 @@ export default class ActionManager {
 		let action = new Action.RotateByAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			deltaRadians: deltaRadians,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -161,43 +184,66 @@ export default class ActionManager {
 		let action = new Action.RotateToAction({
 			duration: duration,
 			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
 			targetRadians: targetRadians,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentDelay += duration;
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
-	start({target,times}){ 
-		this.forcedTarget = target;
-		this.forcedTimes = times;
-		this.finished = false;
+	start({target,times=1}){ 
+		for(;;){
+			if (!this.end({}))
+				break;
+		}
 		
-		console.log(this.topNode)
+		this.forcedTarget = target;
+		//this.forcedTimes = times;
+		this.topNode.times = times;
+		this.finished = false;
 	}
 	
 	update(time){
 		// console.log(this.finished)
 		if(this.finished)
 			return;
-			
-		this.finished = this.updateTransform(time,this.topNode.actions,'parallel',this.forcedTarget,this.forcedTimes);
+		
+		let finished = this.updateTransform(time,this.topNode.actions,'parallel',this.forcedTarget,this.topNode.currentTimes);
+		if(finished && (this.topNode.currentTimes < this.topNode.times)){
+			this.topNode.currentTimes++;
+			finished = false;
+		}
+		this.finished = finished;
 	}
 	
 	updateTransform(time,actionList,type='parallel',target,times){
 		//目前type无用，将来可用于优化
 		let finished = true;
 		for(let action of actionList){
-			if(action.type === 'queue')
-				finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes) && finished;
-			else if(action.type === 'parallel')
-				finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget, action.times || times || this.forcedTimes) && finished;
+			if(action.type === 'queue'){
+				action.finished = finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes*times) && finished;
+				if(finished && (action.currentTimes < action.times)){
+					action.currentTimes++;
+					finished = false;
+				}
+			}
+			else if(action.type === 'parallel'){
+				action.finished = finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes*times) && finished;
+				if(finished && (action.currentTimes < action.times)){
+					action.currentTimes++;
+					finished = false;
+				}
+			}
 			else
 			{
-				finished = action.update(time,target || this.forcedTarget, times || this.forcedTimes) && finished;
+				finished = action.update(time,target || this.forcedTarget, times) && finished;
 			}
+			if(!finished && type==='queue')
+				break;
 		}
+
 		return finished;
 	}
 

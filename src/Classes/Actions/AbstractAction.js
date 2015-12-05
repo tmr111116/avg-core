@@ -9,8 +9,9 @@ import {ErrorHandler as Err} from '../ErrorHandler';
 */
 
 export default class AbstractAction {
-	constructor(duration,delay=0,target) {
+	constructor(duration,delay=0,layerDelay=0,target) {
 		this.delay = delay;
+		this.layerDelay = layerDelay;
 		this.duration = duration;
 		this.finished = false;
 		this.target = target;
@@ -18,7 +19,7 @@ export default class AbstractAction {
 	}
 	
 	initAction(time,target){
-		this.startTime = time + this.delay;
+		this.startTime = time;
 		this.lastProgress = 0;
 	}
 	
@@ -28,7 +29,13 @@ export default class AbstractAction {
 	}
 	
 	update(time,target,times){
-		if(this.finished)
+		// console.log(times)
+		if(this.finished && (this.times < times))
+		{
+			this.reset();
+			this.times++;
+		}
+		else if(this.finished)
 			return true;
 			
 		if(!this.startTime){
@@ -49,12 +56,6 @@ export default class AbstractAction {
 		this.updateTransform(progress,this.lastProgress,this.target || target);
 		
 		this.lastProgress = progress;
-		
-		if(this.finished && (this.times < times))
-		{
-			this.reset();
-			this.times++;
-		}
 		
 		return this.finished;
 
