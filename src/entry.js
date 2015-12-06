@@ -141,15 +141,15 @@ ActMgr.moveBy({
 ActMgr.queue();
 ActMgr.rotateBy({
     deltaRadians: -Math.PI,
-    duration: 1000,
+    duration: 500,
     target: SpriteManager.fromIndex(100)
 });
 ActMgr.rotateBy({
     deltaRadians: -Math.PI,
-    duration: 5000,
+    duration: 1000,
     target: SpriteManager.fromIndex(100)
 });
-ActMgr.end({times:2})
+ActMgr.end({times:3})
 
 // ActMgr.rotateBy({
 //     deltaRadians: -Math.PI/2,

@@ -223,15 +223,15 @@ export default class ActionManager {
 		let finished = true;
 		for(let action of actionList){
 			if(action.type === 'queue'){
-				action.finished = finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes*times) && finished;
-				if(finished && (action.currentTimes < action.times)){
+				action.finished = finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				if(finished && (action.currentTimes < action.times*times)){
 					action.currentTimes++;
 					finished = false;
 				}
 			}
 			else if(action.type === 'parallel'){
-				action.finished = finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes*times) && finished;
-				if(finished && (action.currentTimes < action.times)){
+				action.finished = finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				if(finished && (action.currentTimes < action.times*times)){
 					action.currentTimes++;
 					finished = false;
 				}
