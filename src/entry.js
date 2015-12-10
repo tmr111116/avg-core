@@ -8,7 +8,7 @@ iceleaf.start();
 
 iceleaf.sprite(10,'assets/res/bg1.png',[0,0,900,300]);
 iceleaf.addto(10,-1,10,[200,0],255);
-
+// iceleaf.addto(10,-1,10,[200,300],255);
 
 setTimeout(()=>{
     // iceleaf.remove(10)  
@@ -24,7 +24,7 @@ setTimeout(()=>{
 
 var SoundManager = require('./Classes/SoundManager');
 
-iceleaf.bgm('assets/res/op_cut.mp3',true,50,0,5000);
+//iceleaf.bgm('assets/res/op_cut.mp3',true,50,0,5000);
 
 
 
@@ -150,7 +150,11 @@ let ActMgr = ActionManager.instance();
 // ActMgr.start({
 //     times: 2
 // })
-
+ActMgr.tintTo({
+    targetColor: 0x000000,
+    duration: 1000,
+    target: SpriteManager.fromIndex(10)
+})
 ActMgr.parallel();
 
     ActMgr.delay({
@@ -189,5 +193,5 @@ ActMgr.parallel();
 ActMgr.end({});
 
 ActMgr.start({
-    times: 2
+    times: 1
 })

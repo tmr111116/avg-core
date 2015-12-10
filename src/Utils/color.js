@@ -1,6 +1,6 @@
 import {ErrorHandler as Err} from '../Classes/ErrorHandler';
 
-class Color{
+export default class Color{
 	constructor(value){
 		if(typeof value === 'string'){
 			if(value.length === 7){
@@ -19,13 +19,13 @@ class Color{
 		}
 		else if(typeof value === 'number'){
 			this.b = value%256;
-			this.g = value&65536/256 << 0;
-			this.r = value/65536 << 0;
+			this.g = (value%65536/256) << 0;
+			this.r = (value/65536) << 0;
 		}
 	}
 	
 	toNumber(){
-		return this.r*65535 + this.g*256 + this.b;
+		return ((this.r<<0)*65536 + (this.g<<0)*256 + this.b<<0);
 	}
 	
 	toString(){
