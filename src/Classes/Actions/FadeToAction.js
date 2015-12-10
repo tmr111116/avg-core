@@ -11,7 +11,7 @@ export default class FadeToAction extends AbstractAction{
 	
 	updateTransform(progress,lastProgress,target){
 		let deltaProgress = progress - lastProgress;
-		target.alpha = (this.targetOpacity - target.alpha)*deltaProgress/(1-lastProgress);
+		target.alpha += (this.targetOpacity - target.alpha)*deltaProgress/(1-lastProgress);
 	}
 	
 	

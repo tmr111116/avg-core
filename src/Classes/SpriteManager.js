@@ -1,6 +1,6 @@
 var Err = require('./ErrorHandler');
 
-class SpriteManager {
+export default class SpriteManager {
     constructor(args) {
         
     }

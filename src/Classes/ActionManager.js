@@ -193,6 +193,52 @@ export default class ActionManager {
 		this.currentActionList.push(action);
 	}
 	
+	delay({duration=0}){
+		let action = new Action.DelayAction({
+			duration: duration,
+			target: null,
+			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay
+		});
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
+	remove({target,_delete}){
+		let action = new Action.RemoveAction({
+			target: target,
+			_delete: _delete,
+			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay
+		});
+		if(this.currentNodeType==='queue') this.currentLayerDelay += 0;
+		this.currentActionList.push(action);
+	}
+	
+	visible({target,visible}){
+		let action = new Action.VisibleAction({
+			target: target,
+			visible: visible,
+			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay
+		});
+		if(this.currentNodeType==='queue') this.currentLayerDelay += 0;
+		this.currentActionList.push(action);
+	}
+	
+	tintTo({targetColor,duration=0,target,ease}){
+		let action = new Action.TintToAction({
+			duration: duration,
+			delay: this.currentDelay,
+			layerDelay: this.currentLayerDelay,
+			targetColor: targetColor,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
 	start({target,times=1}){ 
 		for(;;){
 			if (!this.end({}))
@@ -219,18 +265,17 @@ export default class ActionManager {
 	}
 	
 	updateTransform(time,actionList,type='parallel',target,times){
-		//目前type无用，将来可用于优化
 		let finished = true;
 		for(let action of actionList){
 			if(action.type === 'queue'){
-				action.finished = finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes) && finished;
 				if(finished && (action.currentTimes < action.times*times)){
 					action.currentTimes++;
 					finished = false;
 				}
 			}
 			else if(action.type === 'parallel'){
-				action.finished = finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes) && finished;
 				if(finished && (action.currentTimes < action.times*times)){
 					action.currentTimes++;
 					finished = false;

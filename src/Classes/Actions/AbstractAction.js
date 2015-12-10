@@ -40,7 +40,7 @@ export default class AbstractAction {
 			
 		if(!this.startTime){
 			this.initAction(time,this.target || target);
-			return false;
+			//return false;
 		}
 		
 		if(time - this.startTime < 0)

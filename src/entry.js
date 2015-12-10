@@ -89,83 +89,105 @@ import ActionManager from './Classes/ActionManager';
 
 let ActMgr = ActionManager.instance();
 
-
-
-// ActMgr.moveTo({
-//     targetX: 500,
-//     targetY: 140,
-//     duration: 3000,
-//     target: SpriteManager.fromIndex(100)
-// });
-
 // ActMgr.queue();
-// ActMgr.rotateBy({
-//     deltaRadians: Math.PI/2,
-//     duration: 1500,
-//     target: SpriteManager.fromIndex(100)
-// });
-// ActMgr.rotateBy({
-//     deltaRadians: -Math.PI/2,
-//     duration: 1500,
-//     target: SpriteManager.fromIndex(100)
-// });
-// ActMgr.end({});
-// ActMgr.moveBy({
-//     deltaX: 1000,
-//     deltaY: 0,
-//     duration: 3000,
-//     target: SpriteManager.fromIndex(100)
-// })
 
-// ActMgr.end({})
-
+//     ActMgr.queue();
+//         ActMgr.parallel();
+//             ActMgr.moveBy({
+//                 deltaX: -600,
+//                 deltaY: 250,
+//                 duration: 1000,
+//                 target: SpriteManager.fromIndex(100)
+//             })
+//             ActMgr.queue();
+//                 ActMgr.fadeTo({
+//                     duration: 500,
+//                     targetOpacity: 0,
+//                     target: SpriteManager.fromIndex(100)
+//                 })
+//                 ActMgr.fadeTo({
+//                     duration: 500,
+//                     targetOpacity: 1,
+//                     target: SpriteManager.fromIndex(100)
+//                 })
+//             ActMgr.end({});
+//         ActMgr.end({})
+//         ActMgr.remove({
+//             target: SpriteManager.fromIndex(10),
+//             _delete: false
+//         })
+//         ActMgr.queue();
+//             ActMgr.rotateBy({
+//                 deltaRadians: -Math.PI,
+//                 duration: 500,
+//                 target: SpriteManager.fromIndex(100)
+//             });
+//             //ActMgr.delay({duration: 1000});
+//             ActMgr.rotateBy({
+//                 deltaRadians: -Math.PI,
+//                 duration: 1000,
+//                 target: SpriteManager.fromIndex(100)
+//             });
+//         ActMgr.end({times:3})
+        
+//         ActMgr.moveBy({
+//             deltaX: 600,
+//             deltaY: -250,
+//             duration: 1000,
+//             target: SpriteManager.fromIndex(100)
+//         })
+//     ActMgr.end({});
+//     ActMgr.visible({
+//         target: SpriteManager.fromIndex(100),
+//         visible: false
+//     })
+//     ActMgr.delay({duration: 1000});
+//     ActMgr.visible({
+//         target: SpriteManager.fromIndex(100),
+//         visible: true
+//     })
+//     ActMgr.delay({duration: 1000});
 // ActMgr.start({
-//     times: 1
+//     times: 2
 // })
 
-ActMgr.queue();
+ActMgr.parallel();
 
-ActMgr.queue();
-// ActMgr.rotateBy({
-//     deltaRadians: Math.PI/2,
-//     duration: 500,
-//     target: SpriteManager.fromIndex(100)
-// });
-ActMgr.moveBy({
-    deltaX: -600,
-    deltaY: 250,
-    duration: 1000,
-    target: SpriteManager.fromIndex(100)
-})
+    ActMgr.delay({
+        duration: 1000
+    })
 
-ActMgr.queue();
-ActMgr.rotateBy({
-    deltaRadians: -Math.PI,
-    duration: 500,
-    target: SpriteManager.fromIndex(100)
-});
-ActMgr.rotateBy({
-    deltaRadians: -Math.PI,
-    duration: 1000,
-    target: SpriteManager.fromIndex(100)
-});
-ActMgr.end({times:3})
+    ActMgr.queue();
+        ActMgr.fadeTo({
+            duration: 500,
+            targetOpacity: 0,
+            target: SpriteManager.fromIndex(100)
+        })
+        ActMgr.fadeTo({
+            duration: 500,
+            targetOpacity: 1,
+            target: SpriteManager.fromIndex(100)
+        })
+    ActMgr.end({});
 
-// ActMgr.rotateBy({
-//     deltaRadians: -Math.PI/2,
-//     duration: 500,
-//     target: SpriteManager.fromIndex(100)
-// });
-ActMgr.moveBy({
-    deltaX: 600,
-    deltaY: -250,
-    duration: 1000,
-    target: SpriteManager.fromIndex(100)
-})
+    ActMgr.queue();
+    ActMgr.moveBy({
+        deltaX: -600,
+        deltaY: 250,
+        duration: 1000,
+        target: SpriteManager.fromIndex(100)
+    });
+    
+    ActMgr.moveBy({
+        deltaX: 600,
+        deltaY: -250,
+        duration: 1000,
+        target: SpriteManager.fromIndex(100)
+    });
+    ActMgr.end({});
+
 ActMgr.end({});
 
 ActMgr.start({
     times: 2
 })
-
-
