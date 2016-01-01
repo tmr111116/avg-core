@@ -6,23 +6,12 @@ export default class ActionManager {
 	constructor(args) {
 		this.topNode = {type:'parallel',actions:[],times:1,currentTimes:1};
 		this.nodeStack = [];
-		this.delayStack = [];
-		this.layerDelayStack = [];
 		this.currentActionList = this.topNode.actions;
 		this.currentNodeType = 'parallel';
-		this.currentDelay = 0;	//当前级别的delay
-		this.currentLayerDelay = 0;
-		
 		this.nodeStack.push(this.topNode);
-		
 		this.finished = true;
-		
 		this.forcedTarget = null;
 		
-		this.timesStackInUpdate = [];
-		this.totalTimesStackInUpdate = [];
-		this.currentNodeTotalTimes = 0;
-		this.currentNodeTimes = 0;
 	}
 
 	static instance(){
@@ -33,7 +22,6 @@ export default class ActionManager {
 			ActionManager._instance = new ActionManager();
 			return ActionManager._instance;
 		}
-		
 		return ActionManager._instance;
 	}
 
@@ -51,10 +39,6 @@ export default class ActionManager {
 		}
 		this.nodeStack.push(map);
 		this.currentNodeType = 'queue';
-		this.delayStack.push(this.currentDelay);
-		this.layerDelayStack.push(this.currentLayerDelay);
-		this.currentDelay += this.currentLayerDelay;
-		this.currentLayerDelay = 0;
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
@@ -69,10 +53,6 @@ export default class ActionManager {
 		}
 		this.nodeStack.push(map);
 		this.currentNodeType = 'parallel';
-		this.delayStack.push(this.currentDelay);
-		this.layerDelayStack.push(this.currentLayerDelay);
-		this.currentDelay += this.currentLayerDelay;
-		this.currentLayerDelay = 0;
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
@@ -87,8 +67,6 @@ export default class ActionManager {
 		map.target = target;
 		map.times = times;
 		this.currentNodeType = map.type;
-		this.currentDelay = this.delayStack.pop();
-		this.currentLayerDelay = this.layerDelayStack.pop() + this.currentLayerDelay*times;
 		this.currentActionList = this.nodeStack[this.nodeStack.length-1].actions;
 		return !!(this.nodeStack.length-1);
 	}
@@ -96,14 +74,11 @@ export default class ActionManager {
 	moveBy({deltaX,deltaY,duration=0,target,ease}){
 		let action = new Action.MoveByAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			deltaX: deltaX,
 			deltaY: deltaY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -111,27 +86,21 @@ export default class ActionManager {
 	moveTo({targetX,targetY,duration=0,target,ease}){
 		let action = new Action.MoveToAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			targetX: targetX,
 			targetY: targetY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
 	fadeTo({targetOpacity,duration=0,target,ease}){
 		let action = new Action.FadeToAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			targetOpacity: targetOpacity,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -139,14 +108,11 @@ export default class ActionManager {
 	scaleBy({deltaScaleX,deltaScaleY,duration=0,target,ease}){
 		let action = new Action.ScaleByAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			deltaScaleX: deltaScaleX,
 			deltaScaleY: deltaScaleY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -154,14 +120,11 @@ export default class ActionManager {
 	scaleTo({targetScaleX,targetScaleY,duration=0,target,ease}){
 		let action = new Action.ScaleToAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			targetScaleX: targetScaleX,
 			targetScaleY: targetScaleY,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -169,13 +132,10 @@ export default class ActionManager {
 	rotateBy({deltaRadians,duration=0,target,ease}){
 		let action = new Action.RotateByAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			deltaRadians: deltaRadians,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -183,13 +143,10 @@ export default class ActionManager {
 	rotateTo({targetRadians,duration=0,target,ease}){
 		let action = new Action.RotateToAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			targetRadians: targetRadians,
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -197,10 +154,8 @@ export default class ActionManager {
 		let action = new Action.DelayAction({
 			duration: duration,
 			target: null,
-			delay: this.currentDelay,
 			layerDelay: this.currentLayerDelay
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -208,10 +163,8 @@ export default class ActionManager {
 		let action = new Action.RemoveAction({
 			target: target,
 			_delete: _delete,
-			delay: this.currentDelay,
 			layerDelay: this.currentLayerDelay
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += 0;
 		this.currentActionList.push(action);
 	}
 	
@@ -219,18 +172,14 @@ export default class ActionManager {
 		let action = new Action.VisibleAction({
 			target: target,
 			visible: visible,
-			delay: this.currentDelay,
 			layerDelay: this.currentLayerDelay
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += 0;
 		this.currentActionList.push(action);
 	}
 	
 	tintTo({targetColor,duration=0,target,ease}){
 		let action = new Action.TintToAction({
 			duration: duration,
-			delay: this.currentDelay,
-			layerDelay: this.currentLayerDelay,
 			targetColor: targetColor,
 			ease: ease,
 			target: target
@@ -256,27 +205,30 @@ export default class ActionManager {
 		if(this.finished)
 			return;
 		
-		let finished = this.updateTransform(time,this.topNode.actions,'parallel',this.forcedTarget,this.topNode.currentTimes);
+		let finished = this.updateTransform(time,this.topNode.actions,'parallel',this.forcedTarget,1||this.topNode.currentTimes);
 		if(finished && (this.topNode.currentTimes < this.topNode.times)){
+            this.resetTimes(this.topNode.actions);
 			this.topNode.currentTimes++;
 			finished = false;
 		}
 		this.finished = finished;
 	}
 	
-	updateTransform(time,actionList,type='parallel',target,times){
+	updateTransform(time,actionList,type='queue',target,times){
 		let finished = true;
 		for(let action of actionList){
 			if(action.type === 'queue'){
-				finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,1||action.currentTimes) && finished;
 				if(finished && (action.currentTimes < action.times*times)){
+                    this.resetTimes(action.actions);
 					action.currentTimes++;
 					finished = false;
 				}
 			}
 			else if(action.type === 'parallel'){
-				finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,action.currentTimes) && finished;
+				finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,1||action.currentTimes) && finished;
 				if(finished && (action.currentTimes < action.times*times)){
+                    this.resetTimes(action.actions);
 					action.currentTimes++;
 					finished = false;
 				}
@@ -292,6 +244,17 @@ export default class ActionManager {
 		return finished;
 	}
 
+    resetTimes(actionList){
+        for(let action of actionList){
+            if(action.type==='queue' || action.type==='parallel'){
+                action.currentTimes = 1;
+                this.resetTimes(action.actions);
+            }
+            else{
+                action.resetTimes();
+            }
+        }
+    }
 
 }
 

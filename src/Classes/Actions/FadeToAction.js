@@ -1,8 +1,8 @@
 import AbstractAction from './AbstractAction';
 
 export default class FadeToAction extends AbstractAction{
-	constructor({target,duration,delay,layerDelay,targetOpacity,ease}){
-		super(duration,delay,layerDelay,target);
+	constructor({target,duration,targetOpacity,ease}){
+		super(duration,target);
 		
 		this.targetOpacity = targetOpacity;
 		// this.ease = ease;

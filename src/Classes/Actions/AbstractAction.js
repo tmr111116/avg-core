@@ -9,13 +9,11 @@ import {ErrorHandler as Err} from '../ErrorHandler';
 */
 
 export default class AbstractAction {
-	constructor(duration,delay=0,layerDelay=0,target) {
-		this.delay = delay;
-		this.layerDelay = layerDelay;
+	constructor(duration,target) {
 		this.duration = duration;
-		this.finished = false;
+		this.finished = true;
 		this.target = target;
-		this.times = 1;
+		this.times = 0;
 	}
 	
 	initAction(time,target){
@@ -27,6 +25,10 @@ export default class AbstractAction {
 		this.startTime = null;
 		this.finished = false;
 	}
+    
+    resetTimes(){
+        this.times = 0;
+    }
 	
 	update(time,target,times){
 		// console.log(times)
@@ -34,13 +36,14 @@ export default class AbstractAction {
 		{
 			this.reset();
 			this.times++;
+			return false
 		}
 		else if(this.finished)
 			return true;
 			
 		if(!this.startTime){
 			this.initAction(time,this.target || target);
-			//return false;
+			return false;
 		}
 		
 		if(time - this.startTime < 0)

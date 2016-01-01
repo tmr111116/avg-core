@@ -1,8 +1,8 @@
 import AbstractAction from './AbstractAction';
 
 export default class MoveToAction extends AbstractAction{
-	constructor({target,duration,delay,layerDelay,targetX,targetY,ease}){
-		super(duration,delay,layerDelay,target);
+	constructor({target,duration,targetX,targetY,ease}){
+		super(duration,target);
 		
 		this.targetX = targetX;
 		this.targetY = targetY;

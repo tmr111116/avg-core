@@ -2,8 +2,8 @@ import AbstractAction from './AbstractAction';
 import Color from '../../Utils/color.js';
 
 export default class TintToAction extends AbstractAction{
-	constructor({target,duration,delay,layerDelay,targetColor,ease}){
-		super(duration,delay,layerDelay,target);
+	constructor({target,duration,targetColor,ease}){
+		super(duration,target);
 
 		this.targetColor = new Color(targetColor);
 		// this.ease = ease;

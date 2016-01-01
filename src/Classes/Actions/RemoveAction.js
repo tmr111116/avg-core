@@ -2,8 +2,8 @@ import AbstractAction from './AbstractAction';
 import SpriteManager from '../SpriteManager';
 
 export default class RemoveAction extends AbstractAction{
-	constructor({target,_delete=false,delay,layerDelay}){
-		super(0,delay,layerDelay,target);
+	constructor({target,_delete=false}){
+		super(0,target);
 		
 		this._delete = _delete;
 		

@@ -1,8 +1,8 @@
 import AbstractAction from './AbstractAction';
 
 export default class ScaleByAction extends AbstractAction{
-	constructor({target,duration,delay,layerDelay,deltaScaleX,deltaScaleY,ease}){
-		super(duration,delay,layerDelay,target);
+	constructor({target,duration,deltaScaleX,deltaScaleY,ease}){
+		super(duration,target);
 		
 		this.deltaScaleX = deltaScaleX;
 		this.deltaScaleY = deltaScaleY;
