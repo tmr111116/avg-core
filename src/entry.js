@@ -150,11 +150,11 @@ let ActMgr = ActionManager.instance();
 // ActMgr.start({
 //     times: 2
 // })
-// ActMgr.tintTo({
-//     targetColor: 0x000000,
-//     duration: 1000,
-//     target: SpriteManager.fromIndex(10)
-// })
+ActMgr.tintBy({
+    deltaColor: 0x333333,
+    duration: 1500,
+    target: SpriteManager.fromIndex(10)
+})
 ActMgr.parallel();
 
     ActMgr.delay({

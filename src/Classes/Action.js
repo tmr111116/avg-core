@@ -11,6 +11,7 @@ import DelayAction from './Actions/DelayAction';
 import RemoveAction from './Actions/RemoveAction';
 import VisibleAction from './Actions/VisibleAction';
 import TintToAction from './Actions/TintToAction';
+import TintByAction from './Actions/TintByAction';
 
 let Action = {
 	MoveByAction: MoveByAction,
@@ -23,7 +24,8 @@ let Action = {
 	DelayAction: DelayAction,
 	RemoveAction: RemoveAction,
 	VisibleAction: VisibleAction,
-	TintToAction: TintToAction
+	TintToAction: TintToAction,
+	TintByAction: TintByAction
 }
 
 export default Action;

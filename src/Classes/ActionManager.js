@@ -188,6 +188,18 @@ export default class ActionManager {
 		this.currentActionList.push(action);
 	}
 	
+	
+	tintBy({deltaColor,duration=0,target,ease}){
+		let action = new Action.TintByAction({
+			duration: duration,
+			deltaColor: deltaColor,
+			ease: ease,
+			target: target
+		});
+		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
+		this.currentActionList.push(action);
+	}
+	
 	start({target,times=1}){ 
 		for(;;){
 			if (!this.end({}))

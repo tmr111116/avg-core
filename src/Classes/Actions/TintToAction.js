@@ -13,7 +13,7 @@ export default class TintToAction extends AbstractAction{
 	updateTransform(progress,lastProgress,target){
 		let deltaProgress = progress - lastProgress;
 		let co = deltaProgress/(1-lastProgress);
-		let currentColor = new Color(target.tint||0xffffff);
+		let currentColor = new Color((typeof target.tint !== 'undefined')?target.tint:0xffffff);
 		currentColor.r += (this.targetColor.r - currentColor.r)*co;
 		currentColor.g += (this.targetColor.g - currentColor.g)*co;
 		currentColor.b += (this.targetColor.b - currentColor.b)*co;
