@@ -7,7 +7,6 @@ export default class ActionManager {
 		this.topNode = {type:'parallel',actions:[],times:1,currentTimes:1};
 		this.nodeStack = [];
 		this.currentActionList = this.topNode.actions;
-		this.currentNodeType = 'parallel';
 		this.nodeStack.push(this.topNode);
 		this.finished = true;
 		this.forcedTarget = null;
@@ -38,7 +37,6 @@ export default class ActionManager {
 			currentTimes: 1
 		}
 		this.nodeStack.push(map);
-		this.currentNodeType = 'queue';
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
@@ -52,7 +50,6 @@ export default class ActionManager {
 			currentTimes: 1
 		}
 		this.nodeStack.push(map);
-		this.currentNodeType = 'parallel';
 		this.currentActionList.push(map);
 		this.currentActionList = map.actions;
 	}
@@ -66,7 +63,6 @@ export default class ActionManager {
 		let map = this.nodeStack.pop();
 		map.target = target;
 		map.times = times;
-		this.currentNodeType = map.type;
 		this.currentActionList = this.nodeStack[this.nodeStack.length-1].actions;
 		return !!(this.nodeStack.length-1);
 	}
@@ -184,7 +180,6 @@ export default class ActionManager {
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	
@@ -196,7 +191,6 @@ export default class ActionManager {
 			ease: ease,
 			target: target
 		});
-		if(this.currentNodeType==='queue') this.currentLayerDelay += duration;
 		this.currentActionList.push(action);
 	}
 	

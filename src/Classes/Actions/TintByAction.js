@@ -22,14 +22,10 @@ export default class TintByAction extends AbstractAction{
 		let deltaProgress = progress - lastProgress;
         let currentColor = new Color((typeof target.tint !== 'undefined')?target.tint:0xffffff);
 		
-        
-        
         currentColor.r += this.deltaCache('r', this.deltaColor.r * deltaProgress);
 		currentColor.g += this.deltaCache('g', this.deltaColor.g * deltaProgress);
 		currentColor.b += this.deltaCache('b', this.deltaColor.b * deltaProgress);
 		target.tint = currentColor.toNumber();
-        
-        console.log(""+target.tint.toString(16)+"  " + this.deltaColor.r * deltaProgress)
 	}
 	
     // channel: r g b, string
