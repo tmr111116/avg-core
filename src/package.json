@@ -16,6 +16,7 @@
     "babel-loader": "^6.2.0",
     "babel-polyfill": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
+    "babel-preset-stage-0": "^6.3.13",
     "brfs": "^1.4.1",
     "css-loader": "^0.23.0",
     "jfogs": "0.0.11",
