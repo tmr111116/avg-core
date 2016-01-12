@@ -1,4 +1,6 @@
 var PIXI = require('../Library/pixi.js/src/index');
+import { TransitionPlugin } from './Transition/TransitionPlugin'
+import { TransitionFilter } from './Transition/TransitionFilter'
 
 
 /*
@@ -7,6 +9,7 @@ var PIXI = require('../Library/pixi.js/src/index');
 
 */
 
+@TransitionPlugin
 class TextWindow extends PIXI.Container {
     constructor() {
         super();
@@ -317,6 +320,8 @@ class TextWindow extends PIXI.Container {
     }
 
 }   
+
+TransitionPlugin(TextWindow);
 
 function clone(origin) {
     let originProto = Object.getPrototypeOf(origin);

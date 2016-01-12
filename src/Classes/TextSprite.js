@@ -1,6 +1,9 @@
 var PIXI = require('../Library/pixi.js/src/index');
 var Err = require('./ErrorHandler');
+import { TransitionPlugin } from './Transition/TransitionPlugin'
+import { TransitionFilter } from './Transition/TransitionFilter'
 
+@TransitionPlugin
 class TextSprite extends PIXI.Text {
 	constructor(args) {
 		super("",{
@@ -10,6 +13,7 @@ class TextSprite extends PIXI.Text {
 
 		this.m_style = {};
 		this.zorder = 0;
+        this.filters = [new TransitionFilter];
 	}
 
 	setIndex(index){
@@ -136,5 +140,6 @@ class TextSprite extends PIXI.Text {
 	
 }
 
+TransitionPlugin(TextSprite);
 
 module.exports = TextSprite;

@@ -10,6 +10,8 @@ var SoundManager = require('./Classes/SoundManager');
 import ActionManager from './Classes/ActionManager';
 var Animation = require('./Classes/Animation');
 var Err = require('./Classes/ErrorHandler');
+import { TransitionPlugin } from './Classes/Transition/TransitionPlugin'
+import { TransitionFilter } from './Classes/Transition/TransitionFilter'
 
 let ActMgr = ActionManager.instance();
 
@@ -18,6 +20,10 @@ class Iceleaf {
         this.renderer = new PIXI.WebGLRenderer(1280, 720);
         view.appendChild(this.renderer.view);
         this.stage = new PIXI.Container();
+        
+        // Transition Support
+        this.stage.filters = [new TransitionFilter];
+        TransitionPlugin(this.stage);
 
         
 

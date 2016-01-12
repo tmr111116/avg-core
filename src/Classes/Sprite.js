@@ -1,9 +1,15 @@
 var PIXI = require('../Library/pixi.js/src/index');
+import { TransitionPlugin } from './Transition/TransitionPlugin'
+import { TransitionFilter } from './Transition/TransitionFilter'
 
+@TransitionPlugin
 class Sprite extends PIXI.Sprite {
 	constructor(){
 		super();
 		this.zorder = 0;
+        
+        this.filters = [new TransitionFilter];
+        
 	}
 
 	//methods
@@ -31,8 +37,7 @@ class Sprite extends PIXI.Sprite {
 
 }
 
-
-
+TransitionPlugin(Sprite);
 
 
 

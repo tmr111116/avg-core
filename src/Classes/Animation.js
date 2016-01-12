@@ -1,11 +1,15 @@
 var PIXI = require('../Library/pixi.js/src/index');
 var Err = require('./ErrorHandler');
+import { TransitionPlugin } from './Transition/TransitionPlugin'
+import { TransitionFilter } from './Transition/TransitionFilter'
 
+@TransitionPlugin
 class Animation extends PIXI.Sprite {
     constructor(args) {
         super(args);
         this.type = 'horizontal';
         this.textures = [];
+        this.filters = [new TransitionFilter];
 
         this.row = 1;
         this.column = 1;
@@ -228,5 +232,6 @@ class Animation extends PIXI.Sprite {
 
 }
 
+TransitionPlugin(Animation);
 
 module.exports = Animation;
