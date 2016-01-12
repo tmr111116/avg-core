@@ -21,7 +21,6 @@ export default class ActionManager {
 			ActionManager._instance = new ActionManager();
 			return ActionManager._instance;
 		}
-		return ActionManager._instance;
 	}
 
 	static destroy(){
