@@ -1,5 +1,5 @@
 require("./assets/css/style.css");
-require("babel-polyfill");
+// require("babel-polyfill");
 
 var Iceleaf = require('./iceleaf');
 var iceleaf = new Iceleaf(document.body);
@@ -133,12 +133,21 @@ ActMgr.parallel();
 
 ActMgr.end({});
 
-ActMgr.start({
-    times: 2
-})
+// ActMgr.start({
+//     times: 2
+// })
 
 setTimeout(() => {
-    let sprite = SpriteManager.fromIndex(10);
+    let sprite = SpriteManager.fromIndex(-1);
     sprite.prepareTransition(iceleaf.renderer);
+    iceleaf.remove(10);
+},300)
+
+import {CrossFadeFilter} from './Classes/Transition/Filters';
+setTimeout(() => {
     
-},1800)
+    let sprite = SpriteManager.fromIndex(-1);
+    sprite.startTransition(iceleaf.renderer, new CrossFadeFilter);
+    // sprite.startTransition(iceleaf.renderer, new CrossFadeFilter);
+    
+},1000)

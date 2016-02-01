@@ -15,6 +15,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         
         this.filter = null;
         this.start = false;
+        this.block = false;
         
         this.filterType = 'Transition';
         
@@ -28,29 +29,43 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         this.uniforms.texture.value = texture;
     }
     
+    /*
+      说明：
+        `texture`是将要变化到的图像
+        `filter`变换用的Shader
+    */
     startTransition(texture, filter){
-        if(!this.uniforms.texture)
+        //判断当前是否处于pretrans状态
+        if(!this.uniforms.texture.value)
         {
             ErrorHandler.error("TransitionFilter: PreviousTexture must be set.");
             return
         }
         
-        filter.setPreviousTexture(this.uniforms.texture);
+        filter.setPreviousTexture(this.uniforms.texture.value);
         filter.setNextTexture(texture);
-        this.uniforms.texture = null;
+        this.uniforms.texture.value = null;
         this.filter = filter;
         this.start = true;
     }
     
+    setBlocked(bool=true){
+        this.block = bool;
+    }
+    
     applyFilter(renderer, input, output, clear){
-        
+
         if(this.start && this.filter)
         {
             let filter = this.filter;
-            filter.update(Date.now());
+            let finished = filter.update(Date.now());
             filter.applyFilter(renderer, input, output, clear);
+            if (finished) {
+                this.start = false;
+                this.filter = null;
+            }
         }
-        else if(this.uniforms.texture)
+        else if(this.uniforms.texture.value)
         {
             super.applyFilter(renderer, input, output, clear);
         }
@@ -61,11 +76,9 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         }
         else
             super.applyFilter(renderer, input, output, clear);
-        
     }
     
     getShader(renderer){
-        
         if(!this.emptyTextureShader)
             this.emptyTextureShader = new DefaultShader(renderer.shaderManager,
                 EmptyTexureShaderVertex,
@@ -81,8 +94,10 @@ export class TransitionFilter extends PIXI.AbstractFilter {
                 this.attributes
             );
         // console.log(this.uniforms.texture)
+        if (this.block)
+            return this.emptyTextureShader;
         
-        if(this.uniforms.texture)
+        if(this.uniforms.texture.value)
             return this.prepareTransitionShader;
         else
             return this.emptyTextureShader;

@@ -9,16 +9,20 @@ function prepareTransition(renderer){
     matrix.tx = -bounds.x;
     matrix.ty = -bounds.y;
     texture.render(this,matrix,true,false);
-    // console.log(bounds)
-    // console.log(matrix)
-    // console.log(renderer)
-    this.filters[0].setPreviousTexture(texture);
     
-    console.log(texture.getBase64())
+    this.filters[0].setPreviousTexture(texture);
 }
 
 function startTransition(renderer, filter){
-    this.filters[0].startTransition(this.generateTexture(renderer), filter);
+    let bounds = this.getBounds();
+    let texture = new PIXI.RenderTexture(renderer,renderer.width,renderer.height);
+    let matrix = new PIXI.Matrix();
+    matrix.tx = -bounds.x;
+    matrix.ty = -bounds.y;
+    this.filters[0].setBlocked(true);
+    texture.render(this,matrix,true,false);
+    this.filters[0].startTransition(texture, filter);
+    this.filters[0].setBlocked(false);
 }
 
 export function TransitionPlugin(obj){
