@@ -1,0 +1,56 @@
+{
+    "tags": {
+        "allowUnknownTags": false
+    },
+    "source": {
+        "include": [
+            "./src/Classes"
+        ],
+        "exclude": [
+            "./src/polyfill/",
+            "./src/Library/"
+        ],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "templates": {
+        "cleverLinks"   : false,
+        "monospaceLinks": false,
+        "default"       : {
+            "outputSourceFiles" : true
+        },
+        "applicationName": "Iceleaf",
+        "footer"        : "Made with ♥",
+        "copyright"     : "Iceleaf Copyright © 2013-2015 Icemic.",
+        "disqus": "",
+        "googleAnalytics": "",
+        "openGraph": {
+            "title": "",
+            "type": "website",
+            "image": "",
+            "site_name": "",
+            "url": ""
+        },
+        "meta": {
+            "title": "",
+            "description": "",
+            "keyword": ""
+        },
+        "linenums"      : true
+    },
+    "markdown"  : {
+        "parser"        : "gfm",
+        "hardwrap"      : true
+    },
+    "opts": {
+        "encoding"      : "utf8",
+        "recurse"       : true,
+        "private"       : false,
+        "lenient"       : true,
+        "destination"   : "./docs",
+        "template"      : "./jaguarjs-jsdoc"
+    }
+}
