@@ -9,7 +9,10 @@ import { TransitionFilter } from './Transition/TransitionFilter'
 
 */
 
-@TransitionPlugin
+/** 
+ * Class representing a TextWindow. <br>
+ * @extends PIXI.Container
+ */
 class TextWindow extends PIXI.Container {
     constructor() {
         super();
@@ -59,20 +62,36 @@ class TextWindow extends PIXI.Container {
 
     }
 
-    //属性修改
+    /** 
+     * Specify index.
+     * @param {number} index - the id of TextWindow
+     * @returns {TextWindow} - this
+     */
     setIndex(index){
         this.index = index;
         return this;
     }
 
+    /** 
+     * Specify background image.
+     * Background can only be image or color, and cannot be both.
+     * @param {string} filename
+     * @returns {TextWindow} - this
+     */
     setBackgroundFile(filename){
         this.removeChild(this.background);
         this.background && this.background.destroy();
-        this.background = new PIXI.Sprite.fromImage(filename);
+        this.background = PIXI.Sprite.fromImage(filename);
         this.addChildAt(this.background,0);
         return this;
     }
 
+    /** 
+     * Specify background color.<br>
+     * Background can only be image or color, and cannot be both.
+     * @param {string} color
+     * @returns {TextWindow} - this
+     */
     setBackgroundColor(color){
         this.removeChild(this.background);
         this.background && this.background.destroy();
@@ -84,84 +103,156 @@ class TextWindow extends PIXI.Container {
         return this;
     }
 
+    /** 
+     * Specify background opacity of the textwindow.
+     * @param {number} opacity - value between 0 - 1.0
+     * @returns {TextWindow} - this
+     */
     setOpacity(value){
         (this.background) && (this.background.alpha = value);
         return this;
     }
 
+    /** 
+     * Specify positon relative to its parent.
+     * @param {Array} position - [x, y]
+     * @returns {TextWindow} - this
+     */
     setPosition(pos){
         this.x = pos[0];
         this.y = pos[1];
         return this;
     }
 
+    /** 
+     * Specify the area text can be rendered to.
+     * @param {Array} position - [x, y, width, height]
+     * @returns {TextWindow} - this
+     */
     setTextRectangle(rect){
         this.textRectangle = rect;
         return this;
     }
 
+    /** 
+     * Specify intervals between letters.
+     * @param {number} value
+     * @returns {TextSprite} - this
+     */
     setXInterval(value){
         this.style.xInterval = value;
         return this;
     }
 
+    /** 
+     * Specify intervals between lines.
+     * @param {number} value
+     * @returns {TextSprite} - this
+     */
     setYInterval(value){
         this.style.yInterval = value;
         return this;
     }
 
+    /** 
+     * Show or hide textwindow.
+     * @param {boolean} value
+     * @returns {TextSprite} - this
+     */
     setVisible(value){
         this.visible = !!value;
         return this;
     }
-
+    
+    /** 
+     * @param {number} value
+    */
     setTextSize(value){
         this.style.size = value;
     }
 
+    /** 
+     * @param {string} name
+    */
     setTextFont(name){
         this.style.font = name;
     }
 
+    /** 
+     * @param {number} color
+    */
     setTextColor(color){
         this.style.color = color;
     }
 
+    /** 
+     * @param {boolean} value
+    */
     setTextBold(bool){
         this.style.bold = !!bool;
     }
 
+    /** 
+     * @param {boolean} value
+    */
     setTextItalic(bool){
         this.style.italic = !!bool;
     }
 
+    /** 
+     * @param {boolean} value
+    */
     setTextStrike(bool){
         this.style.strike = !!bool;
     }
 
+    /** 
+     * @param {boolean} value
+    */
     setTextUnderline(bool){
         this.style.underline = !!bool;
     }
 
+    /** 
+     * @param {boolean} enable
+     * @param {string} color
+    */
     setTextShadow(bool,color){
         this.style.shadow = !!bool;
         this.style.shadowColor = color || this.style.shadowColor || '#000000';
     }
 
+    /** 
+     * @param {boolean} enable
+     * @param {string} color
+    */
     setTextStroke(bool,color){
         this.style.stroke = !!bool;
         this.style.strokeColor = color || this.style.strokeColor || '#000000';
     }
 
+    /** 
+     * Specify the speed of letters printing.
+     * @param {number} value - letters per second.
+    */
     setTextSpeed(value){
         this.textSpeed = value;
     }
 
+    /** 
+     * Clone a new TextWindow.
+     * @returns {TextSprite} - clone object.
+    */
     clone(){
         return clone(this);
     }
 
-    setTextCursor(sprite,follow,pos){
+    /** 
+     * @param {Object.Sprite} sprite
+     * @param {boolean} follow - follow the last letter, or it is fixed.
+     * @param {Array} [position] - must be defined if follow is false.
+     */
+    setTextCursor(sprite, follow, pos){
         this.textCursor = sprite;
         this.addChildAt(this.textCursor,this.children.length);
         this.textCursorFollow = !!follow;
@@ -171,6 +262,11 @@ class TextWindow extends PIXI.Container {
         }
     }
 
+    /** 
+     * Specify the location that the next letter will be printed.
+     * @param {boolean} follow - follow the last letter, or it is fixed.
+     * @param {Array} [position] - must be defined if follow is false.
+     */
     relocate({x,y}) {
         this.m_currentTextWidth = x || this.m_currentTextWidth;
         this.m_currentTextHeight = y || this.m_currentTextHeight;
