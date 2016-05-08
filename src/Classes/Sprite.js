@@ -2,8 +2,8 @@ var PIXI = require('../Library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
 
-/** 
- * Class representing a Sprite. 
+/**
+ * Class representing a Sprite.
  * @extends PIXI.Sprite
  */
 class Sprite extends PIXI.Sprite {
@@ -14,13 +14,13 @@ class Sprite extends PIXI.Sprite {
 	constructor(){
 		super();
 		this.zorder = 0;
-        
+
         this.filters = [new TransitionFilter];
-        
+
 	}
 
-	/** 
-     * Specify sprite image. 
+	/**
+     * Specify sprite image.
      * This method do not take effect until {@link Sprite#execSync} is called.
      * @param {string} filename
      * @returns {Sprite} - this
@@ -29,9 +29,9 @@ class Sprite extends PIXI.Sprite {
 		this.filename = filename;
 		return this;
 	}
-    
-    /** 
-     * Specify sprite index. 
+
+    /**
+     * Specify sprite index.
      * This method do not take effect until {@link Sprite#execSync} is called.
      * @param {number} index - the id of sprite
      * @returns {Sprite} - this
@@ -40,9 +40,9 @@ class Sprite extends PIXI.Sprite {
 		this.index = index;
 		return this;
 	}
-    
-    /** 
-     * Specify sprite area you wish to use in the sprite. 
+
+    /**
+     * Specify sprite area you wish to use in the sprite.
      * Usually you should not specify it, unless you wish to capture a part of the picture. <br>
      * This method do not take effect until {@link Sprite#execSync} is called.
      * @param {Array[]} index - the id of sprite
@@ -53,8 +53,8 @@ class Sprite extends PIXI.Sprite {
 		return this;
 	}
 
-    /** 
-     * Load the sprite. 
+    /**
+     * Load the sprite.
      */
 	execSync(){
 		let tex = PIXI.Texture.fromImage(this.filename);
@@ -68,9 +68,4 @@ class Sprite extends PIXI.Sprite {
 TransitionPlugin(Sprite);
 
 
-
-
-
-
-
-module.exports = Sprite;
+export default Sprite;

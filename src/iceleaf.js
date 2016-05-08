@@ -1,33 +1,26 @@
-var PIXI = require('./Library/pixi.js/src/index');
+import PIXI from './Library/pixi.js/src/index';
 var fps = require('./Utils/fps.js');
 
-var Sprite = require('./Classes/Sprite');
-var TextSprite = require('./Classes/TextSprite');
-var TextWindow = require('./Classes/TextWindow');
-var Action = require('./Classes/Action');
-var SpriteManager = require('./Classes/SpriteManager');
-var SoundManager = require('./Classes/SoundManager');
-import ActionManager from './Classes/ActionManager';
-var Animation = require('./Classes/Animation');
-var Err = require('./Classes/ErrorHandler');
-import { TransitionPlugin } from './Classes/Transition/TransitionPlugin'
-import { TransitionFilter } from './Classes/Transition/TransitionFilter'
-
-let ActMgr = ActionManager.instance();
+import Sprite from './Classes/Sprite';
+import TextSprite from './Classes/TextSprite';
+import TextWindow from './Classes/TextWindow';
+import Action from './Classes/Action';
+import * as SpriteManager from './Classes/SpriteManager';
+import * as SoundManager from './Classes/SoundManager';
+import * as ActionManager from './Classes/ActionManager';
+import Animation from './Classes/Animation';
+import Err from './Classes/ErrorHandler';
+import { TransitionPlugin } from './Classes/Transition/TransitionPlugin';
+import { TransitionFilter } from './Classes/Transition/TransitionFilter';
 
 class Iceleaf {
     constructor(view){
-        this.renderer = new PIXI.WebGLRenderer(1280, 720);
-        view.appendChild(this.renderer.view);
-        this.stage = new PIXI.Container();
-        
-        // Transition Support
-        this.stage.filters = [new TransitionFilter];
-        TransitionPlugin(this.stage);
+        let viewNode = SpriteManager.init();
+        view.appendChild(viewNode);
 
-        
-
-        SpriteManager.insert(-1,this.stage);
+        //临时hack
+        this.stage = SpriteManager.getStage();
+        this.renderer = SpriteManager.getRenderer();
 
         let tw = new TextWindow();
         tw.setIndex(-2);
@@ -41,7 +34,7 @@ class Iceleaf {
     update(time){
         window.requestAnimationFrame(this.update.bind(this));
         this.renderer.render(this.stage);
-        ActMgr.update(time);
+        ActionManager.update(time);
     }
 
     // test(){
@@ -63,38 +56,16 @@ class Iceleaf {
     //精灵类
     //此处rect与bke不同，默认值为null，bke默认值为[0,0,0,0]
     sprite(index,file,rect=null){
-        let sp = new Sprite();
-        sp.setFile(file).setIndex(index).setRect(rect).execSync();
-        SpriteManager.insert(index,sp);
+        SpriteManager.create(index, file, rect);
     }
     addto(index,target,zorder=0,pos=[0,0],opacity=255,modal=false){
-        let srcSp = SpriteManager.fromIndex(index);
-        if(!srcSp)
-            return Err.warn("源精灵(index="+index+")不存在，此命令忽略执行");
-        let tarSp = (target===-1)?this.stage:SpriteManager.fromIndex(target);
-        if(!tarSp)
-            return Err.warn("目标精灵(index="+target+")不存在，此命令忽略执行");
-        srcSp.x = pos[0];
-        srcSp.y = pos[1];
-        srcSp.alpha = opacity/255;
-        /*modal 未能实现*/
-        tarSp.addChild(srcSp);
-        SpriteManager.setZorder(index,zorder);
+        SpriteManager.addto(index, target, zorder, pos, opacity/255);
     }
     layer(index,width,height,color=0xffffff,opacity=0){
 
     }
     remove(index,_delete=false){
-        let sp = SpriteManager.fromIndex(index);
-        if(!sp)
-            return Err.warn("精灵(index="+index+")不存在，此命令忽略执行");
-        let parent = sp.parent;
-        if(!parent)
-            return Err.warn("精灵(index="+index+")不在屏幕上，此命令忽略执行");
-        parent.removeChild(sp);
-        if(_delete){
-            SpriteManager.remove(index);
-        }
+        SpriteManager.remove(index, _delete);
     }
     removeall(index,_delete=false,recursive=false){
         let sp = (index===-1)?this.stage:SpriteManager.fromIndex(index);

@@ -11,7 +11,7 @@ iceleaf.addto(10,-1,10,[200,0],255);
 // iceleaf.addto(10,-1,10,[200,300],255);
 
 setTimeout(()=>{
-    // iceleaf.remove(10)  
+    // iceleaf.remove(10)
 },1500)
 
 // setTimeout(()=>{
@@ -40,7 +40,7 @@ iceleaf.animate_horizontal({
 });
 
 iceleaf.addto(91,-1);
-    
+
 iceleaf.textcursor({
     index: 91,
     follow: true,
@@ -86,54 +86,54 @@ iceleaf.textspeed(50);
 
 var SpriteManager = require('./Classes/SpriteManager');
 // var ActionManager = require('./Classes/ActionManager');
-import ActionManager from './Classes/ActionManager';
+import * as ActionManager from './Classes/ActionManager';
 
-let ActMgr = ActionManager.instance();
+// let ActionManager = ActionManager.instance();
 
 
-ActMgr.tintBy({
+ActionManager.tintBy({
     deltaColor: 0x333333,
     duration: 800,
     target: SpriteManager.fromIndex(10)
 })
-ActMgr.parallel();
+ActionManager.parallel();
 
-    ActMgr.delay({
+    ActionManager.delay({
         duration: 1000
     })
 
-    ActMgr.queue();
-        ActMgr.fadeTo({
+    ActionManager.queue();
+        ActionManager.fadeTo({
             duration: 500,
             targetOpacity: 0,
             target: SpriteManager.fromIndex(100)
         })
-        ActMgr.fadeTo({
+        ActionManager.fadeTo({
             duration: 500,
             targetOpacity: 1,
             target: SpriteManager.fromIndex(100)
         })
-    ActMgr.end({});
+    ActionManager.end({});
 
-    ActMgr.queue();
-    ActMgr.moveBy({
+    ActionManager.queue();
+    ActionManager.moveBy({
         deltaX: -600,
         deltaY: 250,
         duration: 1000,
         target: SpriteManager.fromIndex(100)
     });
-    
-    ActMgr.moveBy({
+
+    ActionManager.moveBy({
         deltaX: 600,
         deltaY: -250,
         duration: 1000,
         target: SpriteManager.fromIndex(100)
     });
-    ActMgr.end({});
+    ActionManager.end({});
 
-ActMgr.end({});
+ActionManager.end({});
 
-// ActMgr.start({
+// ActionManager.start({
 //     times: 2
 // })
 
@@ -145,9 +145,9 @@ setTimeout(() => {
 
 import {CrossFadeFilter} from './Classes/Transition/Filters';
 setTimeout(() => {
-    
+
     let sprite = SpriteManager.fromIndex(-1);
     sprite.startTransition(iceleaf.renderer, new CrossFadeFilter);
     // sprite.startTransition(iceleaf.renderer, new CrossFadeFilter);
-    
+
 },1000)

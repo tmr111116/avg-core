@@ -20,8 +20,8 @@ class TextSprite extends PIXI.Text {
         this.filters = [new TransitionFilter];
 	}
 
-    /** 
-     * Specify sprite index. 
+    /**
+     * Specify sprite index.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} index - the id of sprite
      * @returns {TextSprite} - this
@@ -31,8 +31,8 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
-     * Specify text content. 
+    /**
+     * Specify text content.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} text
      * @returns {TextSprite} - this
@@ -42,8 +42,8 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
-     * Specify text color. 
+    /**
+     * Specify text color.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} color - any valid color, like `red` `#ff6600`.
      * @returns {TextSprite} - this
@@ -54,8 +54,8 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
-     * Specify text size. 
+    /**
+     * Specify text size.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} size
      * @returns {TextSprite} - this
@@ -69,8 +69,8 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
-     * Specify text font. 
+    /**
+     * Specify text font.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} font - the name of font
      * @returns {TextSprite} - this
@@ -81,7 +81,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify text width, the max width value before it is wrapped.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} value
@@ -94,7 +94,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify text height, the max height value before it is hidden.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} value
@@ -105,7 +105,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify intervals between letters.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} value
@@ -116,7 +116,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify intervals between lines.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {number} value
@@ -127,7 +127,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify ellipsis string when text is ellipsised.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} text
@@ -138,7 +138,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Enable or disable bold style.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {boolean} enable
@@ -157,7 +157,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Enable or disable italic style.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {boolean} enable
@@ -186,7 +186,7 @@ class TextSprite extends PIXI.Text {
 	// 	return this;
 	// }
 
-    /** 
+    /**
      * Enable or disable text shadow.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {boolean} enable
@@ -197,7 +197,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify shadow color.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} color
@@ -208,7 +208,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Enable or disable text stroke.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {boolean} enable
@@ -219,7 +219,7 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
+    /**
      * Specify stroke color.
      * This method do not take effect until {@link TextSprite#exec} is called.
      * @param {string} color
@@ -230,8 +230,8 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
-    /** 
-     * apply style changes. 
+    /**
+     * apply style changes.
      */
 	exec(){
 		this.style = this.m_style;
@@ -240,7 +240,7 @@ class TextSprite extends PIXI.Text {
 
 
 
-	
+
 }
 
 TransitionPlugin(TextSprite);
