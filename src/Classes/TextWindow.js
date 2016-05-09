@@ -2,14 +2,7 @@ var PIXI = require('../Library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
 
-
-/*
-背景index 0
-文字层index 1
-
-*/
-
-/** 
+/**
  * Class representing a TextWindow. <br>
  * @extends PIXI.Container
  */
@@ -20,7 +13,7 @@ class TextWindow extends PIXI.Container {
         this.visible = false;
         this.zorder = 50;
 
-        //文字层
+        // text layer
         this.textCanvas = document.createElement('canvas');
         this.textContext = this.textCanvas.getContext('2d');
         this.textTexture = PIXI.Texture.fromCanvas(this.textCanvas);
@@ -46,7 +39,9 @@ class TextWindow extends PIXI.Container {
             yInterval: 12,
         }
 
-        this.textSpeed = 20;    // 字/秒
+        this.textSpeed = 20;    // characters per second
+
+        // this.textRectangle = [20,55,1008,231];
 
         this.m_currentTextWidth = 0;
         this.m_currentTextHeight = 0;
@@ -62,19 +57,20 @@ class TextWindow extends PIXI.Container {
 
     }
 
-    /** 
+    /**
      * Specify index.
+     * @method setIndex
      * @param {number} index - the id of TextWindow
      * @returns {TextWindow} - this
      */
     setIndex(index){
         this.index = index;
-        return this;
     }
 
-    /** 
+    /**
      * Specify background image.
-     * Background can only be image or color, and cannot be both.
+     * 	Background can only be image or color, and cannot be both.
+     * @method setBackgroundFile
      * @param {string} filename
      * @returns {TextWindow} - this
      */
@@ -83,12 +79,12 @@ class TextWindow extends PIXI.Container {
         this.background && this.background.destroy();
         this.background = PIXI.Sprite.fromImage(filename);
         this.addChildAt(this.background,0);
-        return this;
     }
 
-    /** 
-     * Specify background color.<br>
-     * Background can only be image or color, and cannot be both.
+    /**
+     * Specify background color.
+     * 	Background can only be image or color, and cannot be both.
+     * @method setBackgroundColor
      * @param {string} color
      * @returns {TextWindow} - this
      */
@@ -100,120 +96,142 @@ class TextWindow extends PIXI.Container {
         let rect = this.textRectangle;
         this.background.beginFill(color,1.0).drawRect(rect[0],rect[1],rect[2],rect[3]);
         this.addChildAt(this.background,0);
-        return this;
     }
 
-    /** 
+    /**
      * Specify background opacity of the textwindow.
+     * @method setOpacity
      * @param {number} opacity - value between 0 - 1.0
      * @returns {TextWindow} - this
      */
     setOpacity(value){
         (this.background) && (this.background.alpha = value);
-        return this;
     }
 
-    /** 
-     * Specify positon relative to its parent.
+    /**
+     * Specify coordinate relative to its parent.
+     * @method setPosition
      * @param {Array} position - [x, y]
      * @returns {TextWindow} - this
      */
     setPosition(pos){
         this.x = pos[0];
         this.y = pos[1];
-        return this;
     }
 
-    /** 
+    /**
      * Specify the area text can be rendered to.
+     * @method setTextRectangle
      * @param {Array} position - [x, y, width, height]
      * @returns {TextWindow} - this
      */
     setTextRectangle(rect){
         this.textRectangle = rect;
-        return this;
     }
 
-    /** 
+    /**
      * Specify intervals between letters.
+     * @method setXInterval
      * @param {number} value
      * @returns {TextSprite} - this
      */
     setXInterval(value){
         this.style.xInterval = value;
-        return this;
     }
 
-    /** 
+    /**
      * Specify intervals between lines.
+     * @method setYInterval
      * @param {number} value
      * @returns {TextSprite} - this
      */
     setYInterval(value){
         this.style.yInterval = value;
-        return this;
     }
 
-    /** 
+    /**
      * Show or hide textwindow.
-     * @param {boolean} value
+     * @method setVisible
+     * @param {boolean} enable if no value passes, it will be a switch.
      * @returns {TextSprite} - this
      */
     setVisible(value){
-        this.visible = !!value;
-        return this;
+        if (typeof value === 'undefined')
+            this.visible = !this.visible;
+        else
+            this.visible = !!value;
     }
-    
-    /** 
+
+    /**
+     * @method setTextSize
      * @param {number} value
     */
     setTextSize(value){
         this.style.size = value;
     }
 
-    /** 
+    /**
+     * @method setTextFont
      * @param {string} name
     */
     setTextFont(name){
         this.style.font = name;
     }
 
-    /** 
+    /**
+     * @method setTextColor
      * @param {number} color
     */
     setTextColor(color){
         this.style.color = color;
     }
 
-    /** 
+    /**
+     * @method setTextBold
      * @param {boolean} value
     */
-    setTextBold(bool){
-        this.style.bold = !!bool;
+     setTextBold(bool){
+        if (typeof bool === 'undefined')
+            this.style.bold = !this.style.bold;
+        else
+            this.style.bold = !!bool;
     }
 
-    /** 
-     * @param {boolean} value
+    /**
+     * @method setTextItalic
+     * @param {boolean} enable if no value passes, it will be a switch.
     */
     setTextItalic(bool){
+       if (typeof bool === 'undefined')
+           this.style.italic = !this.style.italic;
+       else
         this.style.italic = !!bool;
     }
 
-    /** 
-     * @param {boolean} value
+    /**
+     * @method setTextStrike
+     * @param {boolean} enable if no value passes, it will be a switch.
     */
     setTextStrike(bool){
+       if (typeof bool === 'undefined')
+           this.style.strike = !this.style.strike;
+       else
         this.style.strike = !!bool;
     }
 
-    /** 
-     * @param {boolean} value
+    /**
+     * @method setTextUnderline
+     * @param {boolean} enable if no value passes, it will be a switch.
     */
     setTextUnderline(bool){
+       if (typeof bool === 'undefined')
+           this.style.underline = !this.style.underline;
+       else
         this.style.underline = !!bool;
     }
 
-    /** 
+    /**
+     * @method setTextShadow
      * @param {boolean} enable
      * @param {string} color
     */
@@ -222,7 +240,8 @@ class TextWindow extends PIXI.Container {
         this.style.shadowColor = color || this.style.shadowColor || '#000000';
     }
 
-    /** 
+    /**
+     * @method setTextStroke
      * @param {boolean} enable
      * @param {string} color
     */
@@ -231,23 +250,26 @@ class TextWindow extends PIXI.Container {
         this.style.strokeColor = color || this.style.strokeColor || '#000000';
     }
 
-    /** 
+    /**
      * Specify the speed of letters printing.
+     * @method setTextSpeed
      * @param {number} value - letters per second.
     */
     setTextSpeed(value){
         this.textSpeed = value;
     }
 
-    /** 
+    /**
      * Clone a new TextWindow.
+     * @method clone
      * @returns {TextSprite} - clone object.
     */
     clone(){
         return clone(this);
     }
 
-    /** 
+    /**
+     * @method setTextCursor
      * @param {Object.Sprite} sprite
      * @param {boolean} follow - follow the last letter, or it is fixed.
      * @param {Array} [position] - must be defined if follow is false.
@@ -262,8 +284,9 @@ class TextWindow extends PIXI.Container {
         }
     }
 
-    /** 
+    /**
      * Specify the location that the next letter will be printed.
+     * @method relocate
      * @param {boolean} follow - follow the last letter, or it is fixed.
      * @param {Array} [position] - must be defined if follow is false.
      */
@@ -277,39 +300,50 @@ class TextWindow extends PIXI.Container {
             }
     }
 
-    styleSwitch({i,b,s,u}){
-        if(i) this.style.italic = !this.style.italic;
-        if(b) this.style.bold = !this.style.bold;
-        if(s) this.style.strike = !this.style.strike;
-        if(u) this.style.underline = !this.style.underline;
-    }
 
 
+    // text printing
 
-    //文字相关
-
+    /**
+     * switch next new line
+     * @method newline
+     */
     newline(){
         this.m_currentTextWidth = this.textRectangle[0];
         this.m_currentTextHeight += this.style.size*this.resolution + this.style.yInterval*this.resolution;
     }
 
+    /**
+     * draw text
+     * @method drawText
+     * @param  {String} text what you want to print
+     */
     drawText(text){
         this.text = text;
         this.initTextRender();
     }
 
+    /**
+     * clear all text in textwindow
+     * @method clearText
+     */
     clearText(){
         this.textCanvas.width = this.textCanvas.width;
     }
 
+    /**
+     * called before draw a text
+     * @method initTextRender
+     * @private
+     */
     initTextRender(){
         this.textCanvas.width = this.textRectangle[2] * this.resolution;
         this.textCanvas.height = this.textRectangle[3] * this.resolution;
         // this.textContext.clear();
 
-        //文字样式设定
+        // set text style
         this.textContext.textBaseline = 'top';
-        { 
+        {
         let style = "";
         if(this.style.bold) style += "bold ";
         if(this.style.italic) style += "italic ";
@@ -330,7 +364,7 @@ class TextWindow extends PIXI.Container {
             this.textContext.lineWidth = this.style.size*this.resolution/24;
         }
 
-        //状态重置
+        // reset status variables
         this.textIndex = 0;
         this.textRendering = true;
         this.m_lastTime = Date.now();
@@ -361,10 +395,10 @@ class TextWindow extends PIXI.Container {
             count = this.text.length - this.textIndex;
 
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
-            //关闭光标（如果有）
+            // hide cursor (if exist)
             if(this.textCursor)
                 this.textCursor.visible = false;
-            //绘制文字，计算偏移
+            // print characters, calculate delta
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             let width = this.textContext.measureText(this.text[i]).width;   //字号已经*this.resolution，无需再乘
@@ -385,13 +419,13 @@ class TextWindow extends PIXI.Container {
         // stop condition
         if(this.textIndex>=this.text.length-1){
             this.textRendering = false;
-            //移动光标（如果有）
+            // move cursor (if exist)
             if(this.textCursor && this.textCursorFollow) {
                 this.textCursor.x = this.m_currentTextWidth;
                 this.textCursor.y = this.m_currentTextHeight;
             }
             if(this.textCursor)
-                this.textCursor.visible = true; //恢复显示
+                this.textCursor.visible = true; // restore cursor
         }
 
     }
@@ -415,7 +449,7 @@ class TextWindow extends PIXI.Container {
 
     }
 
-}   
+}
 
 TransitionPlugin(TextWindow);
 

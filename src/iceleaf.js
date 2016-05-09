@@ -6,12 +6,12 @@ import TextSprite from './Classes/TextSprite';
 import TextWindow from './Classes/TextWindow';
 import Action from './Classes/Action';
 import * as SpriteManager from './Classes/SpriteManager';
+import TWMInit from './Classes/TextWindowManager';
+let TextWindowManager;
 import * as SoundManager from './Classes/SoundManager';
 import * as ActionManager from './Classes/ActionManager';
 import Animation from './Classes/Animation';
 import Err from './Classes/ErrorHandler';
-import { TransitionPlugin } from './Classes/Transition/TransitionPlugin';
-import { TransitionFilter } from './Classes/Transition/TransitionFilter';
 
 class Iceleaf {
     constructor(view){
@@ -22,13 +22,7 @@ class Iceleaf {
         this.stage = SpriteManager.getStage();
         this.renderer = SpriteManager.getRenderer();
 
-        let tw = new TextWindow();
-        tw.setIndex(-2);
-        SpriteManager.insert(-2,tw);
-        this.textWindowIndex = -2;
-        this.textwindow(0x0,1.0,[0,0],[0,0,1180,620],0,12);
-        this.stage.addChild(tw);
-        SpriteManager.setZorder(-2,50);
+        TextWindowManager = TWMInit(SpriteManager);
     }
 
     update(time){
@@ -36,16 +30,6 @@ class Iceleaf {
         this.renderer.render(this.stage);
         ActionManager.update(time);
     }
-
-    // test(){
-    //     // PIXI.loader.add('asserts/res/bg1.png').load((loader, resources) => {
-    //     //     var bg = new PIXI.Sprite(resources["asserts/res/bg1.png"].texture);
-    //     //     this.stage.addChild(bg);
-    //     // });
-    //     let bg = new Sprite();
-    //     bg.file('asserts/res/bg1.png').execSync();
-    //     this.stage.addChild(bg);
-    // }
 
     start(){
         fps.installFPSView(this.stage);
@@ -58,7 +42,7 @@ class Iceleaf {
     sprite(index,file,rect=null){
         SpriteManager.create(index, file, rect);
     }
-    addto(index,target,zorder=0,pos=[0,0],opacity=255,modal=false){
+    addto(index,target,zorder=0,pos=[0,0],opacity=255){
         SpriteManager.addto(index, target, zorder, pos, opacity/255);
     }
     layer(index,width,height,color=0xffffff,opacity=0){
@@ -214,22 +198,17 @@ class Iceleaf {
     }
 
     textwindow(fileOrColor,opacity,pos,rect,xInterval,yInterval) {
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
-
-
-        if(typeof pos !== 'undefined') tw.setPosition(pos);
-        if(typeof rect !== 'undefined') tw.setTextRectangle(rect);
-        if(typeof xInterval !== 'undefined') tw.setXInterval(xInterval);
-        if(typeof yInterval !== 'undefined') tw.setYInterval(yInterval);
+        if(typeof pos !== 'undefined') TextWindowManager.setPosition(pos);
+        if(typeof rect !== 'undefined') TextWindowManager.setTextRectangle(rect);
+        if(typeof xInterval !== 'undefined') TextWindowManager.setXInterval(xInterval);
+        if(typeof yInterval !== 'undefined') TextWindowManager.setYInterval(yInterval);
 
         if(typeof fileOrColor === 'number')
-            tw.setBackgroundColor(fileOrColor);
+            TextWindowManager.setBackgroundColor(fileOrColor);
         else if(fileOrColor)
-            tw.setBackgroundFile(fileOrColor);
+            TextWindowManager.setBackgroundFile(fileOrColor);
 
-        if(typeof opacity !== 'undefined') tw.setOpacity(opacity);
+        if(typeof opacity !== 'undefined') TextWindowManager.setOpacity(opacity);
     }
 
     messagelayer(index,active=true){
@@ -254,63 +233,44 @@ class Iceleaf {
     }
 
     texton(){
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
-        tw.setVisible(true);
+        TextWindowManager.setVisible(true);
     }
 
     textoff(){
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
-        tw.setVisible(false);
+        TextWindowManager.setVisible(false);
     }
 
     text(text){
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
-        tw.drawText(text);
+        TextWindowManager.drawText(text);
     }
 
     textstyle({name,size,color,bold,italic,strike,underline,shadow,shadowColor,stroke,strokeColor}){
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
-        if(typeof name !== 'undefined') tw.setTextFont(name);
-        if(typeof size !== 'undefined') tw.setTextSize(size);
-        if(typeof color !== 'undefined') tw.setTextColor(color);
-        if(typeof bold !== 'undefined') tw.setTextBold(bold);
-        if(typeof italic !== 'undefined') tw.setTextItalic(italic);
-        if(typeof strike !== 'undefined') tw.setTextStrike(strike);
-        if(typeof underline !== 'undefined') tw.setTextUnderline(underline);
-        if(typeof shadow !== 'undefined') tw.setTextShadow(shadow,shadowColor);
-        if(typeof stroke !== 'undefined') tw.setTextStroke(stroke,strokeColor);
+        if(typeof name !== 'undefined') TextWindowManager.setTextFont(name);
+        if(typeof size !== 'undefined') TextWindowManager.setTextSize(size);
+        if(typeof color !== 'undefined') TextWindowManager.setTextColor(color);
+        if(typeof bold !== 'undefined') TextWindowManager.setTextBold(bold);
+        if(typeof italic !== 'undefined') TextWindowManager.setTextItalic(italic);
+        if(typeof strike !== 'undefined') TextWindowManager.setTextStrike(strike);
+        if(typeof underline !== 'undefined') TextWindowManager.setTextUnderline(underline);
+        if(typeof shadow !== 'undefined') TextWindowManager.setTextShadow(shadow,shadowColor);
+        if(typeof stroke !== 'undefined') TextWindowManager.setTextStroke(stroke,strokeColor);
     }
 
     textspeed(value){
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
-
         // 0-100 线性转换到 1字/s - 立刻显示 非线性映射…………真是够了
-        tw.setTextSpeed(value===100?Infinity:(10/(1-value/100)));
+        TextWindowManager.setTextSpeed(value===100?Infinity:(10/(1-value/100)));
     }
 
     textcursor({index,follow,pos}){
         let sp = SpriteManager.fromIndex(index);
         if(!sp)
             return Err.warn("精灵(index="+index+")不存在，此命令忽略执行");
-        let tw = SpriteManager.fromIndex(this.textWindowIndex);
-        if(!tw || !(tw instanceof TextWindow))
-            return Err.warn("文字框(index="+this.textWindowIndex+")不存在或该Index对应的不是一个文字框，此命令忽略执行");
 
-        tw.setTextCursor(sp,follow,pos);
+        TextWindowManager.setTextCursor(sp,follow,pos);
     }
 
     locate({x,y}){
