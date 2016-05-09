@@ -10,9 +10,9 @@ var Err = require('./ErrorHandler');
 Howler.iOSAutoEnable = false;
 
 let Channels = [],
-    Cache = [];
+    Resolve = [];
 
-function getChannel(index) {
+export function getChannel(index) {
     return new Promise((resolve, reject) => {
         let ch = Channels[index];
         if (ch)
@@ -24,14 +24,14 @@ function getChannel(index) {
     })
 }
 
-function setChannel(index, options) {
+export function setChannel(index, options) {
     return new Promise((resolve, reject) => {
         if (!options.file) {
             Err.error('[setChannel] file needed in options');
         }
 
         options = Object.assign({
-            autoplay: true,
+            autoplay: false,
             buffer: false,
             loop: false,
             volume: 1,
@@ -52,7 +52,13 @@ function setChannel(index, options) {
             buffer: options.buffer,
             loop: options.loop,
             volume: options.volume,
-            onend: options.onEnd,   //如何处理？
+            onend: () => {
+                if (Resolve[index]) {
+                    Resolve[index]();
+                    Resolve[index] = null;
+                }
+                options.onEnd && options.onEnd()
+            },   //如何处理？
             onplay: options.onPlay, //如何处理？ waitButton
             onload: () => {
                 resolve(ch);
@@ -109,5 +115,10 @@ export function state(channel) {
     getChannel(channel)
     .then(ch => {
         return ch.m_status;
+    })
+}
+export async function wait(channel) {
+    return new Promise((resolve, reject) => {
+        Resolve[channel] = resolve;
     })
 }

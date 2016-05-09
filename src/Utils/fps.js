@@ -1,7 +1,6 @@
 var PIXI = require('../Library/pixi.js/src/index');
 
-
-module.exports = {
+const FPS = {
 	TOPLEFT: 0,
 	TOPRIGHT: 1,
 	BOTTOMLEFT: 2,
@@ -29,3 +28,5 @@ module.exports = {
 		}
 	}
 }
+
+export default FPS;

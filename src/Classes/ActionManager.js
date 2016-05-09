@@ -13,6 +13,8 @@ let nodeStack = [topNode],
 	finished = true,
 	forcedTarget = null;
 
+let Resolve = null;
+
 export function queue(){
 	let map = {
 		type: 'queue',
@@ -199,36 +201,39 @@ export function update(time){
 		_finished = false;
 	}
 	finished = _finished;
+	if(finished && Resolve) {
+		Resolve();
+		Resolve = null;
+	}
 }
 
 export function updateTransform(time, actionList, type='queue', target, times){
 	let _finished = true;
 	for(let action of actionList){
 		if(action.type === 'queue'){
-			_finished = this.updateTransform(time,action.actions,'queue',action.target || target || this.forcedTarget,1||action.currentTimes) && _finished;
+			_finished = updateTransform(time,action.actions,'queue',action.target || target || forcedTarget,1||action.currentTimes) && _finished;
 			if(_finished && (action.currentTimes < action.times*times)){
-                this.resetTimes(action.actions);
+                resetTimes(action.actions);
 				action.currentTimes++;
 				_finished = false;
 			}
 		}
 		else if(action.type === 'parallel'){
-			_finished = this.updateTransform(time,action.actions,'parallel',action.target || target || this.forcedTarget,1||action.currentTimes) && _finished;
+			_finished = updateTransform(time,action.actions,'parallel',action.target || target || forcedTarget,1||action.currentTimes) && _finished;
 			if(_finished && (action.currentTimes < action.times*times)){
-                this.resetTimes(action.actions);
+                resetTimes(action.actions);
 				action.currentTimes++;
 				_finished = false;
 			}
 		}
 		else
 		{
-			_finished = action.update(time,target || this.forcedTarget, times) && _finished;
+			_finished = action.update(time,target || forcedTarget, times) && _finished;
 		}
 		if(!_finished && type==='queue')
 			break;
 	}
-
-	return finished;
+	return _finished;
 }
 
 export function resetTimes(actionList){
@@ -241,4 +246,10 @@ export function resetTimes(actionList){
             action.resetTimes();
         }
     }
+}
+
+export async function wait() {
+	return new Promise((resolve, reject) => {
+		Resolve = resolve;
+	})
 }

@@ -48,6 +48,8 @@ class TextWindow extends PIXI.Container {
 
         this.m_lastTime = 0;
 
+        this.m_resolve = null;
+
         this.resolution = 1;
 
         this.textSprite = new PIXI.Sprite(this.textTexture);
@@ -419,6 +421,10 @@ class TextWindow extends PIXI.Container {
         // stop condition
         if(this.textIndex>=this.text.length-1){
             this.textRendering = false;
+            if (this.m_resolve) {
+                this.m_resolve();
+                this.m_resolve = null;
+            }
             // move cursor (if exist)
             if(this.textCursor && this.textCursorFollow) {
                 this.textCursor.x = this.m_currentTextWidth;
@@ -447,6 +453,12 @@ class TextWindow extends PIXI.Container {
         this.textSprite._height = this.textCanvas.height / this.resolution;
         texture.baseTexture.emit('update',  texture.baseTexture);
 
+    }
+
+    async wait() {
+        return new Promise((resolve, reject) => {
+            this.m_resolve = resolve;
+        })
     }
 
 }
