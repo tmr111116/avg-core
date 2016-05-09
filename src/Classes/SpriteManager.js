@@ -73,7 +73,8 @@ export function createText(index, text, options) {
         shadow: false,
         shadowcolor: 0x0,
         stroke: false,
-        strokecolor: 0x0
+        strokecolor: 0x0,
+        ...options
     }
     let textsprite = new TextSprite();
     textsprite.setIndex(index).setText(text).setColor(options.color).setSize(options.size).setFont(options.font)
