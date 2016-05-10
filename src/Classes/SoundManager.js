@@ -117,7 +117,7 @@ export function state(channel) {
         return ch.m_status;
     })
 }
-export async function wait(channel) {
+export function wait(channel) {
     return new Promise((resolve, reject) => {
         Resolve[channel] = resolve;
     })

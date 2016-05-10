@@ -150,6 +150,13 @@ export function remove(index, isDelete = true){
         delete Sprites[index];
 }
 
+/**
+ * remove all children from a sprite
+ * @method removeAll
+ * @param  {Number}  index
+ * @param  {Boolean} isDelete if true, the texture of the sprite will be deleted from memory, default to true
+ * @param  {Boolean} isRecursive whether remove all children of each child, default to true.
+ */
 export function removeAll(index, isDelete = true, isRecursive = true) {
     let parent = fromIndex(index);
     if (!parent)
@@ -163,6 +170,33 @@ function removeRecursive(children, isDelete, isRecursive){
         if (isRecursive && child.children.length)
             removeRecursive(child.children);
     };
+}
+
+/**
+ * prepare a transition of a sprite, any change of the sprite will not take effect until `.applyTransition()` is called.
+ * @method prepareTransition
+ * @param  {[type]}          index [description]
+ * @return {[type]}                [description]
+ */
+export function prepareTransition(index) {
+    let sprite = fromIndex(index);
+    if (!sprite)
+        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+    sprite.prepareTransition(Renderer);
+}
+
+/**
+ * apply a transition of a sprite.
+ * @method applyTransition
+ * @param  {Number}             index
+ * @param  {AbstractFilter}     filter filter instance.
+ * @return  {Promise}
+ */
+export function applyTransition(index, filter) {
+    let sprite = fromIndex(index);
+    if (!sprite)
+        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+    return sprite.startTransition(Renderer, filter);
 }
 
 /**

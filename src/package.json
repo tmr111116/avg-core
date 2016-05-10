@@ -8,7 +8,7 @@
   },
   "homepage": "http://bke.bakery.moe",
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --hot",
+    "start": "webpack-dev-server --progress --colors --hot --host 0.0.0.0 --compress",
     "build": "webpack --inline --optimize-minimize",
     "test": "make test"
   },

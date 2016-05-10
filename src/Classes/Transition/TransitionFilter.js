@@ -12,23 +12,25 @@ const PrepareTransitionShaderVertex = fs.readFileSync(__dirname + '/shaders/prep
 export class TransitionFilter extends PIXI.AbstractFilter {
     constructor(args) {
         super(args);
-        
+
         this.filter = null;
         this.start = false;
         this.block = false;
-        
+
+        this.m_resolve = null;
+
         this.filterType = 'Transition';
-        
+
         this.emptyTextureShader = this.prepareTransitionShader = null;
-        
+
         this.uniforms.texture = {type: 'sampler2D', value: null};
-        
+
     }
-    
+
     setPreviousTexture(texture){
         this.uniforms.texture.value = texture;
     }
-    
+
     /*
       说明：
         `texture`是将要变化到的图像
@@ -41,18 +43,23 @@ export class TransitionFilter extends PIXI.AbstractFilter {
             ErrorHandler.error("TransitionFilter: PreviousTexture must be set.");
             return
         }
-        
+
         filter.setPreviousTexture(this.uniforms.texture.value);
         filter.setNextTexture(texture);
         this.uniforms.texture.value = null;
         this.filter = filter;
         this.start = true;
+
+        return new Promise((resolve, reject) => {
+            this.m_resolve = resolve;
+        })
+
     }
-    
+
     setBlocked(bool=true){
         this.block = bool;
     }
-    
+
     applyFilter(renderer, input, output, clear){
 
         if(this.start && this.filter)
@@ -63,6 +70,8 @@ export class TransitionFilter extends PIXI.AbstractFilter {
             if (finished) {
                 this.start = false;
                 this.filter = null;
+                this.m_resolve();
+                this.m_resolve = null;
             }
         }
         else if(this.uniforms.texture.value)
@@ -73,11 +82,13 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         {
             ErrorHandler.error("TransitionFilter: Filter must be set.");
             this.start = false;
+            this.m_resolve();
+            this.m_resolve = null;
         }
         else
             super.applyFilter(renderer, input, output, clear);
     }
-    
+
     getShader(renderer){
         if(!this.emptyTextureShader)
             this.emptyTextureShader = new DefaultShader(renderer.shaderManager,
@@ -96,14 +107,14 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         // console.log(this.uniforms.texture)
         if (this.block)
             return this.emptyTextureShader;
-        
+
         if(this.uniforms.texture.value)
             return this.prepareTransitionShader;
         else
             return this.emptyTextureShader;
     }
-    
-    
+
+
     syncUniform(uniform){
         ErrorHandler.warn("TransitionFilter: method syncUniform() should not be called, it's a bug!");
         super.syncUniform(uniform);

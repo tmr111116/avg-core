@@ -248,7 +248,7 @@ export function resetTimes(actionList){
     }
 }
 
-export async function wait() {
+export function wait() {
 	return new Promise((resolve, reject) => {
 		Resolve = resolve;
 	})

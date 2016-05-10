@@ -10,12 +10,13 @@ require("./assets/css/style.css");
 import * as SpriteManager from './Classes/SpriteManager';
 import * as SoundManager from './Classes/SoundManager';
 import * as ActionManager from './Classes/ActionManager';
+import * as Flow from './Classes/Flow';
 import TWMInit from './Classes/TextWindowManager';
 import fps from './Utils/fps';
 
 import {CrossFadeFilter} from './Classes/Transition/Filters';
 
-(async function() {
+let GlobalSystem = (function*() {
 
 
 
@@ -196,22 +197,27 @@ import {CrossFadeFilter} from './Classes/Transition/Filters';
         times: 2
     })
 
-    // setTimeout(() => {
-    //     let sprite = SpriteManager.fromIndex(-1);
-    //     sprite.prepareTransition(renderer);
-    //     // iceleaf.remove(10);
-    //     SpriteManager.remove(10);
-    // },300)
+    yield Flow.wait(700);
+    SpriteManager.prepareTransition(-1);
+    SpriteManager.remove(10);
 
+    yield Flow.wait(700);
+    yield SpriteManager.applyTransition(-1, new CrossFadeFilter);
 
-    // setTimeout(() => {
-    //
-    //     let sprite = SpriteManager.fromIndex(-1);
-    //     sprite.startTransition(renderer, new CrossFadeFilter);
-    //
-    // },1000)
-
-    await ActionManager.wait();
-    TextWindowManager.drawText('你好，世界！');
+    yield ActionManager.wait();
+    yield TextWindowManager.drawText('你好，世界！');
+    yield TextWindowManager.drawText('这是一段文字');
+    yield TextWindowManager.drawText('点击可以继续下一句');
+    yield TextWindowManager.drawText('啊啊啊啊啊啊啊啊啊啊啊啊啊');
+    yield TextWindowManager.drawText('有什么要说呢');
+    yield TextWindowManager.drawText('Ta最近在好好填坑欸，真是难得的说~');
+    yield TextWindowManager.drawText('………………');
+    yield TextWindowManager.drawText('没了吧，演示就到这了23333');
 
 })()
+
+window.ontouchend = window.onclick = () => GlobalSystem.next();
+
+window.GlobalSystem = GlobalSystem;
+
+GlobalSystem.next();

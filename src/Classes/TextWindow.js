@@ -323,6 +323,7 @@ class TextWindow extends PIXI.Container {
     drawText(text){
         this.text = text;
         this.initTextRender();
+        return this.wait();
     }
 
     /**
@@ -455,7 +456,7 @@ class TextWindow extends PIXI.Container {
 
     }
 
-    async wait() {
+    wait() {
         return new Promise((resolve, reject) => {
             this.m_resolve = resolve;
         })
