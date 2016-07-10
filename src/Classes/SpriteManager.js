@@ -1,6 +1,7 @@
 import PIXI from '../Library/pixi.js/src/index';
 
 import Sprite from './Sprite';
+import Animation from './Animation';
 import TextSprite from './TextSprite';
 import TextWindow from './TextWindow';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
@@ -86,6 +87,41 @@ export function createText(index, text, options) {
 }
 
 /**
+ * create a frame animation.
+ * @method createAnimation
+ * @param  {String}        direction          horizontal or vertical, leave it null if using multifiles.
+ * @param  {Number}        index              [description]
+ * @param  {String}        file               file for horizontal or vertical mode
+ * @param  {Array}         files              files for multifiles mode
+ * @param  {Number}        frame              number of frames in a row (horizontal mode) or column (vertical mode)
+ * @param  {Number}        row                number of rows (for horizontal mode)
+ * @param  {Number}        column             number of rows (for vertical mode)
+ * @param  {Number}        interval           time between each frame (ms)
+ * @param  {String}        loopType           `forward` or 'bouncing', take effects when loop is true.
+ * @param  {Boolean}       loop               whether loop or not
+ * @param  {Number}        delay              interval between each loop
+ */
+export function createAnimation({direction, index, file, files, frame, row=1, column=1, interval=33, loopType='forward', loop=true, delay=0}) {
+    let ani = new Animation();
+    if (files) {
+        ani.setType('multifiles').setIndex(index).setFile(files)
+           .setInterval(interval).setLoop(loop).setDelay(delay)
+           .exec();
+    } else if (direction === 'horizontal') {
+        ani.setType('horizontal').setIndex(index).setFile(file)
+           .setFrame(frame).setRow(row).setInterval(interval)
+           .setLoopType(loop).setDelay(delay)
+           .exec();
+    } else {    // vertical
+        ani.setType('vertical').setIndex(index).setFile(file)
+           .setFrame(frame).setColumn(column).setInterval(interval)
+           .setLoopType(loop).setDelay(delay)
+           .exec();
+    }
+    insert(index,ani);
+}
+
+/**
  * set a sprite as another sprite's child
  * @method addto
  * @param  {Number} sourceIndex the sprite will be add to parent
@@ -166,7 +202,7 @@ export function removeAll(index, isDelete = true, isRecursive = true) {
 
 function removeRecursive(children, isDelete, isRecursive){
     for (let child of children) {
-        SpriteManager.remove(child, isDelete);
+        remove(child, isDelete);
         if (isRecursive && child.children.length)
             removeRecursive(child.children);
     };
@@ -238,4 +274,47 @@ export function setAnchor(index, anchor) {
             default: anchor = [0,0]; break;
         }
     sprite.anchor = new PIXI.Point(set[0],set[1]);
+}
+
+/**
+ * playing a animation sprite.
+ * @method animationCell
+ * @param  {Number}      index
+ */
+export function animationStart(index) {
+    let sprite = fromIndex(index);
+    if(!sprite)
+        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+    else {
+        sp.start();
+    }
+}
+
+/**
+ * stop playing a animation sprite.
+ * @method animationCell
+ * @param  {Number}      index
+ */
+export function animationStop(index) {
+    let sprite = fromIndex(index);
+    if(!sprite)
+        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+    else {
+        sp.stop();
+    }
+}
+
+/**
+ * force a animation sprite in specific frame. This will stop the animation, if it is playing.
+ * @method animationCell
+ * @param  {Number}      index
+ * @param  {Number}      frame the number of frame cell, start from 0.
+ */
+export function animationCell(index, frame) {
+    let sprite = fromIndex(index);
+    if(!sprite)
+        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+    else {
+        sp.cell(frame);
+    }
 }

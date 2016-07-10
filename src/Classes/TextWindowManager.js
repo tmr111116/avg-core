@@ -10,7 +10,8 @@ const Methods = {
 	create(index) {
 		let textwindow = SpriteManager.fromIndex(index);
 		if (textwindow && !(textwindow instanceof TextWindow)) {
-			Err.warn(`[TextWindowManager] Index<${index}> is not empty, which may be a other kind of Sprite. However it will be destroyed to create a new TextWindow.`)
+			Err.warn(`[TextWindowManager] Index<${index}> is not empty,
+				which may be an other kind of Sprite. However, it will be destroyed to create a new TextWindow.`)
 			textwindow.destroy();
 		}
 		else if (textwindow) {

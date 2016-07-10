@@ -7,6 +7,9 @@ require("./assets/css/style.css");
 
 // iceleaf.start();
 
+// require('./Controller.js')
+
+
 import * as SpriteManager from './Classes/SpriteManager';
 import * as SoundManager from './Classes/SoundManager';
 import * as ActionManager from './Classes/ActionManager';
@@ -37,18 +40,9 @@ let GlobalSystem = (function*() {
     }
 
 
-    // iceleaf.sprite(10,'assets/res/bg1.png',[0,0,500,720]);
-    // iceleaf.addto(10,-1,10,[200,0],255);
-
     SpriteManager.create(10,'assets/res/bg1.png',[0,0,500,720])
     SpriteManager.addto(10,-1,10,[200,0], 1);
 
-    //var SoundManager = require('./Classes/SoundManager');
-
-    //iceleaf.bgm('assets/res/op_cut.mp3',true,50,0,5000);
-
-    let firstLoop = true;
-    console.log(1)
     SoundManager.setChannel(-1, {
         file: 'assets/res/op_cut.mp3',
         loop: true,
@@ -58,7 +52,6 @@ let GlobalSystem = (function*() {
         }
     });
 
-    console.log(2)
     // SoundManager.play(-1);
     SoundManager.fadeTo(-1, 0.5, 1000);
 
@@ -74,6 +67,14 @@ let GlobalSystem = (function*() {
     //     loop: 'bouncing',
     //     interval: 33
     // });
+    SpriteManager.createAnimation({
+        direction: 'horizontal',
+        index: 91,
+        file: 'assets/res/LineBreak_a.png',
+        frame: 16,
+        loop: 'bouncing',
+        interval: 33
+    });
     //
     // iceleaf.addto(91,-1);
     //
@@ -82,16 +83,12 @@ let GlobalSystem = (function*() {
     //     follow: true,
     //     pos: [0,0]
     // });
-
+    TextWindowManager.setTextCursor(SpriteManager.fromIndex(91), true, [0,0]);
     })
 
-    // iceleaf.sprite(90,"assets/res/BG32a_1280.jpg");
-    // iceleaf.addto(90,-1);
     SpriteManager.create(90,"assets/res/BG32a_1280.jpg")
     SpriteManager.addto(90,-1);
 
-    // iceleaf.textsprite(100,"TextSprite 测试",0xffcc00,20,"思源黑体 Regular,思源黑体");
-    // iceleaf.addto(100,10,100,[745,25],255)
     SpriteManager.createText(100,"TextSprite 测试", {
         color: 0xffcc00,
         size: 20,
@@ -99,28 +96,10 @@ let GlobalSystem = (function*() {
     })
     SpriteManager.addto(100,10,100,[745,25],255);
 
-    // iceleaf.textwindow("assets/res/textwindow.png",0.8,[126,450],[20,55,1008,231]);
-    // iceleaf.texton();
-    // iceleaf.textstyle({
-    //     name: "思源黑体 Regular,思源黑体",
-    //     size: 24,
-    //     color: 0x000000,
-    //     bold: false,
-    //     italic: false,
-    //     shadow: false,
-    //     shadowColor: 0xffffff,
-    //     stroke: false,
-    // })
-    // iceleaf.text('你好，世界！');
-    // iceleaf.locate({
-    //     x: 20,
-    //     y: 200
-    // })
-    // iceleaf.textspeed(50);
     TextWindowManager.setPosition([126,450]);
     TextWindowManager.setTextRectangle([20,55,1008,231]);
-    // TextWindowManager.setXInterval()
-    // TextWindowManager.setYInterval()
+    TextWindowManager.setXInterval(0)
+    TextWindowManager.setYInterval(12)
     TextWindowManager.setBackgroundFile("assets/res/textwindow.png");
     TextWindowManager.setOpacity(0.8);
     TextWindowManager.setVisible(true);
@@ -133,12 +112,9 @@ let GlobalSystem = (function*() {
     // TextWindowManager.setTextUnderline(underline);
     TextWindowManager.setTextShadow(false, 0xffffff);
     TextWindowManager.setTextStroke(false);
-    TextWindowManager.drawText('你好，世界！');
-    // TextWindowManager.relocate({
-    //     x: x,
-    //     y: y
-    // });
-    TextWindowManager.setTextSpeed(20);
+    // TextWindowManager.relocate(100, 60);
+    yield TextWindowManager.drawText('你好，世界！');
+    TextWindowManager.setTextSpeed(5);
 
     // let f = new Function(`await setTimeout(() => {
     //     console.log(123)
@@ -147,7 +123,6 @@ let GlobalSystem = (function*() {
     // f()
 
     //iceleaf.text('abcde,ABCD, 这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。');
-    // TextWindowManager.drawText('abcde,ABCD, 这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。这是一段测试文字，用于测试打印速度和文字换行、间距等各种参数是否正确。');
 
     // await TextWindowManager.wait();
 
@@ -210,7 +185,6 @@ let GlobalSystem = (function*() {
     yield TextWindowManager.drawText('点击可以继续下一句');
     yield TextWindowManager.drawText('啊啊啊啊啊啊啊啊啊啊啊啊啊');
     yield TextWindowManager.drawText('有什么要说呢');
-    yield TextWindowManager.drawText('Ta最近在好好填坑欸，真是难得的说~');
     yield TextWindowManager.drawText('………………');
     yield TextWindowManager.drawText('没了吧，演示就到这了23333');
 

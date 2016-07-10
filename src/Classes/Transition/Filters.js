@@ -8,21 +8,21 @@ export class CrossFadeFilter extends AbstractFilter{
     constructor(duration=1000){
         super(commonVertex,
         fs.readFileSync(__dirname + '/shaders/crossfade.frag', 'utf8'));
-        
+
         this.duration = duration;
     }
 }
 export class UniversalFilter extends AbstractFilter{
     constructor(ruleFile, vague=64 , duration=1000){
         let ruleTexture = PIXI.Texture.fromImage(ruleFile);
-        
+
         super(commonVertex,
         fs.readFileSync(__dirname + '/shaders/universal.frag', 'utf8'),
         {
             vague: {type:'1f', value: vague},
             ruleTexture: {type: 'sampler2D', value: ruleTexture}
         });
-        
+
         this.duration = duration;
     }
 }
@@ -34,7 +34,7 @@ export class ShutterFilter extends AbstractFilter{
             direction: {type:'1f', value: direction},
             num: {type:'1f', value: num}
         });
-        
+
         this.duration = duration;
     }
 }
@@ -54,8 +54,7 @@ export class RippleFilter extends AbstractFilter{
             phase: {type:'1f', value: phase},
             drift: {type:'1f', value: drift}
         });
-        
+
         this.duration = duration;
     }
 }
-

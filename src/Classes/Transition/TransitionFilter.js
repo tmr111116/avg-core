@@ -40,7 +40,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         //判断当前是否处于pretrans状态
         if(!this.uniforms.texture.value)
         {
-            ErrorHandler.error("TransitionFilter: PreviousTexture must be set.");
+            ErrorHandler.error("[TransitionFilter] PreviousTexture must be provided.");
             return
         }
 
@@ -80,7 +80,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         }
         else if(this.start)
         {
-            ErrorHandler.error("TransitionFilter: Filter must be set.");
+            ErrorHandler.error(`[TransitionFilter] Filter must be provided.`);
             this.start = false;
             this.m_resolve();
             this.m_resolve = null;
@@ -116,7 +116,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
 
 
     syncUniform(uniform){
-        ErrorHandler.warn("TransitionFilter: method syncUniform() should not be called, it's a bug!");
+        ErrorHandler.warn("[TransitionFilter] Method syncUniform() should not be called, it's a bug!");
         super.syncUniform(uniform);
     }
 }

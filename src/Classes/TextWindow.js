@@ -134,7 +134,7 @@ class TextWindow extends PIXI.Container {
     /**
      * Specify intervals between letters.
      * @method setXInterval
-     * @param {number} value
+     * @param {number} value, px.
      * @returns {TextSprite} - this
      */
     setXInterval(value){
@@ -144,7 +144,7 @@ class TextWindow extends PIXI.Container {
     /**
      * Specify intervals between lines.
      * @method setYInterval
-     * @param {number} value
+     * @param {number} value, px.
      * @returns {TextSprite} - this
      */
     setYInterval(value){
@@ -289,10 +289,10 @@ class TextWindow extends PIXI.Container {
     /**
      * Specify the location that the next letter will be printed.
      * @method relocate
-     * @param {boolean} follow - follow the last letter, or it is fixed.
-     * @param {Array} [position] - must be defined if follow is false.
+     * @param {Number} x - x-coordinate, set to null if you don't want to change it.
+     * @param {Number} y - y-coordinate, set to null if you don't want to change it.
      */
-    relocate({x,y}) {
+    relocate(x,y) {
         this.m_currentTextWidth = x || this.m_currentTextWidth;
         this.m_currentTextHeight = y || this.m_currentTextHeight;
 
@@ -378,7 +378,7 @@ class TextWindow extends PIXI.Container {
 
 
 
-    updateTransform(){
+    async updateTransform(){
 
         if(!this.textRendering){
             super.updateTransform();
@@ -399,8 +399,8 @@ class TextWindow extends PIXI.Container {
 
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
             // hide cursor (if exist)
-            if(this.textCursor)
-                this.textCursor.visible = false;
+            // if(this.textCursor)
+            //     this.textCursor.visible = false;
             // print characters, calculate delta
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
