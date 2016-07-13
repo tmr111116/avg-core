@@ -10,15 +10,15 @@ require("./assets/css/style.css");
 // require('./Controller.js')
 
 
-import * as SpriteManager from './Classes/SpriteManager';
-import * as SoundManager from './Classes/SoundManager';
-import * as ActionManager from './Classes/ActionManager';
-import {registerHandler} from './Classes/EventManager';
-import * as Flow from './Classes/Flow';
-import TWMInit from './Classes/TextWindowManager';
-import fps from './Utils/fps';
+import * as SpriteManager from 'Classes/SpriteManager';
+import * as SoundManager from 'Classes/SoundManager';
+import * as ActionManager from 'Classes/ActionManager';
+import {registerHandler} from 'Classes/EventManager';
+import * as Flow from 'Classes/Flow';
+import TWMInit from 'Classes/TextWindowManager';
+import fps from 'Utils/fps';
 
-import {CrossFadeFilter} from './Classes/Transition/Filters';
+import {CrossFadeFilter} from 'Classes/Transition/Filters';
 
 let GlobalSystem = (function*() {
 

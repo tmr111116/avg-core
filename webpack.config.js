@@ -1,8 +1,14 @@
+var path = require('path');
+
 module.exports = {
-    entry: ['babel-polyfill', './entry.js'],
+    entry: ['babel-polyfill', './test/entry.js'],
     output: {
         path: __dirname,
         filename: "bundle.js"
+    },
+    resolve: {
+        // extensions: ['', '.js', '.jsx'],
+        modulesDirectories: ["src", "node_modules"]
     },
     module: {
     	postLoaders: [
@@ -18,6 +24,7 @@ module.exports = {
         ]
     },
     devServer: {
+        contentBase: "./test",
         historyApiFallback: true,
         hot: true,
         inline: true,
