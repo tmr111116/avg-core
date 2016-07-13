@@ -4,6 +4,7 @@ import Sprite from './Sprite';
 import Animation from './Animation';
 import TextSprite from './TextSprite';
 import TextWindow from './TextWindow';
+import {attachToSprite} from './EventManager';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
 import Err from './ErrorHandler';
@@ -18,19 +19,14 @@ let textWindowOptions = {
 export function init() {
     Renderer = new PIXI.WebGLRenderer(1280, 720);
     Stage = new PIXI.Container();
+    attachToSprite(Stage);
+    // Stage.buttonMode = true;
 
     insert(-1, Stage);
 
     // Transition Support
     Stage.filters = [new TransitionFilter];
     TransitionPlugin(Stage);
-
-    // let tw = new TextWindow();
-    // tw.setIndex(textWindowOptions.currentIndex);
-    // insert(textWindowOptions.currentIndex,tw);
-    // this.textwindow(0x0,1.0,[0,0],[0,0,1180,620],0,12);
-    // this.stage.addChild(tw);
-    // setZorder(-2, 50);
 
     return Renderer.view;
 }
@@ -54,6 +50,7 @@ export function getRenderer() {
 export function create(index, file, rect) {
     let sp = new Sprite();
     sp.setFile(file).setIndex(index).setRect(rect).execSync();
+    attachToSprite(sp);
     insert(index, sp);
 }
 
@@ -83,6 +80,7 @@ export function createText(index, text, options) {
        .setExtraChar(options.extrachar).setBold(options.bold).setItalic(options.italic)/*.setStrike(strike).setUnder(under)*/
        .setShadow(options.shadow).setShadowColor(options.shadowcolor).setStroke(options.stroke).setStrokeColor(options.strokecolor)
        .exec();
+    attachToSprite(textsprite);
     insert(index, textsprite);
 }
 
@@ -118,6 +116,7 @@ export function createAnimation({direction, index, file, files, frame, row=1, co
            .setLoopType(loop).setDelay(delay)
            .exec();
     }
+    attachToSprite(ani);
     insert(index,ani);
 }
 

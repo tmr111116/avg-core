@@ -13,6 +13,7 @@ require("./assets/css/style.css");
 import * as SpriteManager from './Classes/SpriteManager';
 import * as SoundManager from './Classes/SoundManager';
 import * as ActionManager from './Classes/ActionManager';
+import {registerHandler} from './Classes/EventManager';
 import * as Flow from './Classes/Flow';
 import TWMInit from './Classes/TextWindowManager';
 import fps from './Utils/fps';
@@ -114,7 +115,7 @@ let GlobalSystem = (function*() {
     TextWindowManager.setTextStroke(false);
     // TextWindowManager.relocate(100, 60);
     yield TextWindowManager.drawText('你好，世界！');
-    TextWindowManager.setTextSpeed(5);
+    TextWindowManager.setTextSpeed(20);
 
     // let f = new Function(`await setTimeout(() => {
     //     console.log(123)
@@ -190,8 +191,16 @@ let GlobalSystem = (function*() {
 
 })()
 
-window.ontouchend = window.onclick = () => GlobalSystem.next();
+registerHandler((e) => {
+    if (e.type !== 'mousemove')
+        console.log(`事件[${e.type}] index=${e.index} gx=${e.global.x} gy=${e.global.y} lx=${e.local.x} ly=${e.local.y}`);
+    if (["click", "tap"].includes(e.type)) {
+        GlobalSystem.next();
+    }
+})
 
-window.GlobalSystem = GlobalSystem;
+// window.ontouchend = window.onclick = () => GlobalSystem.next();
+//
+// window.GlobalSystem = GlobalSystem;
 
 GlobalSystem.next();

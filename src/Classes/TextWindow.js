@@ -397,10 +397,12 @@ class TextWindow extends PIXI.Container {
         if(this.textIndex+count>=this.text.length-1)
             count = this.text.length - this.textIndex;
 
+        // hide cursor (if exist)
+        if(this.textCursor)
+            this.textCursor.visible = false;
+
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
-            // hide cursor (if exist)
-            // if(this.textCursor)
-            //     this.textCursor.visible = false;
+            
             // print characters, calculate delta
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
