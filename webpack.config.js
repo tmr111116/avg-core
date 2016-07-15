@@ -7,7 +7,7 @@ module.exports = {
         filename: "bundle.js"
     },
     resolve: {
-        // extensions: ['', '.js', '.jsx'],
+        extensions: ['', '.js', '.jsx'],
         modulesDirectories: ["src", "node_modules"]
     },
     module: {
@@ -18,7 +18,7 @@ module.exports = {
         ],
         loaders: [
             { test: /\.css$/, loader: "style!css" },
-            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
+            { test: /\.js$|jsx$/, exclude: /node_modules/, loader: "babel-loader"},
             { test: /\.json$/, loader: 'json-loader'},
 
         ]
