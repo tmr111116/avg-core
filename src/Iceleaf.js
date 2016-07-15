@@ -41,6 +41,8 @@ export function render(el) {
 
 export function createElement(tag, params, ...childrenEl) {
 	let el;
+	params = params || {};
+	params.children = childrenEl;
 	if (typeof tag === 'string') {
 		switch (tag.toLowerCase()) {
 			// case 'layer': el = new LayerComponent(params);break;
@@ -60,7 +62,15 @@ export function createElement(tag, params, ...childrenEl) {
 	if (childrenEl) {
 		let parent = el.getInstance();
 		if (childrenEl instanceof Array) {
+			let childrenElExpanded = [];
 			for (let childEl of childrenEl) {
+				if (childEl instanceof Array) {
+					childrenElExpanded = childrenElExpanded.concat(childEl);
+				} else {
+					childrenElExpanded.push(childEl);
+				}
+			}
+			for (let childEl of childrenElExpanded) {
 				childEl.componentWillMount();
 				parent.addChild(childEl.getInstance());
 				childEl.componentDidMount();
