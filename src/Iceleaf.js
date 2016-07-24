@@ -36,19 +36,95 @@ export function render(el) {
         init()
     }
     el.componentWillMount();
-    let instance = mountComponent(el);
-    SpriteManager.getStage().addChild(instance);
+    let node = mountComponent(el);
+    SpriteManager.getStage().addChild(node);
     el.componentDidMount();
 }
 
-function mountComponent(el) {
-    let parent = el.getInstance();
-    bindEvents(el);
+function mountComponent(el, realSelf) {
+    let parentNode = el.renderNode();
+    bindEvents(el, realSelf);
     for (let childEl of el.children) {
-        let child = mountComponent(childEl);
-        parent.addChild(child);
+        childEl.componentWillMount();
+        let child = mountComponent(childEl, realSelf);
+        parentNode.addChild(child);
+        childEl.componentDidMount();
     }
-    return parent;
+    return parentNode;
+}
+
+function updateComponent(el, realSelf) {
+    let parentNode = el.renderNode();
+    el.update();
+    bindEvents(el, realSelf);
+    parentNode.removeChildren();
+    for (let childEl of el.children) {
+        childEl.componentWillUpdate();
+        let child = updateComponent(childEl, realSelf);
+        parentNode.addChild(child);
+        childEl.componentDidUpdate();
+    }
+    return parentNode;
+}
+
+function mergeComponent(prevElement, nextElement) {
+    prevElement.props = nextElement.props;
+    let prevChildrenElement = prevElement.children;
+    let nextChildrenElement = nextElement.children;
+    let mergeResult = [];
+    let reservedIndexes = [];
+    // let lastIndex = 0;
+    for (let [nextIndex, nextChildElement] of nextChildrenElement.entries()) {
+        let nextName = nextChildElement.constructor.name;
+        let prevIndex = null;
+        let prevChildElement = prevChildrenElement.find((_prevChildElement, _prevIndex) => {
+            if (_prevChildElement.constructor.name === nextName
+                && nextChildElement.equals(_prevChildElement)) {
+                prevIndex = _prevIndex;
+                return true
+            } else {
+                return false
+            }
+        })
+        if (prevChildElement && prevIndex !== null) {
+            // 如果不移除会导致一个旧组件被不同新组件find到
+            prevChildrenElement.splice(prevIndex, 1);
+            prevChildElement.children = mergeComponent(prevChildElement, nextChildElement);
+            mergeResult.push(prevChildElement);
+            reservedIndexes.push(prevIndex);
+        } else {
+            mergeResult.push(nextChildElement);
+        }
+    }
+    // 删除已经删掉的
+    for (let [i, prevChildElement] of prevChildrenElement.entries()) {
+        if (reservedIndexes.includes(i)) {
+            continue;
+        } else {
+            // prevChildElement.destroy();
+            destroyRecursive(prevChildElement);
+        }
+    }
+    return mergeResult;
+}
+
+function destroyRecursive(el) {
+    for (let child of el.children) {
+        destroyRecursive(child);
+    }
+    el.destroy();
+}
+
+function getChildrenIndex(parent) {
+    let indexArray = [];
+    for (let child of parent.children) {
+        if (child.children.length)
+            indexArray.concat(getIndex(child));
+        else {
+            indexArray.push(child.index);
+        }
+    }
+    return indexArray;
 }
 
 export function createElement(tag, params, ...childrenEl) {
@@ -74,6 +150,8 @@ export function createElement(tag, params, ...childrenEl) {
     let childrenElExpanded = [];
     if (childrenEl instanceof Array) {
         for (let childEl of childrenEl) {
+            // 成员有可能是一个null，比如 {state ? xx : null} ，过滤掉
+            if (!childEl) continue;
             if (childEl instanceof Array) {
                 childrenElExpanded = childrenElExpanded.concat(childEl);
             } else {
@@ -99,12 +177,16 @@ export function createElement(tag, params, ...childrenEl) {
     return el;
 }
 
-function bindEvents(el) {
-    let obj = el.getInstance();
+function bindEvents(el, realSelf) {
+    let obj = el.renderNode();
+    obj.buttonMode = false;
     let keys = Object.keys(el.props);
     for (let key of keys) {
         if (/^on[A-Z]/.test(key)) {
-            obj[key.replace(/^on/, '').toLowerCase()] = el.props[key];
+            if (key === 'onClick') {
+                obj.buttonMode = true;
+            }
+            obj['_on' + key.replace(/^on/, '').toLowerCase()] = el.props[key].bind(realSelf || el);
         }
     }
 }
@@ -115,10 +197,19 @@ export class Component {
         this.props = props || {};
         this.state = {};
 
-        this.instance = null;
+        this.node = null;
     }
     setState(state) {
         Object.assign(this.state, state);
+        let nextElement = this.render();
+        if (this.prevElement) {
+            let mergeResult = mergeComponent(this.prevElement, nextElement);
+            this.prevElement.children = mergeResult;
+            this.componentWillUpdate();
+            updateComponent(this.prevElement, this);
+            this.componentDidUpdate();
+        }
+
     }
     componentWillMount() {
 
@@ -132,20 +223,35 @@ export class Component {
     componentDidUpdate() {
 
     }
-    getInstance() {
-        if (this.instance) {
-            return this.instance;
+    renderNode() {
+        if (this.node) {
+            return this.node;
         }
         else {
-            this.instance = mountComponent(this.render());
-            return this.instance;
+            this.prevElement = this.render.call(this);
+            this.node = mountComponent(this.prevElement, this);
+            return this.node;
         }
     }
+    // 返回的应该是 Component实例，也就是虚拟节点
     render() {
         return this;
     }
     update() {
-
+        if (this.node) {
+            for (let child of this.prevElement.children) {
+                child.update();
+            }
+        } else {
+            this.renderNode();
+        }
+    }
+    // 判断是否相同
+    equals() {
+        return false;
+    }
+    destroy() {
+        this.node.destroy();
     }
 }
 
@@ -156,17 +262,28 @@ class SpriteComponent extends Component {
 
         this.index = null;
     }
-    render() {
-        if (this.instance) {
-            return this
+    renderNode() {
+        if (this.node) {
+            return this.node;
         } else {
             SpriteManager.create(++Index, this.props.file, this.props.rect);
-            this.instance = SpriteManager.fromIndex(Index);
-            this.instance.x = this.props.x;
-            this.instance.y = this.props.y;
+            this.node = SpriteManager.fromIndex(Index);
+            this.node.x = this.props.x;
+            this.node.y = this.props.y;
             this.index = Index;
-            return this
+            return this.node;
         }
+    }
+    update() {
+        // this.node.file = this.props.file;
+        this.node.x = this.props.x;
+        this.node.y = this.props.y;
+    }
+    equals(obj) {
+        return obj.props.file === this.props.file;
+    }
+    destroy() {
+        this.node.destroy();
     }
 }
 class TextSpriteComponent extends Component {
@@ -175,16 +292,30 @@ class TextSpriteComponent extends Component {
 
         this.index = null;
     }
-    render() {
-        if (this.instance) {
-            return this;
+    renderNode() {
+        if (this.node) {
+            return this.node;
         } else {
             SpriteManager.createText(++Index, this.props.text, this.props);
-            this.instance = SpriteManager.fromIndex(Index);
-            this.instance.x = this.props.x;
-            this.instance.y = this.props.y;
+            window.node = this.node = SpriteManager.fromIndex(Index);
+            this.node.x = this.props.x;
+            this.node.y = this.props.y;
             this.index = Index;
-            return this;
+            return this.node;
         }
+    }
+    update() {
+        // console.log(this)
+        this.node.text = this.props.text;
+        this.node.x = this.props.x;
+        this.node.y = this.props.y;
+    }
+    equals(obj) {
+        // 是否可以全部返回true？
+        return true;
+        // return obj.props.text === this.props.text;
+    }
+    destroy() {
+        this.node.destroy();
     }
 }

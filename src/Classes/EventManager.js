@@ -27,6 +27,9 @@ function handleEvent(evt) {
 	let e = new EventData(evt);
 	if (Handler) {
 		Handler(e);
+	} else {
+		let defaultHandler = e.target['_on'+e.type];
+		defaultHandler && defaultHandler(e);
 	}
 }
 
