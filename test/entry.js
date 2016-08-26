@@ -1,6 +1,6 @@
 require("./assets/css/style.css");
 let view = require('./ui');
 
-import * as Iceleaf from 'Iceleaf';
+import * as iceleaf from 'iceleaf';
 
-Iceleaf.render(view);
+iceleaf.render(view);

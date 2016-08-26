@@ -1,15 +1,28 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
-    entry: ['babel-polyfill', './test/entry.js'],
+    entry: {
+        iceleaf: ['babel-polyfill', './src/Iceleaf.js'],
+        index: './test/entry.js'
+    },
     output: {
-        path: __dirname,
-        filename: "bundle.js"
+        path: path.resolve(__dirname, 'build'),
+        filename: "[name].js",
+        chunkFilename: "[name].min.js",
+        libraryTarget: 'umd',
+        library: 'iceleaf'
     },
     resolve: {
         extensions: ['', '.js', '.jsx'],
         modulesDirectories: ["src", "node_modules"]
     },
+    externals: {    // 指定采用外部 CDN 依赖的资源，不被webpack打包
+        "iceleaf": "iceleaf"
+    },
+    // plugins: [
+    //     new  webpack.optimize.CommonsChunkPlugin('common.js', ['iceleaf', 'index'])
+    // ],
     module: {
     	postLoaders: [
             {

@@ -1,6 +1,6 @@
 /**@jsx createElement*/
 
-import {createElement, render, Component, Sprite, Text} from 'Iceleaf';
+import {createElement, render, Component, Sprite, Text} from 'iceleaf';
 
 class FakeText extends Component {
     constructor(props) {

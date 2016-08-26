@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 
 import * as SpriteManager from 'Classes/SpriteManager';
 import * as SoundManager from 'Classes/SoundManager';
