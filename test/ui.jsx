@@ -1,6 +1,6 @@
 /**@jsx createElement*/
 
-import {createElement, render, Component} from 'Iceleaf';
+import {createElement, render, Component, Sprite, Text} from 'Iceleaf';
 
 class FakeText extends Component {
     constructor(props) {
@@ -50,9 +50,9 @@ class SpriteWithText extends Component {
     render() {
         return (
             <Sprite file="assets/res/textwindow.png" x={this.props.x+this.state.deltaX||0} y={this.props.y||0}>
-                <Text text={'文字框内文字'+this.state.deltaX}
+                <Text text={'文字框内文字颜色是：0x'+this.state.color.toString(16)}
                       color={this.state.color} size={20} x={50+this.state.deltaX} y={50}
-                      font="思源黑体 Regular,思源黑体" onClick={this.handleClick}>
+                      font="思源黑体 Regular,思源黑体" onClick={this.handleClick} onMouseOver={this.handleMouseOver}>
                       {this.state.show ? <Text text="sdfsdfds" color={0xff0000} size={20} x={0} y={50}
                       font="思源黑体 Regular,思源黑体"/> : null}
                 </Text>
@@ -68,7 +68,7 @@ class SpriteWithText extends Component {
 module.exports = (
     <Sprite file="assets/res/BG32a_1280.jpg">
         <SpriteWithText x={100} y={450}>
-            <Sprite file="assets/res/ch-1.png" x={100} y={100} />
+        <Sprite file="assets/res/ch-1.png" x={100} y={100} />
             <Sprite file="assets/res/ch-2.png" x={130} y={100} />
             <Sprite file="assets/res/ch-3.png" x={160} y={100} />
         </SpriteWithText>

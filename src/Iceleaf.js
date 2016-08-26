@@ -1,3 +1,5 @@
+import React from 'react';
+
 import * as SpriteManager from 'Classes/SpriteManager';
 import * as SoundManager from 'Classes/SoundManager';
 import * as ActionManager from 'Classes/ActionManager';
@@ -44,7 +46,7 @@ export function render(el) {
 function mountComponent(el, realSelf) {
     let parentNode = el.renderNode();
     bindEvents(el, realSelf);
-    for (let childEl of el.children) {
+    for (let childEl of el.props.children) {
         childEl.componentWillMount();
         let child = mountComponent(childEl, realSelf);
         parentNode.addChild(child);
@@ -58,7 +60,7 @@ function updateComponent(el, realSelf) {
     el.update();
     bindEvents(el, realSelf);
     parentNode.removeChildren();
-    for (let childEl of el.children) {
+    for (let childEl of el.props.children) {
         childEl.componentWillUpdate();
         let child = updateComponent(childEl, realSelf);
         parentNode.addChild(child);
@@ -68,9 +70,9 @@ function updateComponent(el, realSelf) {
 }
 
 function mergeComponent(prevElement, nextElement) {
+    let prevChildrenElement = prevElement.props.children;
+    let nextChildrenElement = nextElement.props.children;
     prevElement.props = nextElement.props;
-    let prevChildrenElement = prevElement.children;
-    let nextChildrenElement = nextElement.children;
     let mergeResult = [];
     let reservedIndexes = [];
     // let lastIndex = 0;
@@ -89,7 +91,7 @@ function mergeComponent(prevElement, nextElement) {
         if (prevChildElement && prevIndex !== null) {
             // 如果不移除会导致一个旧组件被不同新组件find到
             prevChildrenElement.splice(prevIndex, 1);
-            prevChildElement.children = mergeComponent(prevChildElement, nextChildElement);
+            prevChildElement.props.children = mergeComponent(prevChildElement, nextChildElement);
             mergeResult.push(prevChildElement);
             reservedIndexes.push(prevIndex);
         } else {
@@ -109,7 +111,7 @@ function mergeComponent(prevElement, nextElement) {
 }
 
 function destroyRecursive(el) {
-    for (let child of el.children) {
+    for (let child of el.props.children) {
         destroyRecursive(child);
     }
     el.destroy();
@@ -130,16 +132,17 @@ function getChildrenIndex(parent) {
 export function createElement(tag, params, ...childrenEl) {
     let el;
     params = params || {};
-    params.children = childrenEl;
+    // params.children = childrenEl;
     if (typeof tag === 'string') {
-        switch (tag.toLowerCase()) {
-            // case 'layer': el = new LayerComponent(params);break;
-            case 'sprite': el = new SpriteComponent(params);break;
-            case 'text': el = new TextSpriteComponent(params);break;
-            default: Err.error(`[Iceleaf] Unknown element '${tag}'.`);break;
-        }
-
-        el.name = tag.toLowerCase();
+        Err.error(`[Iceleaf] You cannot use HTML tag '${tag}'.`);
+        // switch (tag.toLowerCase()) {
+        //     // case 'layer': el = new LayerComponent(params);break;
+        //     case 'sprite': el = new SpriteComponent(params);break;
+        //     case 'text': el = new TextSpriteComponent(params);break;
+        //     default: Err.error(`[Iceleaf] Unknown element '${tag}'.`);break;
+        // }
+        //
+        // el.name = tag.toLowerCase();
     }
     else {
         el = new tag(params);
@@ -168,9 +171,10 @@ export function createElement(tag, params, ...childrenEl) {
      * 自定义组件的子节点渲染由内部控制，子组件全部放置到 props
      */
     if (typeof tag === 'string') {
-        el.children = childrenElExpanded
+        // el.children = childrenElExpanded
+        Err.error(`[Iceleaf] You cannot use HTML tag '${tag}'.`);
     } else {
-        el.children = [];
+        // el.children = [];
         el.props.children = childrenElExpanded;
     }
 
@@ -192,9 +196,12 @@ function bindEvents(el, realSelf) {
 }
 
 
-export class Component {
+export class Component extends React.Component{
     constructor(props) {
+        super(props);
+
         this.props = props || {};
+        this.props.children = props.children || [];
         this.state = {};
 
         this.node = null;
@@ -204,7 +211,7 @@ export class Component {
         let nextElement = this.render();
         if (this.prevElement) {
             let mergeResult = mergeComponent(this.prevElement, nextElement);
-            this.prevElement.children = mergeResult;
+            this.prevElement.props.children = mergeResult;
             this.componentWillUpdate();
             updateComponent(this.prevElement, this);
             this.componentDidUpdate();
@@ -239,7 +246,7 @@ export class Component {
     }
     update() {
         if (this.node) {
-            for (let child of this.prevElement.children) {
+            for (let child of this.prevElement.props.children) {
                 child.update();
             }
         } else {
@@ -256,7 +263,7 @@ export class Component {
 }
 
 
-class SpriteComponent extends Component {
+export class Sprite extends Component {
     constructor({file, rect, x=0, y=0}) {
         super({file, rect, x, y});
 
@@ -286,7 +293,7 @@ class SpriteComponent extends Component {
         this.node.destroy();
     }
 }
-class TextSpriteComponent extends Component {
+export class Text extends Component {
     constructor({text, x=0, y=0, ...options}) {
         super({text, x, y, ...options});
 
