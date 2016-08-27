@@ -10,7 +10,7 @@
   "scripts": {
     "start": "webpack-dev-server --progress --colors --hot --host 0.0.0.0 --compress",
     "build": "webpack --inline --optimize-minimize",
-    "test": "make test"
+    "test": "mocha --compilers js:babel-core/register"
   },
   "dependencies": {
     "babel-core": "^6.8.0",
@@ -27,5 +27,10 @@
     "transform-loader": "^0.2.3",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
+    "sinon": "^1.17.5"
   }
 }

@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
     entry: {
         iceleaf: ['babel-polyfill', './src/Iceleaf.js'],
-        index: './test/entry.js'
+        index: './example/entry.js'
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -37,7 +37,7 @@ module.exports = {
         ]
     },
     devServer: {
-        contentBase: "./test",
+        contentBase: "./example",
         historyApiFallback: true,
         hot: true,
         inline: true,
