@@ -1,6 +1,7 @@
 'use strict';
 
-import Parser, {parse} from '../src/Classes/Parser.js';
+import Parser, { parse } from '../src/Classes/Parser.js';
+import { cost } from './utils';
 const fs = require('fs');
 const path = require('path');
 const expect = require('chai').expect;
@@ -156,13 +157,3 @@ describe('Parser', () => {
         });
     })
 });
-
-function cost(fn) {
-    let start = Date.now();
-    try {
-        fn && fn();
-    } catch (e) {
-
-    }
-    return Date.now() - start;
-}

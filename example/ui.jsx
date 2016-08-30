@@ -32,7 +32,7 @@ class SpriteWithText extends Component {
             color: 0xff0000
         })
     }
-    handleMouseLeave() {
+    handleMouseOut() {
         this.setState({
             color: 0x0
         })
@@ -52,7 +52,8 @@ class SpriteWithText extends Component {
             <Sprite file="assets/res/textwindow.png" x={this.props.x+this.state.deltaX||0} y={this.props.y||0}>
                 <Text text={'文字框内文字颜色是：0x'+this.state.color.toString(16)}
                       color={this.state.color} size={20} x={50+this.state.deltaX} y={50}
-                      font="思源黑体 Regular,思源黑体" onClick={this.handleClick} onMouseOver={this.handleMouseOver}>
+                      font="思源黑体 Regular,思源黑体" onClick={this.handleClick} onTap={this.handleClick}
+                      onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                       {this.state.show ? <Text text="sdfsdfds" color={0xff0000} size={20} x={0} y={50}
                       font="思源黑体 Regular,思源黑体"/> : null}
                 </Text>
