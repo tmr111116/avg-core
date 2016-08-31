@@ -3,7 +3,7 @@ var Err = require('./ErrorHandler');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
 
-/** 
+/**
  * Class representing a TextSprite. <br>
  * default font style is `normal 24px sans-serif`
  * @extends PIXI.Text

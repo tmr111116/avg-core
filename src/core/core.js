@@ -38,12 +38,14 @@ export function render(el) {
 
 export function mountComponent(el, realSelf) {
     let parentNode = el.renderNode();
-    bindEvents(el, realSelf);
-    for (let childEl of el.props.children) {
-        childEl.componentWillMount();
-        let child = mountComponent(childEl, realSelf);
-        parentNode.addChild(child);
-        childEl.componentDidMount();
+    if (!el.isMounted()) {
+        bindEvents(el, realSelf);
+        for (let childEl of el.props.children) {
+            childEl.componentWillMount();
+            let child = mountComponent(childEl, realSelf);
+            parentNode.addChild(child);
+            childEl.componentDidMount();
+        }
     }
     return parentNode;
 }
@@ -107,6 +109,7 @@ function destroyRecursive(el) {
     for (let child of el.props.children) {
         destroyRecursive(child);
     }
+    el.componentWillUnmount();
     el.destroy();
 }
 

@@ -4,11 +4,12 @@ export class Component {
     constructor(props) {
         // super(props);
 
-        this.props = props || {};
+        this.props = Object.assign(this.getDefaultProps(), props);
         this.props.children = props.children || [];
         this.state = {};
 
         this.node = null;
+        this._mounted = false;
     }
     setState(state) {
         Object.assign(this.state, state);
@@ -22,6 +23,11 @@ export class Component {
         }
 
     }
+    getDefaultProps() {
+        return {
+
+        }
+    }
     componentWillMount() {
 
     }
@@ -34,15 +40,22 @@ export class Component {
     componentDidUpdate() {
 
     }
+    componentWillUnmount() {
+
+    }
     renderNode() {
         if (this.node) {
             return this.node;
         }
         else {
             this.prevElement = this.render.call(this);
-            this.node = mountComponent(this.prevElement, this);
+            this.node = mountComponent(this.prevElement, this, this.prevElement === this);
+            this._mounted = true;
             return this.node;
         }
+    }
+    isMounted() {
+        return this._mounted;
     }
     // 返回的应该是 Component实例，也就是虚拟节点
     render() {

@@ -8,10 +8,10 @@ export class Sprite extends Component {
 
         // this.index = null;
     }
-    renderNode() {
-        if (this.node) {
-            return this.node;
-        } else {
+    render() {
+        // if (this.node) {
+        //     return this.node;
+        // } else {
             let sp = new pixiSprite();
             sp.setFile(this.props.file).setRect(this.props.rect).execSync();
             attachToSprite(sp);
@@ -21,8 +21,8 @@ export class Sprite extends Component {
             this.node.x = this.props.x;
             this.node.y = this.props.y;
             // this.index = Index;
-            return this.node;
-        }
+            return this;
+        // }
     }
     update() {
         // this.node.file = this.props.file;
