@@ -43,20 +43,20 @@ export default function Manager(SpriteManager) {
 	SpriteManager.addto(-2, -1, 50);
 	CurrentTextWindow = textwindow;
 
-	return new Proxy(Methods, {
-		get: function(target, property, receiver) {
-			if (target.hasOwnProperty(property)) {
-				// console.log(`getting ${property} from Methods!`);
-				return Reflect.get(target, property, receiver);
-			}
-			else {
-				// console.log(`getting ${property} from CurrentTextWindow!`);
-				return Reflect.get(CurrentTextWindow, property, CurrentTextWindow);
-			}
-		},
-		set: function(target, key, value, receiver) {
-			// console.log(`setting ${key}!`);
-			return Reflect.set(CurrentTextWindow, key, value, CurrentTextWindow);
-		}
-	})
+	// return new Proxy(Methods, {
+	// 	get: function(target, property, receiver) {
+	// 		if (target.hasOwnProperty(property)) {
+	// 			// console.log(`getting ${property} from Methods!`);
+	// 			return Reflect.get(target, property, receiver);
+	// 		}
+	// 		else {
+	// 			// console.log(`getting ${property} from CurrentTextWindow!`);
+	// 			return Reflect.get(CurrentTextWindow, property, CurrentTextWindow);
+	// 		}
+	// 	},
+	// 	set: function(target, key, value, receiver) {
+	// 		// console.log(`setting ${key}!`);
+	// 		return Reflect.set(CurrentTextWindow, key, value, CurrentTextWindow);
+	// 	}
+	// })
 }
