@@ -82,7 +82,11 @@ export function mergeComponent(prevElement, nextElement) {
     let mergeResult = [];
     let reservedIndexes = [];
     // let lastIndex = 0;
-    for (let [nextIndex, nextChildElement] of nextChildrenElement.entries()) {
+    // let iterator = nextChildrenElement.entries();
+    // for (let [nextIndex, nextChildElement] of iterator) {
+    for (let nextIndex = 0; nextIndex < nextChildrenElement.length; nextIndex++) {
+        let nextChildElement = nextChildrenElement[nextIndex];
+
         let nextName = nextChildElement.constructor.name;
         let prevIndex = null;
         let prevChildElement = prevChildrenElement.find((_prevChildElement, _prevIndex) => {
@@ -97,6 +101,12 @@ export function mergeComponent(prevElement, nextElement) {
         if (prevChildElement && prevIndex !== null) {
             // 如果不移除会导致一个旧组件被不同新组件find到
             prevChildrenElement.splice(prevIndex, 1);
+            if (prevChildrenElement === nextChildrenElement) {
+                // iterator = nextChildrenElement.entries();
+                // if prevChildrenElement === nextChildrenElement, when prevChildrenElement was sliced,
+                // nextChildrenElement too. So nextIndex should increase.
+                nextIndex--;
+            }
             prevChildElement.props.children = mergeComponent(prevChildElement, nextChildElement);
             mergeResult.push(prevChildElement);
             reservedIndexes.push(prevIndex);
