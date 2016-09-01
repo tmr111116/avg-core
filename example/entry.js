@@ -1,10 +1,7 @@
-	require("./assets/css/style.css");
-	import * as iceleaf from 'iceleaf';
+/*@jsx iceleaf.createElement*/
 
-	try {
-	let view = require('./ui');
-	iceleaf.render(view);
+require("./assets/css/style.css");
+import * as iceleaf from 'iceleaf';
+import Stroy from './ui';
 
-} catch (e) {
-	alert(e)
-}
+iceleaf.render(<Stroy />);
