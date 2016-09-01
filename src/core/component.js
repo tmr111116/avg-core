@@ -13,6 +13,7 @@ export class Component {
         this._shouldUpdate = true;
     }
     setState(state) {
+        // 这里 state被提前合并，导致 shouldComponentUpdate 获取不到之前的state
         Object.assign(this.state, state);
         let nextElement = this.render();
         if (this.prevElement) {
@@ -66,7 +67,7 @@ export class Component {
         }
         else {
             this.prevElement = this.render.call(this);
-            this.node = mountComponent(this.prevElement, this, this.prevElement === this);
+            this.node = mountComponent(this.prevElement, this);
             this._mounted = true;
             return this.node;
         }
