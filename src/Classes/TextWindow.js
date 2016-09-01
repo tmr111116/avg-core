@@ -402,7 +402,7 @@ class TextWindow extends PIXI.Container {
             this.textCursor.visible = false;
 
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
-            
+
             // print characters, calculate delta
             this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
             if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
@@ -463,6 +463,24 @@ class TextWindow extends PIXI.Container {
             this.m_resolve = resolve;
         })
     }
+
+    removeChildren() {
+		super.removeChildren();
+		this.addChild(this.background);
+		this.addChild(this.textSprite);
+		this.addChild(this.textCursor);
+	}
+
+    // addChild(...args) {
+    //     super.addChild(...args);
+    // }
+
+	destroy() {
+		this.background.destroy();
+		this.textSprite.destroy();
+		this.textCursor.destroy();
+		super.destroy();
+	}
 
 }
 
