@@ -3,8 +3,8 @@ import pixiSprite from 'Classes/Sprite';
 import { attachToSprite } from 'Classes/EventManager';
 
 export class Sprite extends Component {
-    constructor({file, rect, x=0, y=0}) {
-        super({file, rect, x, y});
+    constructor({file, rect, x=0, y=0, ...others}) {
+        super({file, rect, x, y, ...others});
 
         // this.index = null;
     }
