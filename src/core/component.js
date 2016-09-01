@@ -10,16 +10,27 @@ export class Component {
 
         this.node = null;
         this._mounted = false;
+        this._shouldUpdate = true;
     }
     setState(state) {
         Object.assign(this.state, state);
         let nextElement = this.render();
         if (this.prevElement) {
-            let mergeResult = mergeComponent(this.prevElement, nextElement);
-            this.prevElement.props.children = mergeResult;
-            this.componentWillUpdate();
-            updateComponent(this.prevElement, this);
-            this.componentDidUpdate();
+            if (this.prevElement === this) {
+                let mergeResult = mergeComponent(this, nextElement);
+                this.props.children = mergeResult;
+                updateComponent(this, this);
+            } else {
+                this.componentWillReceiveProps(nextElement.props);
+                this._shouldUpdate = this.shouldComponentUpdate(nextElement.props, nextElement.state);
+                if (this._shouldUpdate) {
+                    let mergeResult = mergeComponent(this.prevElement, nextElement);
+                    this.prevElement.props.children = mergeResult;
+                    this.componentWillUpdate();
+                    updateComponent(this.prevElement, this);
+                    this.componentDidUpdate();
+                }
+            }
         }
 
     }
@@ -33,6 +44,12 @@ export class Component {
     }
     componentDidMount() {
 
+    }
+    componentWillReceiveProps(nextProps) {
+
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return true;
     }
     componentWillUpdate() {
 

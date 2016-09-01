@@ -47,6 +47,12 @@ class SpriteWithText extends Component {
             show2: true
         }), 1000)
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        return true;
+    }
+    componentDidUpdate() {
+        console.log('updated!');
+    }
     render() {
         return (
             <Sprite file="assets/res/textwindow.png" x={this.props.x+this.state.deltaX||0} y={this.props.y||0}>

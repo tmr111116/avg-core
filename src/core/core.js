@@ -51,23 +51,34 @@ export function mountComponent(el, realSelf) {
 }
 
 export function updateComponent(el, realSelf) {
+    if (!el._shouldUpdate) {
+        return el.renderNode();
+    }
+    el.componentWillUpdate();
     let parentNode = el.renderNode();
     el.update();
     bindEvents(el, realSelf);
     parentNode.removeChildren();
     for (let childEl of el.props.children) {
-        childEl.componentWillUpdate();
         let child = updateComponent(childEl, realSelf);
         parentNode.addChild(child);
-        childEl.componentDidUpdate();
     }
+    el.componentDidUpdate();
     return parentNode;
 }
 
 export function mergeComponent(prevElement, nextElement) {
     let prevChildrenElement = prevElement.props.children;
     let nextChildrenElement = nextElement.props.children;
+
+    prevElement.componentWillReceiveProps(nextElement.props);
+    prevElement._shouldUpdate = prevElement.shouldComponentUpdate(nextElement.props, nextElement.state);
+
+    if (!prevElement._shouldUpdate) {
+        return prevChildrenElement;
+    }
     prevElement.props = nextElement.props;
+
     let mergeResult = [];
     let reservedIndexes = [];
     // let lastIndex = 0;
