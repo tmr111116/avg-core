@@ -36,6 +36,7 @@ function handleEvent(evt) {
 class EventData {
 	constructor(evt) {
 		this.type = evt.type;
+		this.originalEvent = evt;
 		this.index = evt.target.index;
 		this.target = evt.target;
 		this.global = {
@@ -44,9 +45,8 @@ class EventData {
 		}
 		this.local = evt.target.toLocal(this.global);
 
-		this._stopPropagation = evt.stopPropagation;
 	}
 	stopPropagation() {
-		this._stopPropagation();
+		this.originalEvent.stopped = true;
 	}
 }
