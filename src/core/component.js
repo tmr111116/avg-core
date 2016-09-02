@@ -8,6 +8,7 @@ export class Component {
         this.props.children = props.children || [];
         this.state = {};
 
+        this.parent = null;
         this.node = null;
         this._mounted = false;
         this._shouldUpdate = true;
@@ -17,21 +18,29 @@ export class Component {
         Object.assign(this.state, state);
         let nextElement = this.render();
         if (this.prevElement) {
-            if (this.prevElement === this) {
-                let mergeResult = mergeComponent(this, nextElement);
-                this.props.children = mergeResult;
-                updateComponent(this, this);
-            } else {
+            // if (this.prevElement === this) {
+            //     let mergeResult = mergeComponent(this, nextElement);
+            //     this.props.children = mergeResult;
+            //     updateComponent(this, this);
+            // } else {
                 this.componentWillReceiveProps(nextElement.props);
                 this._shouldUpdate = this.shouldComponentUpdate(nextElement.props, nextElement.state);
                 if (this._shouldUpdate) {
                     let mergeResult = mergeComponent(this.prevElement, nextElement);
                     this.prevElement.props.children = mergeResult;
                     this.componentWillUpdate();
+                    // let node = this.renderNode();
+                    // if (this.node !== node) {
+                    //     console.log('top level node changed!')
+                    //     let parent = this.node.parent;
+                    //     parent.removeChild(this.node);
+                    //     parent.addChild(node);
+                    //     this.node.destroy();
+                    // }
                     updateComponent(this.prevElement, this);
                     this.componentDidUpdate();
                 }
-            }
+            // }
         }
 
     }
@@ -66,9 +75,15 @@ export class Component {
             return this.node;
         }
         else {
+            // if (this.prevElement !== this) {
+                this.componentWillMount();
+            // }
             this.prevElement = this.render.call(this);
             this.node = mountComponent(this.prevElement, this);
             this._mounted = true;
+            // if (this.prevElement !== this) {
+                this.componentDidMount();
+            // }
             return this.node;
         }
     }
@@ -90,7 +105,7 @@ export class Component {
     }
     // 判断是否相同
     equals() {
-        return false;
+        return true;
     }
     destroy() {
         this.node.destroy();

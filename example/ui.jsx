@@ -1,6 +1,6 @@
 /**@jsx createElement*/
 
-import {createElement, render, Component, Sprite, Text, Scene, Layer} from 'iceleaf';
+import {createElement, render, Component, Sprite, Text, Scene, Layer, FGImage} from 'iceleaf';
 
 class FakeText extends Component {
     constructor(props) {
@@ -43,9 +43,9 @@ class SpriteWithText extends Component {
         })
     }
     componentDidMount() {
-        setTimeout(() => this.setState({
-            show2: true
-        }), 1000)
+        // setTimeout(() => this.setState({
+        //     show2: true
+        // }), 1000)
     }
     shouldComponentUpdate(nextProps, nextState) {
         return true;
@@ -75,19 +75,29 @@ class SpriteWithText extends Component {
 export default class Story extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            file: "assets/res/BG32a_1280.jpg"
+        }
     }
     handleClick(e) {
         e.stopPropagation();
         console.log('frame clicked!')
     }
+    componentDidMount() {
+        setTimeout(() => this.setState({
+            file: "assets/res/ch-1.png"
+        }), 1000)
+    }
     render() {
         return (
-            <Scene color={0xff6600} opacity={0.1} width={1280} height={720}>
-                <Sprite file="assets/res/BG32a_1280.jpg">
+            <Scene color={0xff6600} opacity={0.1} width={1280} height={720} script='script.bks'>
+                <Sprite file={this.state.file || "assets/res/ch-3.png"}>
+                    <FGImage commandName="fg"/>
                     <SpriteWithText x={100} y={450} onClick={() => console.log('textwindow clicked!')}>
                         <Sprite file="assets/res/ch-1.png" x={100} y={100} onClick={this.handleClick}/>
                         <Sprite file="assets/res/ch-2.png" x={130} y={100} />
-                        <Sprite file="assets/res/ch-3.png" x={160} y={100} />
+                        <Sprite file={this.state.file || "assets/res/ch-3.png"} x={160} y={100} />
                     </SpriteWithText>
                 </Sprite>
             </Scene>

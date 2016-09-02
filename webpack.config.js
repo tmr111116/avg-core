@@ -3,7 +3,7 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
-        iceleaf: ['babel-polyfill', './src/Iceleaf.js'],
+        iceleaf: ['babel-polyfill', 'whatwg-fetch','./src/Iceleaf.js'],
         index: './example/entry.js'
     },
     output: {

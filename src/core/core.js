@@ -37,6 +37,9 @@ export function render(el) {
 }
 
 export function mountComponent(el, realSelf) {
+    // if (el === null || el === false) {
+    //     return
+    // }
     let parentNode = el.renderNode();
     if (!el.isMounted()) {
         bindEvents(el, realSelf);
@@ -51,6 +54,9 @@ export function mountComponent(el, realSelf) {
 }
 
 export function updateComponent(el, realSelf) {
+    // if (el === null || el === false) {
+    //     return
+    // }
     if (!el._shouldUpdate) {
         return el.renderNode();
     }
@@ -60,7 +66,9 @@ export function updateComponent(el, realSelf) {
     bindEvents(el, realSelf);
     parentNode.removeChildren();
     for (let childEl of el.props.children) {
-        let child = updateComponent(childEl, realSelf);
+        let isNativeComponent = childEl === childEl.render();
+        !isNativeComponent && console.log(childEl)
+        let child = updateComponent(isNativeComponent ? childEl : childEl.render(), realSelf);
         parentNode.addChild(child);
     }
     el.componentDidUpdate();
@@ -70,7 +78,8 @@ export function updateComponent(el, realSelf) {
 export function mergeComponent(prevElement, nextElement) {
     let prevChildrenElement = prevElement.props.children;
     let nextChildrenElement = nextElement.props.children;
-
+    // console.log('prevChildrenElement:', prevChildrenElement)
+    // console.log('nextChildrenElement:', nextChildrenElement)
     prevElement.componentWillReceiveProps(nextElement.props);
     prevElement._shouldUpdate = prevElement.shouldComponentUpdate(nextElement.props, nextElement.state);
 
@@ -87,17 +96,32 @@ export function mergeComponent(prevElement, nextElement) {
     for (let nextIndex = 0; nextIndex < nextChildrenElement.length; nextIndex++) {
         let nextChildElement = nextChildrenElement[nextIndex];
 
+        let isNativeComponent = nextChildElement === nextChildElement.render();
+
+        // if (!isNativeComponent) {
+        //     nextChildElement = nextChildElement.render();
+        // }
+
+        // if (nextChildElement === null || nextChildElement === false) {
+        //     continue;
+        // }
+
         let nextName = nextChildElement.constructor.name;
         let prevIndex = null;
         let prevChildElement = prevChildrenElement.find((_prevChildElement, _prevIndex) => {
+            // if (_prevChildElement === null || _prevChildElement === false) {
+            //     return false;
+            // }
             if (_prevChildElement.constructor.name === nextName
                 && nextChildElement.equals(_prevChildElement)) {
                 prevIndex = _prevIndex;
                 return true
             } else {
+                !isNativeComponent && console.log(2222, _prevChildElement)
                 return false
             }
         })
+        // !prevChildElement && console.log(nextChildElement)
         if (prevChildElement && prevIndex !== null) {
             // 如果不移除会导致一个旧组件被不同新组件find到
             prevChildrenElement.splice(prevIndex, 1);
@@ -107,10 +131,18 @@ export function mergeComponent(prevElement, nextElement) {
                 // nextChildrenElement too. So nextIndex should increase.
                 nextIndex--;
             }
-            prevChildElement.props.children = mergeComponent(prevChildElement, nextChildElement);
+
+            if (isNativeComponent) {
+                prevChildElement.props.children = mergeComponent(prevChildElement, nextChildElement);
+            } else {
+                console.log(prevChildElement.renderNode())
+                prevChildElement.prevElement.props.children = mergeComponent(prevChildElement.prevElement, nextChildElement.render());
+            }
+
             mergeResult.push(prevChildElement);
             reservedIndexes.push(prevIndex);
         } else {
+            // console.log(nextChildElement)
             mergeResult.push(nextChildElement);
         }
     }
@@ -120,7 +152,7 @@ export function mergeComponent(prevElement, nextElement) {
             continue;
         } else {
             // prevChildElement.destroy();
-            destroyRecursive(prevChildElement);
+            prevChildElement && destroyRecursive(prevChildElement);
         }
     }
     return mergeResult;
@@ -181,6 +213,7 @@ export function createElement(tag, params, ...childrenEl) {
     } else if (childrenEl){
         childrenElExpanded = [childrenEl];
     }
+    // console.log(tag.name, childrenElExpanded, childrenEl)
 
     /*
      * 区分原生组件和自定义组件。
