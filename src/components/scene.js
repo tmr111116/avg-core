@@ -14,6 +14,8 @@ export class Scene extends Container {
 		// this.parser = new Parser();
 		this.handlers = {};
 		this.contexts = {};
+
+		this.prevElement = this;
 	}
 	componentWillReceiveProps(nextProps) {
 

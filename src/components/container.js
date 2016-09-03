@@ -7,6 +7,7 @@ export class Container extends Component {
         super(...args);
 
         // this.index = null;
+        this.prevElement = this;
     }
     render() {
         // if (this.node) {

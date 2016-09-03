@@ -7,6 +7,7 @@ export class Layer extends Component {
         super({color, opacity, width, height, x, y, ...others});
 
         // this.index = null;
+        this.prevElement = this;
     }
     render() {
         // if (this.node) {

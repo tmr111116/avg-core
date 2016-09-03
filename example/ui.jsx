@@ -10,7 +10,7 @@ class FakeText extends Component {
         return <Text text="sdfsdfds" {...this.props}/>
     }
 }
-
+let x = 1;
 class SpriteWithText extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +28,7 @@ class SpriteWithText extends Component {
         })
     }
     handleMouseOver() {
+        console.log(11)
         this.setState({
             color: 0xff0000
         })
@@ -56,7 +57,7 @@ class SpriteWithText extends Component {
     render() {
         return (
             <Sprite file="assets/res/textwindow.png" x={this.props.x+this.state.deltaX||0} y={this.props.y||0} onClick={this.props.onClick}>
-                <Text text={'文字框内文字颜色是：0x'+this.state.color.toString(16)}
+                <Text text={'文字框内文字颜色是：0x'+this.state.color.toString(16)+x++}
                       color={this.state.color} size={20} x={50+this.state.deltaX} y={50}
                       font="思源黑体 Regular,思源黑体" onClick={this.handleClick} onTap={this.handleClick}
                       onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>

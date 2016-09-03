@@ -7,6 +7,7 @@ export class Text extends Component {
         super({text, x, y, ...options});
 
         // this.index = null;
+        this.prevElement = this;
     }
     render() {
         // if (this.node) {

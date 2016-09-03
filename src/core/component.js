@@ -8,7 +8,7 @@ export class Component {
         this.props.children = props.children || [];
         this.state = {};
 
-        this.parent = null;
+        // this.parent = null;
         this.node = null;
         this._mounted = false;
         this._shouldUpdate = true;
@@ -16,6 +16,7 @@ export class Component {
     setState(state) {
         // 这里 state被提前合并，导致 shouldComponentUpdate 获取不到之前的state
         Object.assign(this.state, state);
+        console.log(state)
         let nextElement = this.render();
         if (this.prevElement) {
             // if (this.prevElement === this) {

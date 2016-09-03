@@ -65,10 +65,19 @@ export function updateComponent(el, realSelf) {
     el.update();
     bindEvents(el, realSelf);
     parentNode.removeChildren();
-    for (let childEl of el.props.children) {
-        let isNativeComponent = childEl === childEl.render();
-        !isNativeComponent && console.log(childEl)
-        let child = updateComponent(isNativeComponent ? childEl : childEl.render(), realSelf);
+    if (!el.prevElement) {
+        console.log(el.prevElement);
+        mountComponent(el);
+        console.log(el.prevElement)
+    }
+    for (let childEl of el.prevElement.props.children) {
+        // let isNativeComponent = childEl === childEl.render();
+        // !isNativeComponent && console.log(childEl)
+        // console.log(childEl)
+        // console.log(childEl.constructor.name, childEl.props.children)
+        // childEl.constructor.name === 'SpriteWithText' && console.log(childEl.prevElement)
+        console.log(childEl)
+        let child = updateComponent(childEl, realSelf);
         parentNode.addChild(child);
     }
     el.componentDidUpdate();
@@ -117,7 +126,7 @@ export function mergeComponent(prevElement, nextElement) {
                 prevIndex = _prevIndex;
                 return true
             } else {
-                !isNativeComponent && console.log(2222, _prevChildElement)
+                // !isNativeComponent && console.log(2222, _prevChildElement)
                 return false
             }
         })
@@ -135,7 +144,8 @@ export function mergeComponent(prevElement, nextElement) {
             if (isNativeComponent) {
                 prevChildElement.props.children = mergeComponent(prevChildElement, nextChildElement);
             } else {
-                console.log(prevChildElement.renderNode())
+                // console.log(prevChildElement.renderNode())
+                // !prevChildElement.prevElement && prevChildElement.renderNode.call(prevChildElement);
                 prevChildElement.prevElement.props.children = mergeComponent(prevChildElement.prevElement, nextChildElement.render());
             }
 
@@ -213,6 +223,7 @@ export function createElement(tag, params, ...childrenEl) {
     } else if (childrenEl){
         childrenElExpanded = [childrenEl];
     }
+    // console.log(el.constructor.name, childrenElExpanded)
     // console.log(tag.name, childrenElExpanded, childrenEl)
 
     /*

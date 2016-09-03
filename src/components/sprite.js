@@ -7,6 +7,7 @@ export class Sprite extends Component {
         super({file, rect, x, y, ...others});
 
         // this.index = null;
+        this.prevElement = this;
     }
     render() {
         // if (this.node) {
