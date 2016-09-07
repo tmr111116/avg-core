@@ -9,7 +9,7 @@ import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
 import Err from './ErrorHandler';
 
-let Sprites = [];
+let Sprites = new Map();
 let Renderer = null;
 let Stage = null;
 let textWindowOptions = {
@@ -48,6 +48,7 @@ export function getRenderer() {
  * @param  {Rectangle} rect  [description]
  */
 export function create(index, file, rect) {
+    // 判断index是否已存在
     let sp = new Sprite();
     sp.setFile(file).setIndex(index).setRect(rect).execSync();
     attachToSprite(sp);
@@ -148,7 +149,7 @@ export function addto(sourceIndex, targetIndex, zorder=0, pos=[0,0], alpha=1) {
  * @return {Sprite}
  */
 export function fromIndex(index){
-    return Sprites[index];
+    return Sprites.get(index);
 }
 
 /**
@@ -168,7 +169,7 @@ export function currentTextWindow() {
  */
 export function insert(index,sprite){
     sprite.index = index;
-    Sprites[index] = sprite;
+    Sprites.set(index, sprite);
 }
 
 /**
@@ -182,7 +183,7 @@ export function remove(index, isDelete = true){
         return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, or it hasn't been added to screen, ignored.`);
     sp.parent.removeChild(sp);
     if (isDelete)
-        delete Sprites[index];
+        Sprites.remove(index);
 }
 
 /**
@@ -241,7 +242,7 @@ export function applyTransition(index, filter) {
  * @param  {Number}  value
  */
 export function setZorder(index, zorder){
-    let sprite = Sprites[index];
+    let sprite = Sprites.get(index);
     if(!sprite)
         Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
     else{

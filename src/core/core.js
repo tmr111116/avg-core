@@ -26,33 +26,171 @@ function init() {
     }
 }
 
-export function render(el) {
+// 总的渲染入口
+export function render(el, parentNode) {
     if (!Initialed) {
-        init()
+        init();
     }
     el.componentWillMount();
-    let node = mountComponent(el);
-    SpriteManager.getStage().addChild(node);
+    let shadow = mountComponent(...markAndGetInnerElement(el, '$'));
+    (parentNode || SpriteManager.getStage()).addChild(shadowToNode(shadow));
     el.componentDidMount();
 }
 
-export function mountComponent(el, realSelf) {
-    // if (el === null || el === false) {
-    //     return
-    // }
-    let parentNode = el.renderNode();
-    if (!el.isMounted()) {
-        bindEvents(el, realSelf);
-        for (let childEl of el.props.children) {
-            childEl.componentWillMount();
-            let child = mountComponent(childEl, realSelf);
-            parentNode.addChild(child);
-            childEl.componentDidMount();
-        }
+// 将虚拟节点树递归转化为实际的精灵节点树
+function shadowToNode(parentShadow) {
+    let parentNode = parentShadow.toNode();
+    for (let childShadow of parentShadow.children) {
+        let childNode = shadowToNode(childShadow);
+        parentNode.addChild(childNode);
     }
     return parentNode;
 }
 
+//
+export function markAndGetInnerElement(el, rootId) {
+    let elRendered = el.render();
+    if (el !== elRendered) {
+        el.props.index = `${rootId}`;
+    }
+    elRendered.props.index = `${rootId}`;
+    return [elRendered, rootId];
+}
+
+
+// “挂载”，输入元素树，输出虚拟节点树
+// 两次 render： 第一次 render 从自定义元素获取内置元素，第二次触发内置元素的render
+//              若第一次时已经是内置元素，render 可看做是幂等的
+export function mountComponent(el, parentid) {
+    if (!parentid) {
+        throw 'need parentid';
+    }
+    let parentEl = el.render();
+    let parentShadow = parentEl.shadow;
+    parentEl.props.index = `${parentid}`;
+    parentShadow.props.index = `${parentid}`;
+    if (!parentEl.isMounted()) {
+        // bindEvents(el, realSelf);
+        for (let [i, childEl] of parentEl.props.children.entries()) {
+            childEl.componentWillMount();
+            let childShadow = mountComponent(...markAndGetInnerElement(childEl, `${parentid}.${i}`));
+            parentShadow.addChild(childShadow);
+            childEl.componentDidMount();
+        }
+        parentEl._mounted = true;
+    }
+    return parentShadow;
+}
+
+function shadowEqual(a, b) {
+    if (!a || !b) {
+        return false;
+    }
+    if (a.constructor.name === 'Shadow' && b.constructor.name === 'Shadow' ) {
+        return a.name === b.name;
+    } else {
+        return false;
+    }
+}
+
+// 对比，将两颗虚拟节点树进行对比，返回结果
+// 只对比本身和第一层 children
+export function diffComponent(prevShadow, nextShadow) {
+    let diffResult = [];
+
+    if (!shadowEqual(prevShadow, nextShadow)) {
+        // prevShadow.result = ['REMOVE_NODE'];
+        diffResult.push({
+            action: 'REMOVE',
+            shadow: prevShadow
+        });
+        diffResult.push({
+            action: 'INSERT',
+            parent: prevShadow.parent,
+            shadow: nextShadow
+        });
+        return diffResult;   // 需要完全重绘
+    }
+
+
+
+    let prevChildrenShadow = prevShadow.children.slice();
+    let nextChildrenShadow = nextShadow.children.slice();
+
+    // let reservedIndexes = [];
+    // let lastIndex = 0;
+    // let iterator = nextChildrenElement.entries();
+    // for (let [nextIndex, nextChildElement] of iterator) {
+    for (let nextIndex = 0; nextIndex < nextChildrenShadow.length; nextIndex++) {
+        let nextChildShadow = nextChildrenShadow[nextIndex];
+
+        // let isNativeComponent = nextChildShadow === nextChildShadow.render();
+
+        // let nextName = nextChildShadow.constructor.name;
+
+        // 尝试寻找新虚拟节点是否在当前虚拟节点树中存在
+        let prevIndex = null;
+        let prevChildShadow = prevChildrenShadow.find((_prevChildShadow, _prevIndex) => {
+            if (shadowEqual(_prevChildShadow, nextChildShadow)) {
+                prevIndex = _prevIndex;
+                return true
+            } else {
+                return false
+            }
+        });
+
+        // 找到了
+        if (prevChildShadow && prevIndex !== null) {
+
+            // 此处可以优化，如实际上不需要移动的情况
+            prevChildShadow.props = nextChildShadow.props;
+            diffResult.push({
+                action: 'MOVE',
+                parent: prevShadow,
+                shadow: prevChildShadow,
+                from: prevIndex,
+                to: nextIndex
+            });
+
+
+            // 递归
+            let childDiffResult = diffComponent(prevChildShadow, nextChildShadow);
+            diffResult.concat(childDiffResult);
+
+            // 如果不移除会导致一个旧组件被不同新组件find到
+            prevChildrenShadow[prevIndex] = null;
+            // prevShadow.removeChild(prevChildShadow);
+            // mergeResult.push(prevChildShadow);
+            // reservedIndexes.push(prevIndex);
+        } else {
+            diffResult.push({
+                action: 'INSERT',
+                parent: prevShadow,
+                shadow: nextChildShadow
+            });
+
+            // mergeResult.push(nextChildShadow);
+        }
+    }
+
+    for (let prevChildShadow of prevChildrenShadow) {
+        if (prevChildShadow) {
+            diffResult.push({
+                action: 'REMOVE',
+                shadow: prevChildShadow
+            });
+        }
+    }
+
+    return diffResult;
+}
+
+// 根据对比结果，将新的更改应用到实际的精灵节点树
+export function patchComponent() {
+
+}
+
+// 自顶向下进行更新，递归进行 diff-patch 操作
 export function updateComponent(el, realSelf) {
     // if (el === null || el === false) {
     //     return

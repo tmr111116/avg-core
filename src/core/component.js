@@ -1,4 +1,4 @@
-import { mountComponent, updateComponent, mergeComponent } from './core';
+import { mountComponent, markAndGetInnerElement, updateComponent, mergeComponent, diffComponent, patchComponent } from './core';
 
 export class Component {
     constructor(props) {
@@ -14,35 +14,34 @@ export class Component {
         this._shouldUpdate = true;
     }
     setState(state) {
-        // 这里 state被提前合并，导致 shouldComponentUpdate 获取不到之前的state
+        // this.componentWillReceiveProps(nextElement.props);
+        // this._shouldUpdate = this.shouldComponentUpdate(nextElement.props, nextElement.state);
+        // let prevElement = this.render();
+        let prevShadow = mountComponent(...markAndGetInnerElement(this, this.props.index));
         Object.assign(this.state, state);
-        console.log(state)
-        let nextElement = this.render();
-        if (this.prevElement) {
-            // if (this.prevElement === this) {
-            //     let mergeResult = mergeComponent(this, nextElement);
-            //     this.props.children = mergeResult;
-            //     updateComponent(this, this);
-            // } else {
-                this.componentWillReceiveProps(nextElement.props);
-                this._shouldUpdate = this.shouldComponentUpdate(nextElement.props, nextElement.state);
-                if (this._shouldUpdate) {
-                    let mergeResult = mergeComponent(this.prevElement, nextElement);
-                    this.prevElement.props.children = mergeResult;
-                    this.componentWillUpdate();
-                    // let node = this.renderNode();
-                    // if (this.node !== node) {
-                    //     console.log('top level node changed!')
-                    //     let parent = this.node.parent;
-                    //     parent.removeChild(this.node);
-                    //     parent.addChild(node);
-                    //     this.node.destroy();
-                    // }
-                    updateComponent(this.prevElement, this);
-                    this.componentDidUpdate();
-                }
-            // }
+        if (this._shouldUpdate) {
+            // let nextElement = this.render();
+            let nextShadow = mountComponent(...markAndGetInnerElement(this, this.props.index));
+            let diffResult = diffComponent(prevShadow, nextShadow);
+            console.log(diffResult)
+        } else {
+
         }
+        // 这里 state被提前合并，导致 shouldComponentUpdate 获取不到之前的state
+        // Object.assign(this.state, state);
+        // console.log(state)
+        // let nextElement = this.render();
+        // if (this.prevElement) {
+        //     this.componentWillReceiveProps(nextElement.props);
+        //     this._shouldUpdate = this.shouldComponentUpdate(nextElement.props, nextElement.state);
+        //     if (this._shouldUpdate) {
+        //         let mergeResult = mergeComponent(this.prevElement, nextElement);
+        //         this.prevElement.props.children = mergeResult;
+        //         this.componentWillUpdate();
+        //         updateComponent(this.prevElement, this);
+        //         this.componentDidUpdate();
+        //     }
+        // }
 
     }
     getDefaultProps() {
@@ -71,23 +70,6 @@ export class Component {
     componentWillUnmount() {
 
     }
-    renderNode() {
-        if (this.node) {
-            return this.node;
-        }
-        else {
-            // if (this.prevElement !== this) {
-                this.componentWillMount();
-            // }
-            this.prevElement = this.render.call(this);
-            this.node = mountComponent(this.prevElement, this);
-            this._mounted = true;
-            // if (this.prevElement !== this) {
-                this.componentDidMount();
-            // }
-            return this.node;
-        }
-    }
     isMounted() {
         return this._mounted;
     }
@@ -96,13 +78,6 @@ export class Component {
         return this;
     }
     update() {
-        if (this.node) {
-            for (let child of this.prevElement.props.children) {
-                child.update();
-            }
-        } else {
-            this.renderNode();
-        }
     }
     // 判断是否相同
     equals() {
@@ -110,5 +85,38 @@ export class Component {
     }
     destroy() {
         this.node.destroy();
+    }
+}
+
+export class Shadow {
+    constructor(name, props, toNode, update) {
+        this.name = name;
+        this.props = props;
+        this.children = [];
+        this.toNode = toNode;
+        this.update = update;
+    }
+    addChild(child) {
+        child.parent = this;
+        this.children.push(child);
+    }
+    removeChild(child) {
+        if (child.parent === this) {
+            child.parent = null;
+            let childIndex = this.children.findIndex(_child => _child === child);
+            this.children.splice(childIndex, 1);
+        }
+    }
+    removeChildren() {
+        for (let child of this.children) {
+            child.parent = null;
+        }
+        this.children = [];
+    }
+    destroy() {
+        for (let child of this.children) {
+            child.destroy();
+        }
+        this.parent = null;
     }
 }
