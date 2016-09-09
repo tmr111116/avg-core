@@ -56,4 +56,4 @@ class Test extends Component {
 // </Image>
 // <Image file="assets/res/ch-2.png" x={80+this.state.x} y={100}/>
 //<Image style={{width: 960, height: 480}} src="assets/res/BG32a_1280.jpg" />
-render(<Test />, document.body)
+render(<Test />, document.body);

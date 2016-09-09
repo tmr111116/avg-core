@@ -1,6 +1,7 @@
 import ReactUpdates from 'react/lib/ReactUpdates';
 import emptyObject from 'fbjs/lib/emptyObject';
 import { attachToSprite } from 'Classes/EventManager';
+import Err from 'Classes/ErrorHandler';
 
 const NodeMixin = {
   construct: function(element) {
@@ -44,6 +45,8 @@ const NodeMixin = {
   getHostNode(...props) {
     // React@15.0 之后新添加的东西
     // 不知道干啥用的，先放着吧……
+    console.log(this.node)
+    return this.node;
   },
 
   mountComponent: function (transaction, nativeParent, nativeContainerInfo, context) {

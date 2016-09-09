@@ -5,7 +5,6 @@ import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
 import Sprite from 'Classes/Sprite';
-import Err from 'Classes/ErrorHandler';
 
 var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
