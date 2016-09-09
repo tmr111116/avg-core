@@ -14,7 +14,7 @@ import Layer from 'Classes/Layer';
  * ReactCanvas components cannot be rendered outside a Surface.
  */
 
-const Surface = React.createClass({
+export const Surface = React.createClass({
 
   mixins: [ContainerMixin],
 
@@ -29,6 +29,47 @@ const Surface = React.createClass({
   },
 
   componentDidMount: function () {
+    // scale
+    //
+    function adjustSize(exchange) {
+      // this.refs.canvas.webkitRequestFullScreen()
+      if (navigator.userAgent.toLowerCase().indexOf('mobile') !== -1) {
+        let width, height;
+        // if (exchange) {
+        //   width = document.body.clientHeight;
+        //   height = document.body.clientWidth;
+        // } else {
+          width = document.body.clientWidth;
+          height = document.body.clientHeight;
+        // }
+
+        var dom = this.refs.canvas;
+        // alert(height)
+        dom.style.width = '' + width + 'px';
+        // dom.style.height = '' + height + 'px';
+        // dom.style.objectFit = 'contain';
+      }
+    }
+    adjustSize.bind(this)()
+    window.onload = window.onorientationchange = () => {
+      console.log(window.orientation)
+      // switch(window.orientation) {
+      //   case 0:
+      //   case 180:
+      //     adjustSize.bind(this)(true);
+      //     this.refs.canvas.style.transform = 'rotate(90deg)';
+      //     this.refs.canvas.style.position = 'absolute';
+      //     this.refs.canvas.style.left = '-50%';
+      //     this.refs.canvas.style.top = '50%';
+      //     break;
+      //   default:
+      //     this.refs.canvas.style.transform = 'none';
+      //     adjustSize.bind(this)(false);break;
+      // }
+    }
+
+
+
     // Prepare the <canvas> for drawing.
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
       view: this.refs.canvas
@@ -93,9 +134,10 @@ const Surface = React.createClass({
 
   tick: function () {
     this.renderer.render(this.node);
-    requestAnimationFrame(this.tick);
+    // requestAnimationFrame(this.tick);
+    setTimeout(this.tick, 33);
   }
 
 });
 
-module.exports = Surface;
+// module.exports = Surface;

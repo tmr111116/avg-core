@@ -1,54 +1,89 @@
 'use strict';
 
-var createComponent = require('./createComponent');
-var LayerMixin = require('./LayerMixin');
+import React from 'react';
+import createComponent from 'core/createComponent';
+import ContainerMixin from 'core/ContainerMixin';
+import NodeMixin from 'core/NodeMixin';
+import TextSprite from 'Classes/TextSprite';
 
-var Text = createComponent('Text', LayerMixin, {
+var RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 
-  applyTextProps: function (prevProps, props) {
-    var style = (props && props.style) ? props.style : {};
-    var layer = this.node;
-
-    layer.type = 'text';
-    layer.text = childrenAsString(props.children);
-
-    layer.color = style.color;
-    layer.fontFace = style.fontFace;
-    layer.fontSize = style.fontSize;
-    layer.lineHeight = style.lineHeight;
-    layer.textAlign = style.textAlign;
+  createNode(element) {
+    this.node = new TextSprite();
   },
-
-  mountComponent: function (rootID, transaction, context) {
-    var props = this._currentElement.props;
+  mountNode(props) {
     var layer = this.node;
-    this.applyLayerProps({}, props);
-    this.applyTextProps({}, props);
+    let options = {
+      color: 0xffffff,
+      size: 24,
+      font: "sans-serif",
+      width: -1,
+      height: -1,
+      xinterval: 0,
+      yinterval: 3,
+      extrachar: "...",
+      bold: false,
+      italic: false,
+      strike: false,
+      under: false,
+      shadow: false,
+      shadowcolor: 0x0,
+      stroke: false,
+      strokecolor: 0x0,
+      ...props
+    };
+    layer.setText(props.text || props.children || "").setColor(options.color).setSize(options.size).setFont(options.font)
+             .setTextWidth(options.width).setTextHeight(options.height).setXInterval(options.xinterval).setYInterval(options.yinterval)
+             .setExtraChar(options.extrachar).setBold(options.bold).setItalic(options.italic)/*.setStrike(strike).setUnder(under)*/
+             .setShadow(options.shadow).setShadowColor(options.shadowcolor).setStroke(options.stroke).setStrokeColor(options.strokecolor)
+             .exec();
+    layer.x = props.x || 0;
+    layer.y = props.y || 0;
     return layer;
   },
-
-  receiveComponent: function (nextComponent, transaction, context) {
-    var props = nextComponent.props;
-    var prevProps = this._currentElement.props;
-    this.applyLayerProps(prevProps, props);
-    this.applyTextProps(prevProps, props);
-    this._currentElement = nextComponent;
-    this.node.invalidateLayout();
+  updateNode(prevProps, props) {
+    this.node.text = props.text || props.children || "";
+    this.node.x = props.x || 0;
+    this.node.y = props.y || 0;
+    let options = {
+        color: 0xffffff,
+        size: 24,
+        font: "sans-serif",
+        width: -1,
+        height: -1,
+        xinterval: 0,
+        yinterval: 3,
+        extrachar: "...",
+        bold: false,
+        italic: false,
+        strike: false,
+        under: false,
+        shadow: false,
+        shadowcolor: 0x0,
+        stroke: false,
+        strokecolor: 0x0,
+        ...props
+    }
+    this.node.setColor(options.color).setSize(options.size).setFont(options.font)
+    .setTextWidth(options.width).setTextHeight(options.height).setXInterval(options.xinterval).setYInterval(options.yinterval)
+    .setExtraChar(options.extrachar).setBold(options.bold).setItalic(options.italic)/*.setStrike(strike).setUnder(under)*/
+    .setShadow(options.shadow).setShadowColor(options.shadowcolor).setStroke(options.stroke).setStrokeColor(options.strokecolor)
+    .exec();
   }
 
 });
 
-function childrenAsString(children) {
-  if (!children) {
-    return '';
+export const Text = React.createClass({
+  displayName: 'Text',
+  propTypes: {
+    text: React.PropTypes.string,
+    x: React.PropTypes.number,
+    y: React.PropTypes.number,
+    children: React.PropTypes.element
+  },
+  render() {
+    return React.createElement(RawText, this.props, this.props.children);
   }
-  if (typeof children === 'string') {
-    return children;
-  }
-  if (children.length) {
-    return children.join('\n');
-  }
-  return '';
-}
+});
 
-module.exports = Text;
+// module.exports = Text;

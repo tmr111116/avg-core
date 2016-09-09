@@ -11,7 +11,7 @@ export function attachToSprite(sprite) {
 	sprite.on('mouseup', handleEvent);
 	sprite.on('touchstart', handleEvent);
 	sprite.on('touchmove', handleEvent);
-	sprite.on('touchEnd', handleEvent);
+	sprite.on('touchend', handleEvent);
 }
 
 let Handler;
@@ -29,7 +29,16 @@ function handleEvent(evt) {
 		Handler(e);
 	} else {
 		let defaultHandler = e.target['_on' + e.type];
-		defaultHandler && defaultHandler(e);
+		if (defaultHandler) {
+			// if (e.type === 'mousemove') {
+			// 	if (e.target.containsPoint(e.global)) {
+			// 		console.log(1111)
+			// 		defaultHandler(e);
+			// 	}
+			// } else {
+				defaultHandler(e);
+			// }
+		}
 	}
 }
 
@@ -44,7 +53,10 @@ class EventData {
 			y: evt.data.global.y
 		}
 		this.local = evt.target.toLocal(this.global);
-
+		this.movement = {
+			x: evt.data.originalEvent.movementX,
+			y: evt.data.originalEvent.movementY
+		};
 	}
 	stopPropagation() {
 		this.originalEvent.stopped = true;

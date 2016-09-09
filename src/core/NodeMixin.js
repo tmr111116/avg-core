@@ -4,6 +4,7 @@ import { attachToSprite } from 'Classes/EventManager';
 import Err from 'Classes/ErrorHandler';
 
 const NodeMixin = {
+  _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
   construct: function(element) {
     this._currentElement = element;
 
@@ -45,8 +46,7 @@ const NodeMixin = {
   getHostNode(...props) {
     // React@15.0 之后新添加的东西
     // 不知道干啥用的，先放着吧……
-    console.log(this.node)
-    return this.node;
+    return this;
   },
 
   mountComponent: function (transaction, nativeParent, nativeContainerInfo, context) {

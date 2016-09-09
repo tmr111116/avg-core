@@ -1,5 +1,6 @@
-export const Surface = require('core/Surface');
-export const Image = require('core/Image');
+export * from 'core/Surface';
+export * from 'core/Image';
+export * from 'core/Text';
 export React, { Component } from 'react';
 export { render } from 'react-dom';
 // export * from 'core/Image';

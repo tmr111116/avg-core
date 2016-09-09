@@ -25,16 +25,17 @@ var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
 });
 
-var Image = React.createClass({
+export const Image = React.createClass({
   displayName: 'Image',
   propTypes: {
     file: React.PropTypes.string.isRequired,
     x: React.PropTypes.number,
-    y: React.PropTypes.number
+    y: React.PropTypes.number,
+    rect: React.PropTypes.arrayOf(React.PropTypes.number)
   },
   render() {
     return React.createElement(RawImage, this.props, this.props.children);
   }
 });
 
-module.exports = Image;
+// module.exports = Image;
