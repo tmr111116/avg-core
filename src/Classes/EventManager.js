@@ -53,10 +53,16 @@ class EventData {
 			y: evt.data.global.y
 		}
 		this.local = evt.target.toLocal(this.global);
-		this.movement = {
-			x: evt.data.originalEvent.movementX,
-			y: evt.data.originalEvent.movementY
-		};
+
+		// 有时候会有奇怪的触发，导致 data.originalEvent 是 null……
+		if (evt.data.originalEvent) {
+			this.movement = {
+				x: evt.data.originalEvent.movementX,
+				y: evt.data.originalEvent.movementY
+			};
+		} else {
+			this.movement = {x: 0, y: 0};
+		}
 	}
 	stopPropagation() {
 		this.originalEvent.stopped = true;
