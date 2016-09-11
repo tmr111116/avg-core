@@ -52,7 +52,7 @@ export const Surface = React.createClass({
     }
     adjustSize.bind(this)()
     window.onload = window.onorientationchange = () => {
-      console.log(window.orientation)
+      // console.log(window.orientation)
       // switch(window.orientation) {
       //   case 0:
       //   case 180:

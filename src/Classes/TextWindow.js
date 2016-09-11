@@ -41,7 +41,7 @@ class TextWindow extends PIXI.Container {
 
         this.textSpeed = 20;    // characters per second
 
-        // this.textRectangle = [20,55,1008,231];
+        this.textRectangle = [20,55,1008,231];
 
         this.m_currentTextWidth = 0;
         this.m_currentTextHeight = 0;
@@ -320,9 +320,9 @@ class TextWindow extends PIXI.Container {
      * @method drawText
      * @param  {String} text what you want to print
      */
-    drawText(text){
+    drawText(text, clear=true){
         this.text = text;
-        this.initTextRender();
+        this.initTextRender(clear);
         return this.wait();
     }
 
@@ -334,14 +334,20 @@ class TextWindow extends PIXI.Container {
         this.textCanvas.width = this.textCanvas.width;
     }
 
+    completeText() {
+        this.m_lastTime = -99999999;
+    }
+
     /**
      * called before draw a text
      * @method initTextRender
      * @private
      */
-    initTextRender(){
-        this.textCanvas.width = this.textRectangle[2] * this.resolution;
-        this.textCanvas.height = this.textRectangle[3] * this.resolution;
+    initTextRender(clear){
+        if (clear) {
+            this.textCanvas.width = this.textRectangle[2] * this.resolution;
+            this.textCanvas.height = this.textRectangle[3] * this.resolution;
+        }
         // this.textContext.clear();
 
         // set text style
@@ -368,12 +374,14 @@ class TextWindow extends PIXI.Container {
         }
 
         // reset status variables
-        this.textIndex = 0;
         this.textRendering = true;
         this.m_lastTime = Date.now();
 
-        this.m_currentTextWidth = this.textRectangle[0]*this.resolution;
-        this.m_currentTextHeight = this.textRectangle[1]*this.resolution;
+        if (clear) {
+            this.textIndex = 0;
+            this.m_currentTextWidth = this.textRectangle[0]*this.resolution;
+            this.m_currentTextHeight = this.textRectangle[1]*this.resolution;
+        }
     }
 
 

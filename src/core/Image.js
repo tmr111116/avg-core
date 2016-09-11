@@ -6,6 +6,8 @@ import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
 import Sprite from 'Classes/Sprite';
 
+import equal from 'deep-equal';
+
 var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
   createNode(element) {
@@ -19,8 +21,12 @@ var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
      return layer;
    },
    updateNode(prevProps, props) {
-     this.node.x = props.x || 0;
-     this.node.y = props.y || 0;
+     var layer = this.node;
+     if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
+       layer.setFile(props.file).setRect(props.rect).execSync();
+     }
+     layer.x = props.x || 0;
+     layer.y = props.y || 0;
    }
 
 });
