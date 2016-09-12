@@ -15,7 +15,7 @@ var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
    },
    mountNode(props) {
      var layer = this.node;
-     layer.setFile(props.file).setRect(props.rect).execSync();
+     layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
      layer.x = props.x || 0;
      layer.y = props.y || 0;
      return layer;
@@ -23,7 +23,7 @@ var RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
    updateNode(prevProps, props) {
      var layer = this.node;
      if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
-       layer.setFile(props.file).setRect(props.rect).execSync();
+       layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
      }
      layer.x = props.x || 0;
      layer.y = props.y || 0;

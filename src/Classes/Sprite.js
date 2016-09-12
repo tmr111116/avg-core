@@ -54,6 +54,14 @@ class Sprite extends PIXI.Sprite {
 		return this;
 	}
 
+	setAnchor(anchor) {
+		if (anchor) {
+			this.anchor.x = anchor[0];
+			this.anchor.y = anchor[1];
+		}
+		return this;
+	}
+
     /**
      * Load the sprite.
      */
