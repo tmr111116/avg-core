@@ -14,11 +14,13 @@ export default class DragableText extends Component {
 			startGlobalX: e.global.x,
 			startGlobalY: e.global.y
 		});
+		e.stopPropagation();
 	}
 	handleTextMouseUp(e) {
 		this.setState({
 			clicked: false
 		});
+		e.stopPropagation();
 	}
 	handleTextMouseMove(e) {
 		if (this.state.clicked) {
@@ -28,6 +30,7 @@ export default class DragableText extends Component {
 				y: state.startY + (e.global.y - state.startGlobalY)
 			})
 		}
+		e.stopPropagation();
 	}
 	render() {
 		return <Text {...this.props}
