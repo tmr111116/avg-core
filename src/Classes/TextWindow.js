@@ -1,6 +1,7 @@
 var PIXI = require('../Library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
+import { getTexture } from 'Classes/Preloader';
 
 /**
  * Class representing a TextWindow. <br>
@@ -79,8 +80,12 @@ class TextWindow extends PIXI.Container {
     setBackgroundFile(filename){
         this.removeChild(this.background);
         this.background && this.background.destroy();
-        this.background = PIXI.Sprite.fromImage(filename);
-        this.addChildAt(this.background,0);
+        if (filename) {
+            this.background = new PIXI.Sprite(getTexture(filename));
+            this.addChildAt(this.background,0);
+        } else {
+            this.background = null;
+        }
     }
 
     /**
@@ -93,11 +98,15 @@ class TextWindow extends PIXI.Container {
     setBackgroundColor(color){
         this.removeChild(this.background);
         this.background && this.background.destroy();
-        this.background = new PIXI.Graphics();
-        /*绘制*/
-        let rect = this.textRectangle;
-        this.background.beginFill(color,1.0).drawRect(rect[0],rect[1],rect[2],rect[3]);
-        this.addChildAt(this.background,0);
+        if (color) {
+            this.background = new PIXI.Graphics();
+            /*绘制*/
+            let rect = this.textRectangle;
+            this.background.beginFill(color,1.0).drawRect(rect[0],rect[1],rect[2],rect[3]);
+            this.addChildAt(this.background,0);
+        } else {
+            this.background = null;
+        }
     }
 
     /**
@@ -137,7 +146,7 @@ class TextWindow extends PIXI.Container {
      * @param {number} value, px.
      * @returns {TextSprite} - this
      */
-    setXInterval(value){
+    setXInterval(value=0){
         this.style.xInterval = value;
     }
 
@@ -147,7 +156,7 @@ class TextWindow extends PIXI.Container {
      * @param {number} value, px.
      * @returns {TextSprite} - this
      */
-    setYInterval(value){
+    setYInterval(value=12){
         this.style.yInterval = value;
     }
 
@@ -157,7 +166,7 @@ class TextWindow extends PIXI.Container {
      * @param {boolean} enable if no value passes, it will be a switch.
      * @returns {TextSprite} - this
      */
-    setVisible(value){
+    setVisible(value=false){
         if (typeof value === 'undefined')
             this.visible = !this.visible;
         else
@@ -168,7 +177,7 @@ class TextWindow extends PIXI.Container {
      * @method setTextSize
      * @param {number} value
     */
-    setTextSize(value){
+    setTextSize(value=24){
         this.style.size = value;
     }
 
@@ -176,7 +185,7 @@ class TextWindow extends PIXI.Container {
      * @method setTextFont
      * @param {string} name
     */
-    setTextFont(name){
+    setTextFont(name="sans-serif"){
         this.style.font = name;
     }
 
@@ -184,7 +193,7 @@ class TextWindow extends PIXI.Container {
      * @method setTextColor
      * @param {number} color
     */
-    setTextColor(color){
+    setTextColor(color="#ffffff"){
         this.style.color = color;
     }
 
@@ -257,7 +266,7 @@ class TextWindow extends PIXI.Container {
      * @method setTextSpeed
      * @param {number} value - letters per second.
     */
-    setTextSpeed(value){
+    setTextSpeed(value=20){
         this.textSpeed = value;
     }
 
@@ -321,7 +330,11 @@ class TextWindow extends PIXI.Container {
      * @param  {String} text what you want to print
      */
     drawText(text, clear=true){
-        this.text = text;
+        if (clear) {
+            this.text = text;
+        } else {
+            this.text += text;
+        }
         this.initTextRender(clear);
         return this.wait();
     }

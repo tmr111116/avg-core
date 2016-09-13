@@ -18,7 +18,22 @@ export class FGImage extends React.Component {
     }
     execute(params, flags, name) {
         this.setState({...params});
-        return Promise.resolve;
+        return {
+            promise: Promise.resolve
+        };
+    }
+    reset() {
+        this.setState({
+            file: null,
+            x: 0,
+            y: 0
+        });
+    }
+    getData() {
+        return this.state;
+    }
+    setData(state) {
+        this.setState(state);
     }
     render() {
         return (

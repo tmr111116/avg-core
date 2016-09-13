@@ -1,20 +1,38 @@
 
 export default class Parser {
-    constructor(data) {
+    constructor(options={}) {
+
+        this.resourceHost = options.resourceHost || '';
 
         this.reset();
-
-        if (data) {
-            this.load(data);
-        }
     }
     load(data) {
         this.reset();
         this.data = data.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/^(?=\n)$|^\s*|\s*$|\n\n+/gm, '').split('\n');
+
+        let resources = this.resources;
+        let reg = new RegExp(/["']{1}(.+?\.(png|jpg|jpeg|webp))["']{1}/g);
+        let result = reg.exec(data);
+        while (result) {
+            resources.push(result[1]);
+            result = reg.exec(data);
+        }
     }
     reset() {
         this.data = [];
         this.currentLine = 0;
+        this.resources = [];
+    }
+
+    getResources() {
+        return this.resources;
+    }
+
+    getCurrentLine() {
+        return this.currentLine;
+    }
+    setCurrentLine(line) {
+        this.currentLine = line;
     }
 
     [Symbol.iterator]() {

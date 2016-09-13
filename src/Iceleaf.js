@@ -7,6 +7,7 @@ export * from 'core/Scene';
 export * from 'core/Textwindow';
 export * from 'core/BGImage';
 export * from 'core/FGImage';
+export { load as loadResource } from 'Classes/Preloader';
 export React, { Component } from 'react';
 export { render } from 'react-dom';
 // export * from 'core/Image';

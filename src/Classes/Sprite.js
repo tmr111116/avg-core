@@ -1,6 +1,7 @@
 var PIXI = require('../Library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
+import { getTexture } from 'Classes/Preloader';
 import Err from 'Classes/ErrorHandler';
 
 /**
@@ -66,7 +67,7 @@ class Sprite extends PIXI.Sprite {
      * Load the sprite.
      */
 	execSync(){
-		let tex = PIXI.Texture.fromImage(this.filename);
+		let tex = getTexture(this.filename);
 		try {
 			if(this.m_rect)
 				tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0],this.m_rect[1],this.m_rect[2],this.m_rect[3]));

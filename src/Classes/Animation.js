@@ -1,7 +1,8 @@
 var PIXI = require('../Library/pixi.js/src/index');
 var Err = require('./ErrorHandler');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
+import { TransitionPlugin } from './Transition/TransitionPlugin';
+import { TransitionFilter } from './Transition/TransitionFilter';
+import { getTexture } from 'Classes/Preloader';
 
 @TransitionPlugin
 class Animation extends PIXI.Sprite {
@@ -200,7 +201,7 @@ class Animation extends PIXI.Sprite {
 
 
     static loadHorizontal(file,frame,row=1){
-        let tex = PIXI.Texture.fromImage(file);
+        let tex = getTexture(file);
         let textures = [];
         tex.update();
         let deltaX = tex.width/frame;
@@ -211,7 +212,7 @@ class Animation extends PIXI.Sprite {
         return textures;
     }
     static loadVertical(file,frame,column=1){
-        let tex = PIXI.Texture.fromImage(file);
+        let tex = getTexture(file);
         let textures = [];
         let deltaX = tex.width/column;
         let deltaY = tex.height/frame;
@@ -223,7 +224,7 @@ class Animation extends PIXI.Sprite {
     static loadMultifiles(files){
         let textures = [];
         for (var i = 0; i < files.length; i++) {
-            let tex = PIXI.Texture.fromImage(files[i]);
+            let tex = getTexture(files[i]);
             textures.push(tex);
         };
         return textures;

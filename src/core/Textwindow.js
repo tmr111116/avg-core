@@ -29,7 +29,7 @@ var RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, 
     props.bold != null && layer.setTextBold(props.bold);
     props.italic != null && layer.setTextItalic(props.italic);
     props.speed && layer.setTextSpeed(props.speed);
-    // props.text && layer.drawText(props.text, true);
+    props.text && layer.drawText(props.text, true);
     layer.x = props.x || 0;
     layer.y = props.y || 0;
     return layer;
@@ -68,7 +68,7 @@ export class Textwindow extends React.Component {
   state = {
     props: {}
   }
-  execute(params, flags=[], name) {
+  execute(params, flags, name) {
     let layer = this.refs.layer;
     let promise = Promise.resolve;
     let waitClick = false;
@@ -78,6 +78,10 @@ export class Textwindow extends React.Component {
     if (flags.includes('set')) {
       this.setState({
         props: Object.assign({}, this.state.props, params)
+      });
+    } else if (flags.includes('reset')) {
+      this.setState({
+        props: this.props
       });
     } else if (flags.includes('continue')) {
       waitClick = true;
@@ -94,11 +98,19 @@ export class Textwindow extends React.Component {
       }
     };
   }
-  getData() {
-
+  reset() {
+    this.setState({
+      props: this.props
+    });
   }
-  setData() {
-
+  getData() {
+    let layer = this.refs.layer;
+    return {...this.state.props, text: layer.text};
+  }
+  setData(state) {
+    this.setState({
+      props: state
+    });
   }
   componentWillMount() {
     this.setState({
