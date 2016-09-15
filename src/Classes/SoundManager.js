@@ -31,9 +31,9 @@ export function setChannel(index, options) {
         }
 
         options = Object.assign({
-            autoplay: false,
+            autoplay: true,
             buffer: false,
-            loop: false,
+            loop: true,
             volume: 1,
             onEnd: () => {},
             onPlay: () => {},
@@ -48,7 +48,7 @@ export function setChannel(index, options) {
         }
         Channels[index] = ch = new Howler.Howl({
             urls: (options.file instanceof Array)?options.file:[options.file],
-            autoplay: options.autoPlay,
+            autoplay: options.autoplay,
             buffer: options.buffer,
             loop: options.loop,
             volume: options.volume,
@@ -69,15 +69,15 @@ export function setChannel(index, options) {
 
 // methods
 export function setVolume(channel, value) {    //value区间0-1
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => ch.volume(value))
 }
 export function setPosition(channel, value) {  //value单位是秒
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => ch.pos(value))
 }
 export function play(channel) {
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => {
         ch.play();
         ch.m_status = 'play';
@@ -85,23 +85,33 @@ export function play(channel) {
 }
 
 export function pause(channel) {
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => {
         ch.pause();
         ch.m_status = (ch.m_status==='pause')?'play':'pause';
     })
 }
 export function stop(channel) {
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => {
         ch.stop();
         ch.unload();
     })
 }
-export function fadeTo(channel,to,duration,cb) {
-    getChannel(channel)
+export function fade(channel,from,to,duration,cb) {
+    return getChannel(channel)
     .then(ch => {
-        ch.fade(ch.volume(),to,duration,cb);
+        from != null && ch.volume(from);
+        if (ch.m_status !== 'play') {
+            ch.play();
+        }
+        if (cb) {
+            ch.fade(ch.volume(),to,duration,cb);
+        } else {
+            return new Promise((resolve, reject) => {
+                ch.fade(ch.volume(),to,duration,resolve);
+            });
+        }
     })
 }
 export function stopAll() {
@@ -112,7 +122,7 @@ export function stopAll() {
         }
 }
 export function state(channel) {
-    getChannel(channel)
+    return getChannel(channel)
     .then(ch => {
         return ch.m_status;
     })

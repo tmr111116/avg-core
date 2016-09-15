@@ -11,20 +11,22 @@ import equal from 'deep-equal';
 var RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, {
 
   createNode(element) {
-     this.node = new pixiContainer();
-   },
-   mountNode(props) {
-     // color, opacity, width, height, x, y, etc.
-     var layer = this.node;
-     layer.x = props.x || 0;
-     layer.y = props.y || 0;
-     return layer;
-   },
-   updateNode(prevProps, props) {
-     var layer = this.node;
-	 layer.x = props.x || 0;
-	 layer.y = props.y || 0;
-   }
+    this.node = new pixiContainer();
+  },
+  mountNode(props) {
+    // color, opacity, width, height, x, y, etc.
+    var layer = this.node;
+    layer.x = props.x || 0;
+    layer.y = props.y || 0;
+    layer.alpha = props.opactiy || 1;
+    return layer;
+  },
+  updateNode(prevProps, props) {
+    var layer = this.node;
+	  layer.x = props.x || 0;
+	  layer.y = props.y || 0;
+    layer.alpha = props.opactiy || 1;
+  }
 
 });
 

@@ -29,6 +29,7 @@
     "json-loader": "^0.5.3",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
+    "react-router": "^2.8.1",
     "style-loader": "^0.13.1",
     "transform-loader": "^0.2.3",
     "webpack": "^1.13.0",

@@ -2,8 +2,6 @@
 export default class Parser {
     constructor(options={}) {
 
-        this.resourceHost = options.resourceHost || '';
-
         this.reset();
     }
     load(data) {
@@ -49,7 +47,18 @@ export default class Parser {
 }
 
 export function parse(line) {
-    line = getContent(line);
+    let valid;
+    [line, valid] = getContent(line);
+
+    if (!valid) {
+        return {
+            command: '*',
+            flags: [],
+            params: {
+                raw: getValue(`"${line.replace(/"/g, '࿉')}"`).replace(/࿉/g, '"')
+            }
+        };
+    }
 
     if (line.search(/^(([a-zA-Z_]+\d*)(=((\S+?)|(["'`].*?["'`]))+)?\s*)+?$/) === -1) {
         throw 'Wrong script.';
@@ -76,9 +85,9 @@ export function parse(line) {
     for (let [i, statement] of iterator) {
         let ret = parseStatement(statement.replace(/࿉/g, ' '));
         if (ret.length > 1) {
-            result.params[ret[0]] = ret[1];
+            result.params[ret[0].toLowerCase()] = ret[1];
         } else {
-            result.flags.push(ret[0])
+            result.flags.push(ret[0].toLowerCase())
         }
     }
 
@@ -89,11 +98,11 @@ export function parse(line) {
 function getContent(line) {
     line = line.trim();
     if (line.startsWith('@')) {
-        return line.substr(1);
+        return [line.substr(1), true];
     } else if (line.startsWith('[') && line.endsWith(']')) {
-        return line.substr(1, line.length - 2);
+        return [line.substr(1, line.length - 2), true];
     } else {
-        throw 'Invalid script format.';
+        return [line, false];
     }
 }
 

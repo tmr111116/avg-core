@@ -30,6 +30,7 @@ class Container extends PIXI.Container {
 		return this;
 	}
 
+
 }
 
 TransitionPlugin(Container);

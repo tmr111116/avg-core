@@ -36,19 +36,18 @@ export const Scene = React.createClass({
   propTypes: {
   },
   components: {},
-  parser: new Parser({
-    resourceHost: 'https://7xi9kn.com1.z0.glb.clouddn.com'
-  }),
+  parser: new Parser(),
   script: '',
   clickCallback: null,
   loading: false,
+  waiting: false,
   getInitialState() {
     return {
       empty: false
     }
   },
   async componentDidMount() {
-    this.bindCommand([this]);
+    this.bindCommand('*', this);
     await this.loadScript(this.props.script);
     this.beginStory();
     // this.bindCommand(this.getChildrenArray(this.props.children));
@@ -123,20 +122,29 @@ export const Scene = React.createClass({
     await this.loadScript(sceneData.script);
     this.parser.setCurrentLine(sceneData.line);
   },
-  bindCommand(children) {
-    for (let child of children) {
-      if (child.execute && child.reset && child.getData && child.setData) {
-        let name = (child.props.commandName || child.constructor.name).toLowerCase();
-        this.components[name] = child;
-        console.log(`已绑定命令<${name}>`);
+  bindCommand(name, provider) {
+    // for (let child of children) {
+      if (provider.execute && provider.reset && provider.getData && provider.setData) {
+        // let name = (provider.props.commandName || provider.constructor.name).toLowerCase();
+
+        if (typeof name === 'string') {
+          this.components[name] = provider;
+          console.log(`已绑定命令<${name}>`);
+        } else {
+          for (let _name of name) {
+            this.components[_name] = provider;
+            console.log(`已绑定命令<${_name}>`);
+          }
+        }
+
       } else {
-        Err.warn(`${child.constructor.name} is not a valid command component`);
+        Err.warn(`${provider.constructor.name} is not a valid command component`);
       }
       // let grandChildren = this.getChildrenArray(child.props.children);
 			// if (grandChildren.length) {
 			// 	this.bindCommand(grandChildren);
 			// }
-    }
+    // }
   },
   async loadScript(scriptUrl) {
 		if (scriptUrl) {
@@ -159,9 +167,14 @@ export const Scene = React.createClass({
       let component = this.components[name];
       let execute = component.execute;
 			if (execute) {
+        this.waiting = true;
         let { promise, waitClick, clickCallback } = await execute.call(component, params, flags, name);
         this.clickCallback = clickCallback;
-        await promise;
+        if (promise) {
+          await promise;
+        }
+        // await promise;
+        this.waiting = false;
         this.clickCallback = null;
         if (waitClick) {
           break;
@@ -184,7 +197,7 @@ export const Scene = React.createClass({
     if (callback) {
       callback(e);
     } else {
-      this.beginStory();
+      !this.waiting && this.beginStory();
     }
   },
   render() {

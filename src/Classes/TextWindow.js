@@ -423,11 +423,15 @@ class TextWindow extends PIXI.Container {
             this.textCursor.visible = false;
 
         for (let i = this.textIndex; i < this.textIndex+count; i++) {
-
+            let character = this.text[i];
+            if (character === '\n') {
+                this.newline();
+                continue;
+            }
             // print characters, calculate delta
-            this.textContext.fillText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
-            if(this.style.stroke) this.textContext.strokeText(this.text[i],this.m_currentTextWidth,this.m_currentTextHeight);
-            let width = this.textContext.measureText(this.text[i]).width;   //字号已经*this.resolution，无需再乘
+            this.textContext.fillText(character,this.m_currentTextWidth,this.m_currentTextHeight);
+            if(this.style.stroke) this.textContext.strokeText(character,this.m_currentTextWidth,this.m_currentTextHeight);
+            let width = this.textContext.measureText(character).width;   //字号已经*this.resolution，无需再乘
             this.m_currentTextWidth += width + this.style.xInterval*this.resolution;
             if(this.m_currentTextWidth+width>=this.textRectangle[2]*this.resolution)
             {

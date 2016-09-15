@@ -31,6 +31,14 @@ class TextSprite extends PIXI.Text {
 		return this;
 	}
 
+    setAnchor(anchor) {
+		if (anchor) {
+			this.anchor.x = anchor[0];
+			this.anchor.y = anchor[1];
+		}
+		return this;
+	}
+
     /**
      * Specify text content.
      * This method do not take effect until {@link TextSprite#exec} is called.

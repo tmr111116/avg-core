@@ -4,8 +4,8 @@ var Err = require('./ErrorHandler');
 const TEXTURES = {};
 
 export function load(resources) {
-    var loader = new PIXI.loaders.Loader('https://7xi9kn.com1.z0.glb.clouddn.com');
-    for (let res of resources) {
+    var loader = new PIXI.loaders.Loader('/'); //https://7xi9kn.com1.z0.glb.clouddn.com
+    for (let res of [...new Set(resources)]) {
         loader.add(res, res);
     }
     let promise = new Promise((resolve, reject) => {

@@ -70,12 +70,16 @@ export class Textwindow extends React.Component {
   }
   execute(params, flags, name) {
     let layer = this.refs.layer;
-    let promise = Promise.resolve;
+    let promise = Promise.resolve();
     let waitClick = false;
     if (flags.includes('clear')) {
-      layer.clearText();
-    }
-    if (flags.includes('set')) {
+      // layer.clearText();
+      layer.drawText("", true); // it is a hack
+    } else if (flags.includes('set')) {
+      params.bgfile && (params.bgFile = params.bgfile);
+      params.textrect && (params.textRect = params.textrect);
+      params.xinterval && (params.xInterval = params.xinterval);
+      params.yinterval && (params.yInterval = params.yinterval);
       this.setState({
         props: Object.assign({}, this.state.props, params)
       });
@@ -83,6 +87,10 @@ export class Textwindow extends React.Component {
       this.setState({
         props: this.props
       });
+    } else if (flags.includes('show')) {
+      layer.visible = true;
+    } else if (flags.includes('hide')) {
+      layer.visible = false;
     } else if (flags.includes('continue')) {
       waitClick = true;
       promise = layer.drawText(params.text, false);

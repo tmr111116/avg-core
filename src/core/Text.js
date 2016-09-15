@@ -32,7 +32,7 @@ var RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
       strokecolor: 0x0,
       ...props
     };
-    layer.setText(props.text || props.children || "").setColor(options.color).setSize(options.size).setFont(options.font)
+    layer.setText(props.text || props.children || "").setAnchor(options.anchor).setColor(options.color).setSize(options.size).setFont(options.font)
              .setTextWidth(options.width).setTextHeight(options.height).setXInterval(options.xinterval).setYInterval(options.yinterval)
              .setExtraChar(options.extrachar).setBold(options.bold).setItalic(options.italic)/*.setStrike(strike).setUnder(under)*/
              .setShadow(options.shadow).setShadowColor(options.shadowcolor).setStroke(options.stroke).setStrokeColor(options.strokecolor)
@@ -64,7 +64,7 @@ var RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
         strokecolor: 0x0,
         ...props
     }
-    this.node.setColor(options.color).setSize(options.size).setFont(options.font)
+    this.node.setAnchor(options.anchor).setColor(options.color).setSize(options.size).setFont(options.font)
     .setTextWidth(options.width).setTextHeight(options.height).setXInterval(options.xinterval).setYInterval(options.yinterval)
     .setExtraChar(options.extrachar).setBold(options.bold).setItalic(options.italic)/*.setStrike(strike).setUnder(under)*/
     .setShadow(options.shadow).setShadowColor(options.shadowcolor).setStroke(options.stroke).setStrokeColor(options.strokecolor)

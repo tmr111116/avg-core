@@ -48,7 +48,7 @@ class Layer extends PIXI.Container {
 		this.rectWidth = width || this.rectWidth || 10;
 		this.rectHeight = height || this.rectHeight || 10;
 		this.fillColor = color || this.fillColor || 0x000000;
-		this.fillAlpha = alpha || this.fillAlpha || 1;
+		this.fillAlpha = (alpha === 0) ? alpha : (this.fillAlpha || 1);
 		this.background.clear();
 		this.background.beginFill(this.fillColor, this.fillAlpha);
 		this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);

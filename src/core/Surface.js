@@ -7,7 +7,7 @@ import invariant from 'fbjs/lib/invariant';
 import ContainerMixin from 'core/ContainerMixin';
 
 import PIXI from '../Library/pixi.js/src/index';
-import Layer from 'Classes/Layer';
+import Container from 'Classes/Container';
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
@@ -74,7 +74,7 @@ export const Surface = React.createClass({
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
       view: this.refs.canvas
     });
-    this.node = new Layer();
+    this.node = new Container();
     window.stage = this.node;
     // window.renderer = this.renderer;
 
