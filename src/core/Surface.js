@@ -74,6 +74,7 @@ export const Surface = React.createClass({
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
       view: this.refs.canvas
     });
+    PIXI.currentRenderer = this.renderer;
     this.node = new Container();
     window.stage = this.node;
     // window.renderer = this.renderer;

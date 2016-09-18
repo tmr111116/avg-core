@@ -14,6 +14,8 @@ class TextWindow extends PIXI.Container {
         this.visible = false;
         this.zorder = 50;
 
+        this.filters = [new TransitionFilter];
+
         // text layer
         this.textCanvas = document.createElement('canvas');
         this.textContext = this.textCanvas.getContext('2d');

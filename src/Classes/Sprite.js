@@ -16,6 +16,7 @@ class Sprite extends PIXI.Sprite {
 	constructor(){
 		super();
 		this.zorder = 0;
+		// this.texture = PIXI.Texture.fromImage('assets/res/bg1.png');
 
         this.filters = [new TransitionFilter];
 

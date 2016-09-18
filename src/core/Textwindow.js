@@ -5,6 +5,8 @@ import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
 import pixiTextwindow from 'Classes/Textwindow';
+import { Container } from './Container';
+import { transition } from './decorators/transition';
 
 import equal from 'deep-equal';
 
@@ -67,11 +69,13 @@ export class Textwindow extends React.Component {
   };
   state = {
     props: {}
-  }
+  };
+  @transition('wrapper')
   execute(params, flags, name) {
     let layer = this.refs.layer;
     let promise = Promise.resolve();
     let waitClick = false;
+    let clickCallback = null;
     if (flags.includes('clear')) {
       // layer.clearText();
       layer.drawText("", true); // it is a hack
@@ -88,22 +92,22 @@ export class Textwindow extends React.Component {
         props: this.props
       });
     } else if (flags.includes('show')) {
-      layer.visible = true;
+      layer.setVisible(true);
     } else if (flags.includes('hide')) {
-      layer.visible = false;
+      layer.setVisible(false);
     } else if (flags.includes('continue')) {
       waitClick = true;
       promise = layer.drawText(params.text, false);
+      clickCallback = () => layer.completeText();
     } else {
       waitClick = true;
       promise = layer.drawText(params.text, true);
+      clickCallback = () => layer.completeText();
     }
     return {
       waitClick: waitClick,
       promise: flags.includes('nowait') ? Promise.resolve() : promise,
-      clickCallback: () => {
-        layer.completeText();
-      }
+      clickCallback: clickCallback
     };
   }
   reset() {
@@ -126,7 +130,11 @@ export class Textwindow extends React.Component {
     });
   }
   render() {
-    return <RawTextwindow {...this.state.props} ref={'layer'}>{this.props.children}</RawTextwindow>
+    return (
+      <Container ref='wrapper'>
+        <RawTextwindow {...this.state.props} ref={'layer'}>{this.props.children}</RawTextwindow>
+      </Container>
+    )
   }
 }
 

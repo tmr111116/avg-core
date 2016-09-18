@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image } from './Image';
+import { transition } from './decorators/transition';
 
 export class BGImage extends React.Component {
     constructor(props) {
@@ -11,6 +12,7 @@ export class BGImage extends React.Component {
             y: 0
         }
     }
+    @transition('layer')
     execute(params, flags, name) {
         this.setState({...params});
         return {
@@ -31,6 +33,6 @@ export class BGImage extends React.Component {
         this.setState(state);
     }
     render() {
-        return <Image file={this.state.file || ""} x={0} y={0} />
+        return <Image file={this.state.file || ""} x={0} y={0} ref='layer'/>
     }
 }

@@ -52,7 +52,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
 
         return new Promise((resolve, reject) => {
             this.m_resolve = resolve;
-        })
+        });
 
     }
 
@@ -61,7 +61,6 @@ export class TransitionFilter extends PIXI.AbstractFilter {
     }
 
     applyFilter(renderer, input, output, clear){
-
         if(this.start && this.filter)
         {
             let filter = this.filter;

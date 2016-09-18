@@ -4,7 +4,7 @@ import React from 'react';
 import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
-import pixiContainer from 'Classes/Container';
+import pixiContainer from 'Classes/Sprite';
 
 import equal from 'deep-equal';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container } from './Container';
 import { Image } from './Image';
+import { transition } from './decorators/transition';
 
 export class FGImage extends React.Component {
     static propTypes = {
@@ -16,6 +17,7 @@ export class FGImage extends React.Component {
             y: 0
         }
     }
+    @transition('layer')
     execute(params, flags, name) {
         this.setState({...params});
         return {
@@ -37,7 +39,7 @@ export class FGImage extends React.Component {
     }
     render() {
         return (
-            <Container>
+            <Container ref='layer'>
                 <Image file={this.state.file || ""} x={this.props.width/2} y={this.props.height} anchor={[0.5, 1]}/>
             </Container>
         )
