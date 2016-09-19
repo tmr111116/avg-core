@@ -31,13 +31,19 @@ var RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 export const Layer = React.createClass({
   displayName: 'Layer',
   propTypes: {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
     x: React.PropTypes.number,
     y: React.PropTypes.number
   },
   render() {
-    return React.createElement(RawLayer, this.props, this.props.children);
+    let props = {
+      width: PIXI.currentRenderer.width,
+      height: PIXI.currentRenderer.height,
+      opacity: 0,
+      ...this.props
+    };
+    return React.createElement(RawLayer, props, this.props.children);
   }
 });
 

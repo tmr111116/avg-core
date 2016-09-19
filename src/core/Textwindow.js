@@ -5,7 +5,7 @@ import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
 import pixiTextwindow from 'Classes/Textwindow';
-import { Container } from './Container';
+import { Layer } from './Layer';
 import { transition } from './decorators/transition';
 
 import equal from 'deep-equal';
@@ -131,9 +131,9 @@ export class Textwindow extends React.Component {
   }
   render() {
     return (
-      <Container ref='wrapper'>
+      <Layer ref='wrapper'>
         <RawTextwindow {...this.state.props} ref={'layer'}>{this.props.children}</RawTextwindow>
-      </Container>
+      </Layer>
     )
   }
 }

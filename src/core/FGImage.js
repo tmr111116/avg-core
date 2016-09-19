@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from './Container';
+import { Layer } from './Layer';
 import { Image } from './Image';
 import { transition } from './decorators/transition';
 
@@ -39,9 +39,9 @@ export class FGImage extends React.Component {
     }
     render() {
         return (
-            <Container ref='layer'>
+            <Layer ref='layer'>
                 <Image file={this.state.file || ""} x={this.props.width/2} y={this.props.height} anchor={[0.5, 1]}/>
-            </Container>
+            </Layer>
         )
     }
 }
