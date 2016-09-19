@@ -1,6 +1,6 @@
-var PIXI = require('../Library/pixi.js/src/index');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
+const PIXI = require('../Library/pixi.js/src/index');
+import { TransitionPlugin } from './Transition/TransitionPlugin';
+import { TransitionFilter } from './Transition/TransitionFilter';
 
 /**
  * Class representing a Layer.
@@ -11,18 +11,17 @@ class Layer extends PIXI.Container {
      * Create a sprite.
      * It is a empty sprite, you should specify is content (use {@link Sprite#setFile}, for example) and call {@link Sprite#execSync}.
      */
-	constructor(){
-		super();
-		this.zorder = 0;
+  constructor() {
+    super();
+    this.zorder = 0;
 
-		this.background = new PIXI.Graphics();
-		this.addChild(this.background);
+    this.background = new PIXI.Graphics();
+    this.addChild(this.background);
 
-		this.setProperties({});
+    this.setProperties({});
 
-        this.filters = [new TransitionFilter];
-
-	}
+    this.filters = [new TransitionFilter()];
+  }
 
     /**
      * Specify sprite index.
@@ -30,10 +29,10 @@ class Layer extends PIXI.Container {
      * @param {number} index - the id of sprite
      * @returns {Sprite} - this
      */
-	setIndex(index){
-		this.index = index;
-		return this;
-	}
+  setIndex(index) {
+    this.index = index;
+    return this;
+  }
 
     /**
      * Specify sprite area you wish to use in the sprite.
@@ -42,29 +41,29 @@ class Layer extends PIXI.Container {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-	setProperties({x, y, width, height, color, opacity: alpha}){
-		this.x = x || this.x || 0;
-		this.y = y || this.y || 0;
-		this.rectWidth = width || this.rectWidth || 10;
-		this.rectHeight = height || this.rectHeight || 10;
-		this.fillColor = color || this.fillColor || 0x000000;
-		this.fillAlpha = (alpha === 0) ? alpha : (this.fillAlpha || 1);
-		this.background.clear();
-		this.background.beginFill(this.fillColor, this.fillAlpha);
-		this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
-		this.background.endFill();
-		return this;
-	}
+  setProperties({ x, y, width, height, color, opacity: alpha }) {
+    this.x = x || this.x || 0;
+    this.y = y || this.y || 0;
+    this.rectWidth = width || this.rectWidth || 10;
+    this.rectHeight = height || this.rectHeight || 10;
+    this.fillColor = color || this.fillColor || 0x000000;
+    this.fillAlpha = (alpha === 0) ? alpha : (this.fillAlpha || 1);
+    this.background.clear();
+    this.background.beginFill(this.fillColor, this.fillAlpha);
+    this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
+    this.background.endFill();
+    return this;
+  }
 
-	removeChildren() {
-		super.removeChildren();
-		this.addChild(this.background);
-	}
+  removeChildren() {
+    super.removeChildren();
+    this.addChild(this.background);
+  }
 
-	destroy() {
-		this.background.destroy();
-		super.destroy();
-	}
+  destroy() {
+    this.background.destroy();
+    super.destroy();
+  }
 
 }
 

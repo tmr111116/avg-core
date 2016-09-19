@@ -1,6 +1,6 @@
 
 
-import {ErrorHandler as Err} from '../ErrorHandler';
+import { ErrorHandler as Err } from '../ErrorHandler';
 
 /*
 * 抽象动作类
@@ -9,67 +9,63 @@ import {ErrorHandler as Err} from '../ErrorHandler';
 */
 
 export default class AbstractAction {
-	constructor(duration,target) {
-		this.duration = duration;
-		this.finished = true;
-		this.target = target;
-		this.times = 0;
-	}
-	
-	initAction(time,target){
-		this.startTime = time;
-		this.lastProgress = 0;
-	}
-	
-	reset(){
-		this.startTime = null;
-		this.finished = false;
-	}
-    
-    resetTimes(){
-        this.times = 0;
+  constructor(duration, target) {
+    this.duration = duration;
+    this.finished = true;
+    this.target = target;
+    this.times = 0;
+  }
+
+  initAction(time, target) {
+    this.startTime = time;
+    this.lastProgress = 0;
+  }
+
+  reset() {
+    this.startTime = null;
+    this.finished = false;
+  }
+
+  resetTimes() {
+    this.times = 0;
+  }
+
+  update(time, target, times) {
+    // console.log(times)
+    if (this.finished && (this.times < times))
+    {
+      this.reset();
+      this.times++;
+      return false;
     }
-	
-	update(time,target,times){
-		// console.log(times)
-		if(this.finished && (this.times < times))
-		{
-			this.reset();
-			this.times++;
-			return false
-		}
-		else if(this.finished)
-			return true;
-			
-		if(!this.startTime){
-			this.initAction(time,this.target || target);
-			return false;
-		}
-		
-		if(time - this.startTime < 0)
-			return false;
-		
-		let progress = (time - this.startTime) / this.duration;
-		
-		if(progress >= 1){
-			progress = 1;
-			this.finished = true;
-		}
+    else if (this.finished)
+      return true;
 
-		this.updateTransform(progress,this.lastProgress,this.target || target);
-		
-		this.lastProgress = progress;
-		
-		return this.finished;
+    if (!this.startTime) {
+      this.initAction(time, this.target || target);
+      return false;
+    }
 
-	}
-	
-	updateTransform(progress,lastProgress,target){
-		
-	}
+    if (time - this.startTime < 0)
+      return false;
+
+    let progress = (time - this.startTime) / this.duration;
+
+    if (progress >= 1) {
+      progress = 1;
+      this.finished = true;
+    }
+
+    this.updateTransform(progress, this.lastProgress, this.target || target);
+
+    this.lastProgress = progress;
+
+    return this.finished;
+  }
+
+  updateTransform(progress, lastProgress, target) {
+
+  }
 
 }
-
-
-
 

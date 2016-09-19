@@ -23,7 +23,7 @@ var RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
   },
   updateNode(prevProps, props) {
     var layer = this.node;
-	  layer.setProperties(props);
+    layer.setProperties(props);
   }
 
 });

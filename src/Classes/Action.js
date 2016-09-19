@@ -13,23 +13,20 @@ import VisibleAction from './Actions/VisibleAction';
 import TintToAction from './Actions/TintToAction';
 import TintByAction from './Actions/TintByAction';
 
-let Action = {
-	MoveByAction: MoveByAction,
-	MoveToAction: MoveToAction,
-	FadeToAction: FadeToAction,
-	ScaleByAction: ScaleByAction,
-	ScaleToAction: ScaleToAction,
-	RotateByAction: RotateByAction,
-	RotateToAction: RotateToAction,
-	DelayAction: DelayAction,
-	RemoveAction: RemoveAction,
-	VisibleAction: VisibleAction,
-	TintToAction: TintToAction,
-	TintByAction: TintByAction
-}
+const Action = {
+  MoveByAction,
+  MoveToAction,
+  FadeToAction,
+  ScaleByAction,
+  ScaleToAction,
+  RotateByAction,
+  RotateToAction,
+  DelayAction,
+  RemoveAction,
+  VisibleAction,
+  TintToAction,
+  TintByAction,
+};
 
 export default Action;
-
-
-
 

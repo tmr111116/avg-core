@@ -74,7 +74,7 @@ class TextWindow extends PIXI.Container {
 
     /**
      * Specify background image.
-     * 	Background can only be image or color, and cannot be both.
+     *   Background can only be image or color, and cannot be both.
      * @method setBackgroundFile
      * @param {string} filename
      * @returns {TextWindow} - this
@@ -92,7 +92,7 @@ class TextWindow extends PIXI.Container {
 
     /**
      * Specify background color.
-     * 	Background can only be image or color, and cannot be both.
+     *   Background can only be image or color, and cannot be both.
      * @method setBackgroundColor
      * @param {string} color
      * @returns {TextWindow} - this
@@ -492,22 +492,22 @@ class TextWindow extends PIXI.Container {
     }
 
     removeChildren() {
-		super.removeChildren();
-		this.addChild(this.background);
-		this.addChild(this.textSprite);
-		this.addChild(this.textCursor);
-	}
+    super.removeChildren();
+    this.addChild(this.background);
+    this.addChild(this.textSprite);
+    this.addChild(this.textCursor);
+  }
 
     // addChild(...args) {
     //     super.addChild(...args);
     // }
 
-	destroy() {
-		this.background.destroy();
-		this.textSprite.destroy();
-		this.textCursor.destroy();
-		super.destroy();
-	}
+  destroy() {
+    this.background.destroy();
+    this.textSprite.destroy();
+    this.textCursor.destroy();
+    super.destroy();
+  }
 
 }
 

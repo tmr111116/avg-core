@@ -5,7 +5,7 @@ import Err from 'Classes/ErrorHandler';
 
 const NodeMixin = {
   _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
-  construct: function(element) {
+  construct(element) {
     this._currentElement = element;
 
     this.createNode(element);
@@ -16,29 +16,29 @@ const NodeMixin = {
     // bind event handlers
     attachToSprite(this.node);
     this.node.buttonMode = false;
-    let keys = Object.keys(element.props);
-    for (let key of keys) {
+    const keys = Object.keys(element.props);
+    for (const key of keys) {
       if (/^on[A-Z]/.test(key)) {
-          if (key === 'onClick') {
-              this.node.buttonMode = true;
-          }
-          this.node['_on' + key.replace(/^on/, '').toLowerCase()] = element.props[key].bind(element);
+        if (key === 'onClick') {
+          this.node.buttonMode = true;
+        }
+        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = element.props[key].bind(element);
       }
     }
   },
 
-  getPublicInstance: function() {
+  getPublicInstance() {
     return this.node;
   },
 
-  mountComponentIntoNode: function(rootID, container) {
+  mountComponentIntoNode(rootID, container) {
     throw new Error(
       'You cannot render a Canvas component standalone. ' +
       'You need to wrap it in a Surface.'
     );
   },
 
-  unmountComponent: function() {
+  unmountComponent() {
     // this.destroyEventListeners();
     this.node.removeChildren();
   },
@@ -49,10 +49,10 @@ const NodeMixin = {
     return this;
   },
 
-  mountComponent: function (transaction, nativeParent, nativeContainerInfo, context) {
-    var props = this._currentElement.props;
+  mountComponent(transaction, nativeParent, nativeContainerInfo, context) {
+    const props = this._currentElement.props;
 
-    let layer = this.mountNode(props);
+    const layer = this.mountNode(props);
 
     var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
     transaction.perform(
@@ -66,9 +66,9 @@ const NodeMixin = {
     return layer;
   },
 
-  receiveComponent: function (nextComponent, transaction, context) {
-    var prevProps = this._currentElement.props;
-    var props = nextComponent.props;
+  receiveComponent(nextComponent, transaction, context) {
+    const prevProps = this._currentElement.props;
+    const props = nextComponent.props;
 
     this.updateNode(prevProps, props);
 
@@ -82,7 +82,7 @@ const NodeMixin = {
     ReactUpdates.ReactReconcileTransaction.release(transaction);
 
     this._currentElement = nextComponent;
-  }
+  },
 };
 
 export default NodeMixin;

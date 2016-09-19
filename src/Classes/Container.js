@@ -1,6 +1,6 @@
-var PIXI = require('../Library/pixi.js/src/index');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
+const PIXI = require('../Library/pixi.js/src/index');
+import { TransitionPlugin } from './Transition/TransitionPlugin';
+import { TransitionFilter } from './Transition/TransitionFilter';
 
 /**
  * Class representing a Container.
@@ -11,13 +11,12 @@ class Container extends PIXI.Container {
      * Create a sprite.
      * It is a empty sprite, you should specify is content (use {@link Sprite#setFile}, for example) and call {@link Sprite#execSync}.
      */
-	constructor(){
-		super();
-		this.zorder = 0;
+  constructor() {
+    super();
+    this.zorder = 0;
 
-        this.filters = [new TransitionFilter];
-
-	}
+    this.filters = [new TransitionFilter()];
+  }
 
     /**
      * Specify sprite index.
@@ -25,10 +24,10 @@ class Container extends PIXI.Container {
      * @param {number} index - the id of sprite
      * @returns {Sprite} - this
      */
-	setIndex(index){
-		this.index = index;
-		return this;
-	}
+  setIndex(index) {
+    this.index = index;
+    return this;
+  }
 
 
 }

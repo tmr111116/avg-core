@@ -54,7 +54,7 @@ var RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, 
     layer.x = props.x || 0;
     layer.y = props.y || 0;
 
-	//  layer.setProperties(props);
+  //  layer.setProperties(props);
   }
 
 });

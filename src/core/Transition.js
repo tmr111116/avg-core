@@ -4,25 +4,25 @@ import { Container } from 'core/Container';
 import { CrossFadeFilter } from 'Classes/Transition/Filters';
 
 export class Transition extends React.Component {
-	componentWillMount() {
+  componentWillMount() {
 
-	}
-	componentWillUpdate() {
-		let layer = this.refs.layer._reactInternalInstance._renderedComponent.node;
-		console.log(layer)
-		let renderer = PIXI.currentRenderer;
-		layer.prepareTransition(renderer);
-	}
-	componentDidUpdate() {
-		let layer = this.refs.layer._reactInternalInstance._renderedComponent.node;
-		let renderer = PIXI.currentRenderer;
-		layer.startTransition(renderer, new CrossFadeFilter);
-	}
-	render() {
-		return (
-			<Container ref='layer'>
-				{this.props.children}
-			</Container>
-		)
-	}
+  }
+  componentWillUpdate() {
+    const layer = this.refs.layer._reactInternalInstance._renderedComponent.node;
+    console.log(layer);
+    const renderer = PIXI.currentRenderer;
+    layer.prepareTransition(renderer);
+  }
+  componentDidUpdate() {
+    const layer = this.refs.layer._reactInternalInstance._renderedComponent.node;
+    const renderer = PIXI.currentRenderer;
+    layer.startTransition(renderer, new CrossFadeFilter());
+  }
+  render() {
+    return (
+      <Container ref="layer">
+        {this.props.children}
+      </Container>
+    );
+  }
 }

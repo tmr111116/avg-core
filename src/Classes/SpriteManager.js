@@ -41,7 +41,7 @@ export function getRenderer() {
 /**
  * create a normal sprite
  * argument `rect` there is different from this in BKEngine,
- * 		for it default to `null`, instead of [0,0,0,0] in BKEngine.
+ *     for it default to `null`, instead of [0,0,0,0] in BKEngine.
  * @method create
  * @param  {Number} index [description]
  * @param  {String} file  [description]

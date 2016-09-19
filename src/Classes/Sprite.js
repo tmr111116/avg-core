@@ -1,6 +1,6 @@
-var PIXI = require('../Library/pixi.js/src/index');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
+const PIXI = require('../Library/pixi.js/src/index');
+import { TransitionPlugin } from './Transition/TransitionPlugin';
+import { TransitionFilter } from './Transition/TransitionFilter';
 import { getTexture } from 'Classes/Preloader';
 import Err from 'Classes/ErrorHandler';
 
@@ -13,24 +13,23 @@ class Sprite extends PIXI.Sprite {
      * Create a sprite.
      * It is a empty sprite, you should specify is content (use {@link Sprite#setFile}, for example) and call {@link Sprite#execSync}.
      */
-	constructor(){
-		super();
-		this.zorder = 0;
+  constructor() {
+    super();
+    this.zorder = 0;
 
-        this.filters = [new TransitionFilter];
+    this.filters = [new TransitionFilter()];
+  }
 
-	}
-
-	/**
+  /**
      * Specify sprite image.
      * This method do not take effect until {@link Sprite#execSync} is called.
      * @param {string} filename
      * @returns {Sprite} - this
      */
-	setFile(filename){
-		this.filename = filename;
-		return this;
-	}
+  setFile(filename) {
+    this.filename = filename;
+    return this;
+  }
 
     /**
      * Specify sprite index.
@@ -38,10 +37,10 @@ class Sprite extends PIXI.Sprite {
      * @param {number} index - the id of sprite
      * @returns {Sprite} - this
      */
-	setIndex(index){
-		this.index = index;
-		return this;
-	}
+  setIndex(index) {
+    this.index = index;
+    return this;
+  }
 
     /**
      * Specify sprite area you wish to use in the sprite.
@@ -50,32 +49,32 @@ class Sprite extends PIXI.Sprite {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-	setRect(rect){
-		this.m_rect = rect;
-		return this;
-	}
+  setRect(rect) {
+    this.m_rect = rect;
+    return this;
+  }
 
-	setAnchor(anchor) {
-		if (anchor) {
-			this.anchor.x = anchor[0];
-			this.anchor.y = anchor[1];
-		}
-		return this;
-	}
+  setAnchor(anchor) {
+    if (anchor) {
+      this.anchor.x = anchor[0];
+      this.anchor.y = anchor[1];
+    }
+    return this;
+  }
 
     /**
      * Load the sprite.
      */
-	execSync(){
-		let tex = getTexture(this.filename);
-		try {
-			if(this.m_rect)
-				tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0],this.m_rect[1],this.m_rect[2],this.m_rect[3]));
-		} catch (e) {
-			Err.warn('Rectangle you specified may be larger than real size of image, rectangle has been ignored');
-		}
-		this.texture = tex;
-	}
+  execSync() {
+    let tex = getTexture(this.filename);
+    try {
+      if (this.m_rect)
+        tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0], this.m_rect[1], this.m_rect[2], this.m_rect[3]));
+    } catch (e) {
+      Err.warn('Rectangle you specified may be larger than real size of image, rectangle has been ignored');
+    }
+    this.texture = tex;
+  }
 
 }
 

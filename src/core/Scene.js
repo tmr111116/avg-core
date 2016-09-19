@@ -26,7 +26,7 @@ var RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
   },
   updateNode(prevProps, props) {
     var layer = this.node;
-	  layer.setProperties(props);
+    layer.setProperties(props);
   }
 
 });
@@ -141,32 +141,32 @@ export const Scene = React.createClass({
         Err.warn(`${provider.constructor.name} is not a valid command component`);
       }
       // let grandChildren = this.getChildrenArray(child.props.children);
-			// if (grandChildren.length) {
-			// 	this.bindCommand(grandChildren);
-			// }
+      // if (grandChildren.length) {
+      //   this.bindCommand(grandChildren);
+      // }
     // }
   },
   async loadScript(scriptUrl) {
-		if (scriptUrl) {
+    if (scriptUrl) {
       this.loading = true;
       this.props.onLoading && this.props.onLoading();
-			await fetch(scriptUrl)
-			.then(res => res.text())
-			.then(text => this.parser.load(text.trim()));
+      await fetch(scriptUrl)
+      .then(res => res.text())
+      .then(text => this.parser.load(text.trim()));
       await Preloader.load(this.parser.getResources());
       this.props.onCompleteLoading && this.props.onCompleteLoading();
       this.loading = false;
-		} else {
-			Err.error('You must pass a script url');
-		}
-	},
+    } else {
+      Err.error('You must pass a script url');
+    }
+  },
   async beginStory() {
     let ret = this.parser.next();
-		while (!ret.done) {
-			let { command: name, flags, params } = ret.value;
+    while (!ret.done) {
+      let { command: name, flags, params } = ret.value;
       let component = this.components[name];
       let execute = component.execute;
-			if (execute) {
+      if (execute) {
         this.waiting = true;
         let { promise, waitClick, clickCallback } = await execute.call(component, params, flags, name);
         this.clickCallback = clickCallback;
@@ -183,11 +183,11 @@ export const Scene = React.createClass({
         Err.warn(`Command <${name}> is not found, ignored`);
       }
       ret = this.parser.next();
-		}
+    }
     if (ret.done) {
       Err.warn(`Script executed to end`);
     }
-	},
+  },
   handleClick(e) {
     if (this.loading) {
       return

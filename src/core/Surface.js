@@ -20,15 +20,15 @@ export const Surface = React.createClass({
 
   propTypes: {
     width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired
+    height: React.PropTypes.number.isRequired,
   },
 
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
     };
   },
 
-  componentDidMount: function () {
+  componentDidMount() {
     // scale
     //
     function adjustSize(exchange) {
@@ -39,18 +39,18 @@ export const Surface = React.createClass({
         //   width = document.body.clientHeight;
         //   height = document.body.clientWidth;
         // } else {
-          width = document.body.clientWidth;
-          height = document.body.clientHeight;
+        width = document.body.clientWidth;
+        height = document.body.clientHeight;
         // }
 
-        var dom = this.refs.canvas;
+        const dom = this.refs.canvas;
         // alert(height)
         dom.style.width = '' + width + 'px';
         // dom.style.height = '' + height + 'px';
         // dom.style.objectFit = 'contain';
       }
     }
-    adjustSize.bind(this)()
+    adjustSize.bind(this)();
     window.onload = window.onorientationchange = () => {
       // console.log(window.orientation)
       // switch(window.orientation) {
@@ -66,13 +66,12 @@ export const Surface = React.createClass({
       //     this.refs.canvas.style.transform = 'none';
       //     adjustSize.bind(this)(false);break;
       // }
-    }
-
+    };
 
 
     // Prepare the <canvas> for drawing.
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
-      view: this.refs.canvas
+      view: this.refs.canvas,
     });
     PIXI.currentRenderer = this.renderer;
     this.node = new Container();
@@ -80,7 +79,7 @@ export const Surface = React.createClass({
     // window.renderer = this.renderer;
 
     // This is the integration point between custom canvas components and React
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+    const transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
     transaction.perform(
       this.mountAndInjectChildren,
       this,
@@ -94,14 +93,14 @@ export const Surface = React.createClass({
     this.tick();
   },
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     // Implemented in ReactMultiChild.Mixin
     this.node.removeChildren();
   },
 
-  componentDidUpdate: function (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     // We have to manually apply child reconciliation since child are not
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+    const transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
     transaction.perform(
       this.updateChildren,
       this,
@@ -117,27 +116,27 @@ export const Surface = React.createClass({
     // }
   },
 
-  render: function () {
+  render() {
     return (
       React.createElement('canvas', {
         ref: 'canvas',
         width: this.props.width,
-        height: this.props.height})
+        height: this.props.height })
     );
   },
 
   // Drawing
   // =======
 
-  scale: function () {
+  scale() {
     // this.getContext().scale(this.props.scale, this.props.scale);
   },
 
-  tick: function () {
+  tick() {
     this.renderer.render(this.node);
     // requestAnimationFrame(this.tick);
     setTimeout(this.tick, 33);
-  }
+  },
 
 });
 
