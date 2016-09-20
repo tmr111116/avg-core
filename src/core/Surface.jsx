@@ -1,12 +1,9 @@
-'use strict';
-
 import React from 'react';
 import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
-import invariant from 'fbjs/lib/invariant';
 import ContainerMixin from 'core/ContainerMixin';
 
-import PIXI from '../Library/pixi.js/src/index';
+import PIXI from 'Library/pixi.js/src/index';
 import Container from 'Classes/Container';
 
 /**
@@ -16,12 +13,13 @@ import Container from 'Classes/Container';
 
 export const Surface = React.createClass({
 
-  mixins: [ContainerMixin],
-
   propTypes: {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
+    children: React.PropTypes.any,
   },
+
+  mixins: [ContainerMixin],
 
   getDefaultProps() {
     return {
@@ -43,9 +41,9 @@ export const Surface = React.createClass({
         height = document.body.clientHeight;
         // }
 
-        const dom = this.refs.canvas;
+        const dom = this.canvas;
         // alert(height)
-        dom.style.width = '' + width + 'px';
+        dom.style.width = `${width}px`;
         // dom.style.height = '' + height + 'px';
         // dom.style.objectFit = 'contain';
       }
@@ -71,7 +69,7 @@ export const Surface = React.createClass({
 
     // Prepare the <canvas> for drawing.
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
-      view: this.refs.canvas,
+      view: this.canvas,
     });
     PIXI.currentRenderer = this.renderer;
     this.node = new Container();
@@ -116,14 +114,6 @@ export const Surface = React.createClass({
     // }
   },
 
-  render() {
-    return (
-      React.createElement('canvas', {
-        ref: 'canvas',
-        width: this.props.width,
-        height: this.props.height })
-    );
-  },
 
   // Drawing
   // =======
@@ -137,7 +127,15 @@ export const Surface = React.createClass({
     // requestAnimationFrame(this.tick);
     setTimeout(this.tick, 33);
   },
-
+  render() {
+    return (
+      React.createElement('canvas', {
+        ref: canvas => this.canvas = canvas,
+        width: this.props.width,
+        height: this.props.height,
+      })
+    );
+  },
 });
 
 // module.exports = Surface;

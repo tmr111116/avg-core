@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
@@ -38,6 +36,7 @@ export const Image = React.createClass({
     x: React.PropTypes.number,
     y: React.PropTypes.number,
     rect: React.PropTypes.arrayOf(React.PropTypes.number),
+    children: React.PropTypes.any,
   },
   render() {
     return React.createElement(RawImage, this.props, this.props.children);

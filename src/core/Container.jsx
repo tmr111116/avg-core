@@ -1,17 +1,13 @@
-'use strict';
-
 import React from 'react';
 import createComponent from 'core/createComponent';
 import ContainerMixin from 'core/ContainerMixin';
 import NodeMixin from 'core/NodeMixin';
-import pixiContainer from 'Classes/Sprite';
-
-import equal from 'deep-equal';
+import PixiContainer from 'Classes/Sprite';
 
 const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, {
 
   createNode(element) {
-    this.node = new pixiContainer();
+    this.node = new PixiContainer();
   },
   mountNode(props) {
     // color, opacity, width, height, x, y, etc.
@@ -35,6 +31,7 @@ export const Container = React.createClass({
   propTypes: {
     x: React.PropTypes.number,
     y: React.PropTypes.number,
+    children: React.PropTypes.any,
   },
   render() {
     return React.createElement(RawContainer, this.props, this.props.children);
