@@ -54,13 +54,19 @@ export class TransitionFilter extends PIXI.AbstractFilter {
     });
   }
 
+  completeTransition() {
+    this.start = false;
+    this.filter = null;
+    this.m_resolve && this.m_resolve();
+    this.m_resolve = null;
+  }
+
   setBlocked(bool = true) {
     this.block = bool;
   }
 
   applyFilter(renderer, input, output, clear) {
-    if (this.start && this.filter)
-        {
+    if (this.start && this.filter) {
       const filter = this.filter;
       const finished = filter.update(Date.now());
       filter.applyFilter(renderer, input, output, clear);
@@ -70,20 +76,16 @@ export class TransitionFilter extends PIXI.AbstractFilter {
         this.m_resolve();
         this.m_resolve = null;
       }
-    }
-    else if (this.uniforms.texture.value)
-        {
+    } else if (this.uniforms.texture.value) {
       super.applyFilter(renderer, input, output, clear);
-    }
-    else if (this.start)
-        {
+    } else if (this.start) {
       ErrorHandler.error('[TransitionFilter] Filter must be provided.');
       this.start = false;
       this.m_resolve();
       this.m_resolve = null;
+    } else {
+      super.applyFilter(renderer, input, output, clear);
     }
-    else
-            super.applyFilter(renderer, input, output, clear);
   }
 
   getShader(renderer) {
@@ -108,7 +110,7 @@ export class TransitionFilter extends PIXI.AbstractFilter {
     if (this.uniforms.texture.value)
       return this.prepareTransitionShader;
     else
-            return this.emptyTextureShader;
+      return this.emptyTextureShader;
   }
 
 

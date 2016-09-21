@@ -18,7 +18,8 @@ export function transition(target, name, descriptor) {
       let { promise, ...otherRets } = method.call(this, params, flags, name);
       await promise;
       promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration));
-      return { promise, ...otherRets };
+      const clickCallback = layer.completeTransition.bind(layer);
+      return { promise, ...otherRets, clickCallback };
     } else {
       return method.call(this, params, flags, name);
     }

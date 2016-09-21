@@ -13,8 +13,8 @@ function prepareTransition(renderer) {
         // matrix.ty = -bounds.y;
     texture.render(this, matrix, true, false);
   }
-  document.body.appendChild(texture.getImage());
-  document.body.appendChild(document.createTextNode('pretrans'));
+  // document.body.appendChild(texture.getImage());
+  // document.body.appendChild(document.createTextNode('pretrans'));
   this.filters[0].setPreviousTexture(texture);
 }
 
@@ -30,11 +30,15 @@ function startTransition(renderer, filter) {
         // matrix.ty = -bounds.y;
     texture.render(this, matrix, true, false);
   }
-  document.body.appendChild(texture.getImage());
-  document.body.appendChild(document.createTextNode('trans'));
+  // document.body.appendChild(texture.getImage());
+  // document.body.appendChild(document.createTextNode('trans'));
   const promise = this.filters[0].startTransition(texture, filter);
   this.filters[0].setBlocked(false);
   return promise;
+}
+
+function completeTransition() {
+  this.filters[0].completeTransition();
 }
 
 export function TransitionPlugin(obj) {
@@ -42,11 +46,13 @@ export function TransitionPlugin(obj) {
     {
     obj.prototype.prepareTransition = prepareTransition;
     obj.prototype.startTransition = startTransition;
+    obj.prototype.completeTransition = completeTransition;
   }
   else    // object
     {
     obj.prepareTransition = prepareTransition;
     obj.startTransition = startTransition;
+    obj.completeTransition = completeTransition;
   }
 }
 
