@@ -12,13 +12,13 @@ export class BGImage extends React.Component {
       y: 0,
     };
   }
-  @transition
   getData() {
     return this.state;
   }
   setData(state) {
     this.setState(state);
   }
+  @transition
   execute(params, flags, name) {
     this.setState({ ...params });
     return {
