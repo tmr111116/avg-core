@@ -43,7 +43,11 @@ export const Surface = React.createClass({
 
         const dom = this.canvas;
         // alert(height)
-        dom.style.width = `${width}px`;
+        if (width / height > 1) {
+          dom.style.height = `${height}px`;
+        } else {
+          dom.style.width = `${width}px`;
+        }
         // dom.style.height = '' + height + 'px';
         // dom.style.objectFit = 'contain';
       }
@@ -91,10 +95,6 @@ export const Surface = React.createClass({
     this.tick();
   },
 
-  componentWillUnmount() {
-    // Implemented in ReactMultiChild.Mixin
-    this.node.removeChildren();
-  },
 
   componentDidUpdate(prevProps, prevState) {
     // We have to manually apply child reconciliation since child are not
@@ -114,6 +114,10 @@ export const Surface = React.createClass({
     // }
   },
 
+  componentWillUnmount() {
+    // Implemented in ReactMultiChild.Mixin
+    this.node.removeChildren();
+  },
 
   // Drawing
   // =======
