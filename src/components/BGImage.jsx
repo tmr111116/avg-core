@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from './Image';
-import { transition } from './decorators/transition';
+import { transition } from 'decorators/transition';
 
 export class BGImage extends React.Component {
   constructor(props) {

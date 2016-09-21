@@ -5,7 +5,7 @@ import NodeMixin from 'components/NodeMixin';
 import PixiTextwindow from 'classes/Textwindow';
 
 import { Layer } from './Layer';
-import { transition } from './decorators/transition';
+import { transition } from 'decorators/transition';
 
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {

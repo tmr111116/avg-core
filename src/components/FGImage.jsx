@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layer } from './Layer';
 import { Image } from './Image';
-import { transition } from './decorators/transition';
+import { transition } from 'decorators/transition';
 
 export class FGImage extends React.Component {
   static propTypes = {
