@@ -1,4 +1,4 @@
-const PIXI = require('../../Library/pixi.js/src/index');
+const PIXI = require('../../library/pixi.js/src/index');
 import ErrorHandler from '../ErrorHandler';
 
 

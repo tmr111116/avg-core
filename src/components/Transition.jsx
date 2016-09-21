@@ -1,7 +1,7 @@
-import PIXI from 'Library/pixi.js/src/index';
+import PIXI from 'library/pixi.js/src/index';
 import React from 'react';
-import { Container } from 'core/Container';
-import { CrossFadeFilter } from 'Classes/Transition/Filters';
+import { Container } from 'components/Container';
+import { CrossFadeFilter } from 'classes/Transition/Filters';
 
 export class Transition extends React.Component {
   static propTypes = {

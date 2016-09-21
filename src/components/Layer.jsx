@@ -1,9 +1,9 @@
 import React from 'react';
-import createComponent from 'core/createComponent';
-import ContainerMixin from 'core/ContainerMixin';
-import NodeMixin from 'core/NodeMixin';
-import PixiLayer from 'Classes/Layer';
-import PIXI from 'Library/pixi.js/src/index';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import PixiLayer from 'classes/Layer';
+import PIXI from 'library/pixi.js/src/index';
 
 const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 

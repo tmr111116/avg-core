@@ -1,4 +1,4 @@
-import { CrossFadeFilter } from 'Classes/Transition/Filters';
+import { CrossFadeFilter } from 'classes/Transition/Filters';
 
 export function transition(target, name, descriptor) {
   let method = descriptor.value;

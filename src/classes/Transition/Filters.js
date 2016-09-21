@@ -1,7 +1,7 @@
 const fs = require('fs');
 import AbstractFilter from './AbstractFilter';
-const PIXI = require('../../Library/pixi.js/src/index');
-import { getTexture } from 'Classes/Preloader';
+const PIXI = require('../../library/pixi.js/src/index');
+import { getTexture } from 'classes/Preloader';
 
 const commonVertex = fs.readFileSync(__dirname + '/shaders/common.vert', 'utf8');
 

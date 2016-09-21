@@ -1,5 +1,5 @@
-const PIXI = require('../../Library/pixi.js/src/index');
-const DefaultShader = require('../../Library/pixi.js/src/core/renderers/webgl/shaders/TextureShader');
+const PIXI = require('../../library/pixi.js/src/index');
+const DefaultShader = require('../../library/pixi.js/src/core/renderers/webgl/shaders/TextureShader');
 import ErrorHandler from '../ErrorHandler';
 const fs = require('fs');
 

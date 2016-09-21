@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
-import ContainerMixin from 'core/ContainerMixin';
+import ContainerMixin from 'components/ContainerMixin';
 
-import PIXI from 'Library/pixi.js/src/index';
-import Container from 'Classes/Container';
+import PIXI from 'library/pixi.js/src/index';
+import Container from 'classes/Container';
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.

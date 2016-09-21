@@ -1,7 +1,7 @@
 import ReactUpdates from 'react/lib/ReactUpdates';
 import emptyObject from 'fbjs/lib/emptyObject';
-import { attachToSprite } from 'Classes/EventManager';
-import Err from 'Classes/ErrorHandler';
+import { attachToSprite } from 'classes/EventManager';
+import Err from 'classes/ErrorHandler';
 
 const NodeMixin = {
   _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)

@@ -1,7 +1,7 @@
-var PIXI = require('../Library/pixi.js/src/index');
+var PIXI = require('../library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin'
 import { TransitionFilter } from './Transition/TransitionFilter'
-import { getTexture } from 'Classes/Preloader';
+import { getTexture } from 'classes/Preloader';
 
 /**
  * Class representing a TextWindow. <br>

@@ -1,8 +1,8 @@
-const PIXI = require('../Library/pixi.js/src/index');
+const PIXI = require('../library/pixi.js/src/index');
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
-import { getTexture } from 'Classes/Preloader';
-import Err from 'Classes/ErrorHandler';
+import { getTexture } from 'classes/Preloader';
+import Err from 'classes/ErrorHandler';
 
 /**
  * Class representing a Sprite.

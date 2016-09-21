@@ -1,8 +1,8 @@
 import React from 'react';
-import createComponent from 'core/createComponent';
-import ContainerMixin from 'core/ContainerMixin';
-import NodeMixin from 'core/NodeMixin';
-import TextSprite from 'Classes/TextSprite';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import TextSprite from 'classes/TextSprite';
 
 const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 

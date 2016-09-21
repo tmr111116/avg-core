@@ -1,11 +1,11 @@
 import React from 'react';
-import createComponent from 'core/createComponent';
-import ContainerMixin from 'core/ContainerMixin';
-import NodeMixin from 'core/NodeMixin';
-import PixiLayer from 'Classes/Layer';
-import Parser from 'Classes/Parser';
-import * as Preloader from 'Classes/Preloader';
-import Err from 'Classes/ErrorHandler';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import PixiLayer from 'classes/Layer';
+import Parser from 'classes/Parser';
+import * as Preloader from 'classes/Preloader';
+import Err from 'classes/ErrorHandler';
 
 const RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
 

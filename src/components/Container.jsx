@@ -1,8 +1,8 @@
 import React from 'react';
-import createComponent from 'core/createComponent';
-import ContainerMixin from 'core/ContainerMixin';
-import NodeMixin from 'core/NodeMixin';
-import PixiContainer from 'Classes/Sprite';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import PixiContainer from 'classes/Sprite';
 
 const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, {
 
