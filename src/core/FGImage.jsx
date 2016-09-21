@@ -8,27 +8,41 @@ export class FGImage extends React.Component {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
   };
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      file: null,
-      x: 0,
-      y: 0,
-    };
-  }
+  state = {
+    left: null,
+    center: null,
+    right: null,
+  };
   @transition
   execute(params, flags, name) {
-    this.setState({ ...params });
+    // this.setState({ ...params });
+    let pos = 'center';
+    if (flags.includes('left')) {
+      pos = 'left';
+    } else if (flags.includes('right')) {
+      pos = 'right';
+    }
+    if (['left', 'center', 'right'].includes(params.pos)) {
+      pos = params.pos;
+    }
+
+    const state = {};
+    if (flags.includes('clear')) {
+      state[pos] = null;
+    } else {
+      state[pos] = params.file;
+    }
+    this.setState(state);
+
     return {
       promise: Promise.resolve(),
     };
   }
   reset() {
     this.setState({
-      file: null,
-      x: 0,
-      y: 0,
+      left: null,
+      center: null,
+      right: null,
     });
   }
   getData() {
@@ -40,7 +54,9 @@ export class FGImage extends React.Component {
   render() {
     return (
       <Layer ref={node => this.node = node}>
-        <Image file={this.state.file || ''} x={this.props.width / 2} y={this.props.height} anchor={[0.5, 1]} />
+        {this.state.center ? <Image file={this.state.center} x={this.props.width * 0.5} y={this.props.height} anchor={[0.5, 1]} key="center" /> : null}
+        {this.state.left ? <Image file={this.state.left} x={this.props.width * 0.25} y={this.props.height} anchor={[0.5, 1]} key="left" /> : null}
+        {this.state.right ? <Image file={this.state.right} x={this.props.width * 0.75} y={this.props.height} anchor={[0.5, 1]} key="right" /> : null}
       </Layer>
     );
   }
