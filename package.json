@@ -10,6 +10,7 @@
   "scripts": {
     "start": "webpack-dev-server --progress --colors --hot --host 0.0.0.0 --compress",
     "build": "webpack --inline --optimize-minimize",
+    "docs": "esdoc -c esdoc.json"
     "test": "mocha --compilers js:babel-core/register"
   },
   "dependencies": {
@@ -42,6 +43,8 @@
     "babel-eslint": "^6.1.2",
     "babel-preset-babili": "0.0.1",
     "chai": "^3.5.0",
+    "esdoc": "^0.4.8",
+    "esdoc-es7-plugin": "0.0.3",
     "eslint": "^3.5.0",
     "eslint-config-airbnb": "^11.1.0",
     "eslint-import-resolver-webpack": "^0.6.0",
