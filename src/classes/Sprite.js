@@ -1,4 +1,4 @@
-const PIXI = require('../library/pixi.js/src/index');
+const PIXI = require('pixi.js');
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
 import { getTexture } from 'classes/Preloader';

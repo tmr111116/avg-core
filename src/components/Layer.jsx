@@ -3,7 +3,7 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
-import PIXI from 'library/pixi.js/src/index';
+import PIXI from 'pixi.js/src/index';
 
 const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 

@@ -1,4 +1,4 @@
-const PIXI = require('../Library/pixi.js/src/index');
+const PIXI = require('pixi.js');
 
 const FPS = {
   TOPLEFT: 0,

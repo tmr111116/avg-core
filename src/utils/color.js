@@ -1,4 +1,4 @@
-import { ErrorHandler as Err } from '../Classes/ErrorHandler';
+import { ErrorHandler as Err } from 'classes/ErrorHandler';
 
 export default class Color {
   constructor(value) {

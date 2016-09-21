@@ -1,4 +1,4 @@
-import PIXI from '../library/pixi.js/src/index';
+import PIXI from 'pixi.js/src/index';
 
 import Sprite from './Sprite';
 import Animation from './Animation';

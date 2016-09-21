@@ -1,4 +1,4 @@
-const Howler = require('../library/howler.js/howler');
+const Howler = require('howler');
 const Err = require('./ErrorHandler');
 
 /* By default, audio on iOS is locked until a sound is played within a user interaction,
