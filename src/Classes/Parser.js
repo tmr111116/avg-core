@@ -37,7 +37,11 @@ export default class Parser {
   }
   next() {
     if (this.currentLine < this.data.length) {
-      const line = this.data[this.currentLine++];
+      let line = this.data[this.currentLine++];
+      // skip comment lines
+      while (line.trim().startsWith('//')) {
+        line = this.data[this.currentLine++];
+      }
       return { value: parse(line), done: false };
     } else {
       return { done: true };
@@ -63,12 +67,12 @@ export function parse(line) {
     throw 'Wrong script.';
   }
 
-  let lineMatch = line.match(/^(.*?["'`].*?)(\s+)(.*?["'`].*?)$/);
-  while (lineMatch) {
-        // character `࿉`: Tibetan, a piece of treasure...
-    line = `${lineMatch[1]}${'࿉'.repeat(lineMatch[2].length)}${lineMatch[3]}`;
-    lineMatch = line.match(/^(.*?["'`].*?)(\s+)(.*?["'`].*?)$/);
-  }
+  // let lineMatch = line.match(/^(.*?["'`].*?)(\s+)(.*?["'`].*?)$/);
+  // while (lineMatch) {
+  //       // character `࿉`: Tibetan, a piece of treasure...
+  //   line = `${lineMatch[1]}${'࿉'.repeat(lineMatch[2].length)}${lineMatch[3]}`;
+  //   lineMatch = line.match(/^(.*?["'`].*?)(\s+)(.*?["'`].*?)$/);
+  // }
 
     // handle multi-space
   const statements = line.replace(/\s+/g, ' ').split(' ');
