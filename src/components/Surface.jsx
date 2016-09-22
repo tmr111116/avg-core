@@ -3,7 +3,7 @@ import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
-import PIXI from 'pixi.js/src/index';
+import PIXI from 'pixi.js';
 import Container from 'classes/Container';
 
 /**

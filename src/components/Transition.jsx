@@ -1,4 +1,4 @@
-import PIXI from 'pixi.js/src/index';
+import PIXI from 'pixi.js';
 import React from 'react';
 import { Container } from 'components/Container';
 import { CrossFadeFilter } from 'classes/Transition/Filters';

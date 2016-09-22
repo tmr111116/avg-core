@@ -1,4 +1,4 @@
-import PIXI from 'pixi.js/src/index';
+import PIXI from 'pixi.js';
 
 import TextWindow from './TextWindow';
 import Err from './ErrorHandler';

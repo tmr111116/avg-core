@@ -15,7 +15,7 @@ export class FGImage extends React.Component {
   };
   @transition
   execute(params, flags, name) {
-    // this.setState({ ...params });
+    this.setState({ ...params });
     let pos = 'center';
     if (flags.includes('left')) {
       pos = 'left';

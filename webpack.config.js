@@ -26,6 +26,7 @@ module.exports = {
   module: {
     postLoaders: [
       {
+        include: path.resolve(__dirname, 'node_modules', 'pixi.js'),
         loader: 'transform/cacheable?brfs',
       },
     ],
@@ -34,7 +35,9 @@ module.exports = {
       { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
       { test: /\.jsx$/, exclude: /node_modules/, loaders: ['babel-loader'] },
       { test: /\.json$/, loader: 'json-loader' },
-
+      { test: /\.(glsl|frag|vert)$/, loader: 'raw', exclude: /node_modules/ },
+      { test: /\.(glsl|frag|vert)$/, loader: 'glslify', exclude: /node_modules/ },
+      { test: path.resolve(__dirname, 'node_modules', 'pixi.js'), loader: 'ify' },
     ],
   },
   devServer: {
