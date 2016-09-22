@@ -3,7 +3,7 @@ const Err = require('./ErrorHandler');
 
 const TEXTURES = {};
 
-export function load(resources) {
+export function load(resources, onProgress) {
   const loader = new PIXI.loaders.Loader('/'); // https://7xi9kn.com1.z0.glb.clouddn.com
   for (const res of [...new Set(resources)]) {
     loader.add(res, res);
@@ -11,6 +11,7 @@ export function load(resources) {
   const promise = new Promise((resolve, reject) => {
     loader.once('complete', resolve);
     loader.once('error', reject);
+    loader.on('progress', onProgress);
   });
   loader.load((loader, resources) => {
     Object.assign(TEXTURES, resources);

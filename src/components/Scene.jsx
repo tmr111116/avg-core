@@ -32,6 +32,7 @@ export const Scene = React.createClass({
     script: React.PropTypes.string,
     onLoading: React.PropTypes.func,
     onCompleteLoading: React.PropTypes.func,
+    onLoadingProgress: React.PropTypes.func,
     children: React.PropTypes.any,
   },
   components: {},
@@ -149,7 +150,7 @@ export const Scene = React.createClass({
       await fetch(scriptUrl)
       .then(res => res.text())
       .then(text => this.parser.load(text.trim()));
-      await Preloader.load(this.parser.getResources());
+      await Preloader.load(this.parser.getResources(), this.props.onLoadingProgress);
       this.props.onCompleteLoading && this.props.onCompleteLoading();
       this.loading = false;
     } else {
