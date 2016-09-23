@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    iceleaf: ['babel-polyfill', 'whatwg-fetch', './src/Iceleaf.js'],
+    avg: ['babel-polyfill', 'whatwg-fetch', './src/avg.js'],
     index: './example/entry.jsx',
   },
   output: {
@@ -11,14 +11,14 @@ module.exports = {
     filename: '[name].js',
     chunkFilename: '[name].min.js',
     libraryTarget: 'umd',
-    library: 'iceleaf',
+    library: 'AVG',
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
     modulesDirectories: ['src', 'node_modules'],
   },
   externals: {  // 指定采用外部 CDN 依赖的资源，不被webpack打包
-    iceleaf: 'iceleaf',
+    'avg.js': 'AVG',
   },
   // plugins: [
   //   new  webpack.optimize.CommonsChunkPlugin('common.js', ['iceleaf', 'index'])
