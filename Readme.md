@@ -1,3 +1,3 @@
-#BKEngine-iceleaf
+# AVG.js
 
-Web Edition of BKEngine, based on pixi.js.
+Develop Adventure Game (or ADV, Visual Novel, Galgame, etc.) on your own!
