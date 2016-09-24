@@ -2,6 +2,7 @@
  * @file        Main export of the AVG core library
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2013-2016 Icemic Jia
+ * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

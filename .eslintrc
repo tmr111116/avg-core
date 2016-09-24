@@ -61,7 +61,8 @@
       "allowShortCircuit": true,
       "allowTernary": true
     }],
-    "no-param-reassign": "warn"
+    "no-param-reassign": "warn",
+    "class-methods-use-this": "off"
   },
   "settings": {
     "import/resolver": "webpack"
