@@ -26,14 +26,15 @@ function prepareTransition(renderer) {
   this.updateTransform();
   // const bounds = this.getBounds();
   // let bounds = getBoundsFromChildren(this);
-  const baseTexture = new PIXI.BaseRenderTexture(renderer.width, renderer.height,
+  const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
     PIXI.SCALE_MODES.DEFAULT, renderer.resolution);
-  const texture = new PIXI.RenderTexture(baseTexture);
+  // const texture = new PIXI.RenderTexture(baseTexture);
   if (this.visible) {
     renderer.render(this, texture);
   }
-  // document.body.appendChild(texture.getImage());
-  // document.body.appendChild(document.createTextNode('pretrans'));
+  let extract = new PIXI.extract.webGL(renderer);
+  document.body.appendChild(extract.image(texture));
+  document.body.appendChild(document.createTextNode('pretrans'));
   this.filters[0].setPreviousTexture(texture);
 }
 
@@ -46,10 +47,13 @@ function startTransition(renderer, filter) {
   const texture = new PIXI.RenderTexture(baseTexture);
   this.filters[0].setBlocked(true);
   if (this.visible) {
+    this.filters[0].enabled = false;
     renderer.render(this, texture);
+    this.filters[0].enabled = true;
   }
-  // document.body.appendChild(texture.getImage());
-  // document.body.appendChild(document.createTextNode('trans'));
+  let extract = new PIXI.extract.webGL(renderer);
+  document.body.appendChild(extract.image(texture));
+  document.body.appendChild(document.createTextNode('trans'));
   const promise = this.filters[0].startTransition(texture, filter);
   this.filters[0].setBlocked(false);
   return promise;

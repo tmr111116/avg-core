@@ -36,21 +36,22 @@ export class FGImage extends React.Component {
   @transition
   execute(params, flags, name) {
     this.setState({ ...params });
-    let pos = 'center';
+    let positions = [];
     if (flags.includes('left')) {
-      pos = 'left';
-    } else if (flags.includes('right')) {
-      pos = 'right';
+      positions.push('left');
     }
-    if (['left', 'center', 'right'].includes(params.pos)) {
-      pos = params.pos;
+    if (flags.includes('right')) {
+      positions.push('right');
+    }
+    if (flags.includes('center') || !positions.length) {
+      positions.push('center');
     }
 
     const state = {};
     if (flags.includes('clear')) {
-      state[pos] = null;
+      positions.map(pos => state[pos] = null);
     } else {
-      state[pos] = params.file;
+      state[positions[0]] = params.file;
     }
     this.setState(state);
 

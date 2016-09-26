@@ -21,7 +21,7 @@
 const PIXI = require('pixi.js');
 // const DefaultShader = require('pixi.js/src/core/renderers/webgl/shaders/TextureShader');
 import ErrorHandler from '../ErrorHandler';
-
+import FrozenTextureFilter from './FrozenTextureFilter';
 
 const EmptyTexureShaderFragment = require(__dirname + '/shaders/emptyTexture.frag');
 const PrepareTransitionShaderFragment = require(__dirname + '/shaders/prepareTransition.frag');
@@ -45,12 +45,17 @@ export class TransitionFilter extends PIXI.Filter {
 
     this.filterType = 'Transition';
 
-    this.emptyTextureShader = this.prepareTransitionShader = null;
+    // this.emptyTextureShader = this.prepareTransitionShader = null;
+
+    this.frozenTextureFilter = new FrozenTextureFilter();
+    this.frozenTexture = null;
   }
 
   setPreviousTexture(texture) {
-    this.uniformData.texture = { type: 'sampler2D', value: texture };
-    this.uniforms.texture = texture;
+    // this.uniformData.texture = { type: 'sampler2D', value: texture };
+    // this.uniforms.texture = texture;
+    this.frozenTextureFilter.setTexture(texture);
+    this.frozenTexture = texture;
   }
 
     /*
@@ -60,15 +65,16 @@ export class TransitionFilter extends PIXI.Filter {
     */
   startTransition(texture, filter) {
     // 判断当前是否处于pretrans状态
-    if (!this.uniforms.texture) {
+    if (!this.frozenTexture) {
       ErrorHandler.error('[TransitionFilter] PreviousTexture must be provided.');
       return;
     }
 
-    filter.setPreviousTexture(this.uniforms.texture);
+    filter.setPreviousTexture(this.frozenTexture);
     filter.setNextTexture(texture);
-    delete this.uniformData.texture;
-    delete this.uniforms.texture;
+    this.frozenTexture = null;
+    // delete this.uniformData.texture;
+    // delete this.uniforms.texture;
     this.filter = filter;
     this.start = true;
 
@@ -89,7 +95,7 @@ export class TransitionFilter extends PIXI.Filter {
   }
 
   apply(filterManager, input, output, clear) {
-    this.applyShader();
+    // this.applyShader();
     if (this.start && this.filter) {
       const filter = this.filter;
 
@@ -106,8 +112,16 @@ export class TransitionFilter extends PIXI.Filter {
         this.m_resolve();
         this.m_resolve = null;
       }
-    } else if (this.uniforms.texture) {
-      filterManager.applyFilter(this, input, output, clear);
+    } else if (this.frozenTexture) {
+      const filter = this.frozenTextureFilter;
+
+      const matrix = new PIXI.Matrix();
+      filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
+      filter.uniforms.filterMatrix = matrix;
+      filter.uniformData.filterMatrix = { type: 'mat3', value: matrix };
+      filterManager.applyFilter(filter, input, output, clear);
+      // filterManager.applyFilter(this, input, output, clear);
+
     } else if (this.start) {
       ErrorHandler.error('[TransitionFilter] Filter must be provided.');
       this.start = false;

@@ -31,13 +31,25 @@ export function transition(target, name, descriptor) {
       layer = node;
     }
 
-    if (flags.includes('trans') || params.trans) {
+    if (flags.includes('pretrans')) {
+      let renderer = PIXI.currentRenderer;
+      if (layer._transitionStatus !== 'prepare') {
+        layer._transitionStatus = 'prepare';
+        layer.prepareTransition(renderer);
+      }
+      return method.call(this, params, flags, name);
+    } else if (flags.includes('trans') || params.trans) {
       params.trans = params.trans || 'crossfade';
       let renderer = PIXI.currentRenderer;
-      layer.prepareTransition(renderer);
+      if (layer._transitionStatus !== 'prepare') {
+        layer._transitionStatus = 'prepare';
+        layer.prepareTransition(renderer);
+      }
       let { promise, ...otherRets } = method.call(this, params, flags, name);
       await promise;
-      promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration));
+      layer._transitionStatus = 'start';
+      promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration))
+        .then(() => layer._transitionStatus = null);
       const clickCallback = layer.completeTransition.bind(layer);
       return { promise, ...otherRets, clickCallback };
     } else {
