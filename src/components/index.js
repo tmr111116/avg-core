@@ -1,7 +1,7 @@
 /**
  * @file        Main export of the AVG core components
  * @author      Icemic Jia <bingfeng.web@gmail.com>
- * @copyright   2013-2016 Icemic Jia
+ * @copyright   2015-2016 Icemic Jia
  * @license     Apache License 2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

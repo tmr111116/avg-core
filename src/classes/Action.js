@@ -1,7 +1,7 @@
 /**
  * @file        Main export of the AVG core actions
  * @author      Icemic Jia <bingfeng.web@gmail.com>
- * @copyright   2013-2016 Icemic Jia
+ * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
