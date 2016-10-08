@@ -17,6 +17,9 @@ module.exports = {
     extensions: ['', '.js', '.jsx'],
     modulesDirectories: ['src', 'node_modules'],
   },
+  resolveLoader: {
+    fallback: [path.join(__dirname, 'node_modules')]
+  },
   externals: {  // 指定采用外部 CDN 依赖的资源，不被webpack打包
     'avg.js': 'AVG',
   },

@@ -13,7 +13,9 @@
     "docs": "esdoc -c esdoc.json",
     "test": "mocha --compilers js:babel-core/register"
   },
+  "license": "Apache-2.0",
   "dependencies": {
+    "avg-storyscript": "0.0.1",
     "babel-core": "^6.14.0",
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-class-properties": "^6.11.5",

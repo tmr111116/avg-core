@@ -21,10 +21,16 @@
 const PIXI = require('pixi.js');
 const Err = require('./ErrorHandler');
 
-const TEXTURES = {};
+let TEXTURES = {};
+let HOST = '/';
+
+export function init(host) {
+  TEXTURES = {};
+  HOST = host || HOST;
+}
 
 export function load(resources, onProgress) {
-  const loader = new PIXI.loaders.Loader('http://cdn.bakery.moe/'); // http://7xi9kn.com1.z0.glb.clouddn.com
+  const loader = new PIXI.loaders.Loader(HOST); // http://7xi9kn.com1.z0.glb.clouddn.com
   for (const res of [...new Set(resources)]) {
     loader.add(res, res);
   }
@@ -44,6 +50,6 @@ export function getTexture(url) {
   if (obj) {
     return obj.texture;
   } else {
-    return PIXI.Texture.fromImage(url);
+    return PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
   }
 }

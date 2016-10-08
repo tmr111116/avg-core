@@ -26,6 +26,8 @@ import ContainerMixin from 'components/ContainerMixin';
 import PIXI from 'pixi.js';
 import Container from 'classes/Container';
 
+import { init as preloaderInit } from 'classes/Preloader';
+
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
  * ReactCanvas components cannot be rendered outside a Surface.
@@ -36,6 +38,7 @@ export const Surface = React.createClass({
   propTypes: {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
+    cdn: React.PropTypes.string,
     children: React.PropTypes.any,
   },
 
@@ -44,6 +47,10 @@ export const Surface = React.createClass({
   getDefaultProps() {
     return {
     };
+  },
+
+  componentWillMount() {
+    preloaderInit(this.props.cdn);
   },
 
   componentDidMount() {

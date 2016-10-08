@@ -24,7 +24,8 @@ import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
 import Parser from 'classes/Parser';
-import * as Preloader from 'classes/Preloader';
+import StoryScript from 'avg-storyscript';
+import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 
 const RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
@@ -56,7 +57,7 @@ export const Scene = React.createClass({
     children: React.PropTypes.any,
   },
   components: {},
-  parser: new Parser(),
+  parser: new StoryScript(),
   script: '',
   clickCallback: null,
   loading: false,
@@ -90,7 +91,6 @@ export const Scene = React.createClass({
     } else if (flags.includes('save')) {
       const saveData = await this.getData();
       window.xxx = saveData;
-      console.log(saveData);
     } else if (flags.includes('load')) {
       await this.reset();
       await this.setData(window.xxx);
@@ -121,9 +121,8 @@ export const Scene = React.createClass({
     }
     data.$$scene = {
       script: this.script || this.props.script,
-      line: this.parser.getCurrentLine(),
+      data: this.parser.getData(),
     };
-    console.log(data.$$scene);
     return data;
   },
   async setData(data) {
@@ -136,15 +135,11 @@ export const Scene = React.createClass({
       }
     }
     const sceneData = data.$$scene;
-    console.log(sceneData);
     await this.loadScript(sceneData.script);
-    this.parser.setCurrentLine(sceneData.line);
+    this.parser.setData(sceneData.data);
   },
   bindCommand(names, provider) {
-    // for (let child of children) {
     if (provider.execute && provider.reset && provider.getData && provider.setData) {
-      // let name = (provider.props.commandName || provider.constructor.name).toLowerCase();
-
       if (typeof names === 'string') {
         this.components[names] = provider;
         console.log(`已绑定命令<${names}>`);
@@ -157,20 +152,22 @@ export const Scene = React.createClass({
     } else {
       Err.warn(`${provider.constructor.name} is not a valid command component`);
     }
-      // let grandChildren = this.getChildrenArray(child.props.children);
-      // if (grandChildren.length) {
-      //   this.bindCommand(grandChildren);
-      // }
-    // }
   },
-  async loadScript(scriptUrl) {
-    if (scriptUrl) {
+  async loadScript(scriptName) {
+    if (scriptName) {
+      const scriptFile = `${scriptName}.bks`;
+      const scriptConfig = `${scriptName}.bkc`;
       this.loading = true;
       this.props.onLoading && this.props.onLoading();
-      await fetch(scriptUrl)
+      const task1 = fetch(scriptConfig)
+      .then(res => res.json())
+      .then(json => loadResources(json.resources, this.props.onLoadingProgress));
+      const task2 = fetch(scriptFile)
       .then(res => res.text())
       .then(text => this.parser.load(text.trim()));
-      await Preloader.load(this.parser.getResources(), this.props.onLoadingProgress);
+
+      await Promise.all([task1, task2]);
+
       this.props.onCompleteLoading && this.props.onCompleteLoading();
       this.loading = false;
     } else {
