@@ -4,10 +4,9 @@ const path = require('path');
 module.exports = {
   entry: {
     avg: ['babel-polyfill', 'whatwg-fetch', './src/avg.js'],
-    index: './example/entry.jsx',
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     chunkFilename: '[name].min.js',
     libraryTarget: 'umd',
@@ -18,14 +17,8 @@ module.exports = {
     modulesDirectories: ['src', 'node_modules'],
   },
   resolveLoader: {
-    fallback: [path.join(__dirname, 'node_modules')]
+    fallback: [path.join(__dirname, 'node_modules')],
   },
-  externals: {  // 指定采用外部 CDN 依赖的资源，不被webpack打包
-    'avg.js': 'AVG',
-  },
-  // plugins: [
-  //   new  webpack.optimize.CommonsChunkPlugin('common.js', ['iceleaf', 'index'])
-  // ],
   module: {
     postLoaders: [
       {
@@ -34,9 +27,8 @@ module.exports = {
       },
     ],
     loaders: [
-      { test: /\.css$/, loader: 'style!css' },
-      { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
-      { test: /\.jsx$/, exclude: /node_modules/, loaders: ['babel-loader'] },
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader', query: { compact: true } },
+      { test: /\.jsx$/, exclude: /node_modules/, loader: 'babel-loader', query: { compact: true } },
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.(glsl|frag|vert)$/, loader: 'raw', exclude: /node_modules/ },
       { test: /\.(glsl|frag|vert)$/, loader: 'glslify', exclude: /node_modules/ },

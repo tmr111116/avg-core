@@ -19,12 +19,11 @@
  */
 
 import React from 'react';
+import StoryScript from 'avg-storyscript';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
-import Parser from 'classes/Parser';
-import StoryScript from 'avg-storyscript';
 import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 
