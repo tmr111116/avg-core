@@ -33,8 +33,8 @@ function prepareTransition(renderer) {
     renderer.render(this, texture);
   }
   let extract = new PIXI.extract.webGL(renderer);
-  document.body.appendChild(extract.image(texture));
-  document.body.appendChild(document.createTextNode('pretrans'));
+  // document.body.appendChild(extract.image(texture));
+  // document.body.appendChild(document.createTextNode('pretrans'));
   this.filters[0].setPreviousTexture(texture);
 }
 
@@ -52,8 +52,8 @@ function startTransition(renderer, filter) {
     this.filters[0].enabled = true;
   }
   let extract = new PIXI.extract.webGL(renderer);
-  document.body.appendChild(extract.image(texture));
-  document.body.appendChild(document.createTextNode('trans'));
+  // document.body.appendChild(extract.image(texture));
+  // document.body.appendChild(document.createTextNode('trans'));
   const promise = this.filters[0].startTransition(texture, filter);
   this.filters[0].setBlocked(false);
   return promise;
