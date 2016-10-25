@@ -54,50 +54,6 @@ export const Surface = React.createClass({
   },
 
   componentDidMount() {
-    // scale
-    //
-    function adjustSize(exchange) {
-      // this.refs.canvas.webkitRequestFullScreen()
-      if (navigator.userAgent.toLowerCase().indexOf('mobile') !== -1) {
-        let width, height;
-        // if (exchange) {
-        //   width = document.body.clientHeight;
-        //   height = document.body.clientWidth;
-        // } else {
-        width = document.body.clientWidth;
-        height = document.body.clientHeight;
-        // }
-
-        const dom = this.canvas;
-        // alert(height)
-        if (width / height > 1) {
-          dom.style.height = `${height}px`;
-        } else {
-          dom.style.width = `${width}px`;
-        }
-        // dom.style.height = '' + height + 'px';
-        // dom.style.objectFit = 'contain';
-      }
-    }
-    adjustSize.bind(this)();
-    window.onload = window.onorientationchange = () => {
-      // console.log(window.orientation)
-      // switch(window.orientation) {
-      //   case 0:
-      //   case 180:
-      //     adjustSize.bind(this)(true);
-      //     this.refs.canvas.style.transform = 'rotate(90deg)';
-      //     this.refs.canvas.style.position = 'absolute';
-      //     this.refs.canvas.style.left = '-50%';
-      //     this.refs.canvas.style.top = '50%';
-      //     break;
-      //   default:
-      //     this.refs.canvas.style.transform = 'none';
-      //     adjustSize.bind(this)(false);break;
-      // }
-    };
-
-
     // Prepare the <canvas> for drawing.
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
       view: this.canvas,
