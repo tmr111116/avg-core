@@ -72,6 +72,7 @@ class Layer extends PIXI.Container {
     this.background.beginFill(this.fillColor, this.fillAlpha);
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
     this.background.endFill();
+    this.filterArea = new PIXI.Rectangle(this.x, this.y, this.rectWidth, this.rectHeight);
     return this;
   }
 

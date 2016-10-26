@@ -101,8 +101,8 @@ export class Textwindow extends React.Component {
     } else if (flags.includes('set')) {
       params.bgfile && (params.bgFile = params.bgfile);
       params.textrect && (params.textRect = params.textrect);
-      params.xinterval && (params.xInterval = params.xinterval);
-      params.yinterval && (params.yInterval = params.yinterval);
+      params.xinterval != null && (params.xInterval = params.xinterval);
+      params.yinterval != null && (params.yInterval = params.yinterval);
       this.setState({
         props: Object.assign({}, this.state.props, params),
       });

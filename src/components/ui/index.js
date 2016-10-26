@@ -1,5 +1,5 @@
 /**
- * @file        Main export of the AVG core library
+ * @file        Window component
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,12 +18,4 @@
  * limitations under the License.
  */
 
-/**
- * @namespace AVG
- */
-export * as components from 'components';
-export * as ui from 'components/ui';
-export * as plugins from 'plugins';
-export { load as loadResource } from 'classes/Preloader';
-export React, { Component } from 'react';
-export { render } from 'react-dom';
+export Window from './Window';
