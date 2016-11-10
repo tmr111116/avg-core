@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-import PIXI from 'pixi.js';
+const PIXI = require('pixi.js');
 
 import TextWindow from './TextWindow';
 import Err from './ErrorHandler';

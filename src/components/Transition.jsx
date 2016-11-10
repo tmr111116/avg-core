@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-import PIXI from 'pixi.js';
+const PIXI = require('pixi.js');
 import React from 'react';
 import { Container } from 'components/Container';
 import { CrossFadeFilter } from 'classes/Transition/Filters';

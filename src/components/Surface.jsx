@@ -23,9 +23,8 @@ import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
-import PIXI from 'pixi.js';
+const PIXI = require('pixi.js');
 import Container from 'classes/Container';
-
 import { init as preloaderInit } from 'classes/Preloader';
 
 /**
