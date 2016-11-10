@@ -49,9 +49,9 @@ const RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
 export const Scene = React.createClass({
   displayName: 'Scene',
   propTypes: {
-    script: React.PropTypes.string,
+    script: React.PropTypes.string.isRequired,
     onLoading: React.PropTypes.func,
-    onCompleteLoading: React.PropTypes.func,
+    onLoadingComplete: React.PropTypes.func,
     onLoadingProgress: React.PropTypes.func,
     children: React.PropTypes.any,
   },
@@ -67,7 +67,7 @@ export const Scene = React.createClass({
     };
   },
   async componentDidMount() {
-    this.bindCommand('*', this);
+    this.bindCommand('stage', this);
     await this.loadScript(this.props.script);
     this.beginStory();
     // this.bindCommand(this.getChildrenArray(this.props.children));
@@ -167,7 +167,7 @@ export const Scene = React.createClass({
 
       await Promise.all([task1, task2]);
 
-      this.props.onCompleteLoading && this.props.onCompleteLoading();
+      this.props.onLoadingComplete && this.props.onLoadingComplete();
       this.loading = false;
     } else {
       Err.error('You must pass a script url');

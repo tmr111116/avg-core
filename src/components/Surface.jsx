@@ -38,7 +38,7 @@ export const Surface = React.createClass({
   propTypes: {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
-    cdn: React.PropTypes.string,
+    source: React.PropTypes.string,
     children: React.PropTypes.any,
   },
 
@@ -46,11 +46,12 @@ export const Surface = React.createClass({
 
   getDefaultProps() {
     return {
+      source: './',
     };
   },
 
   componentWillMount() {
-    preloaderInit(this.props.cdn);
+    preloaderInit(this.props.source);
   },
 
   componentDidMount() {
