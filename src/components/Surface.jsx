@@ -111,8 +111,8 @@ export const Surface = React.createClass({
 
   tick() {
     this.renderer.render(this.node);
-    // requestAnimationFrame(this.tick);
-    setTimeout(this.tick, 33);
+    requestAnimationFrame(this.tick);
+    // setTimeout(this.tick, 33);
   },
   render() {
     return (
