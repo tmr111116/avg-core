@@ -61,18 +61,24 @@ class Layer extends PIXI.Container {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-  setProperties({ x, y, width, height, color, opacity: alpha }) {
+  setProperties({ x, y, width, height, color, fillAlpha, opacity, anchor=[0,0], visible=true }) {
     this.x = x || this.x || 0;
     this.y = y || this.y || 0;
+    this.alpha = opacity || 1;
+    this.visible = visible;
     this.rectWidth = width || this.rectWidth || 10;
     this.rectHeight = height || this.rectHeight || 10;
+    this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1]));
     this.fillColor = color || this.fillColor || 0x000000;
-    this.fillAlpha = (alpha === 0) ? alpha : (this.fillAlpha || 1);
+    this.fillAlpha = (fillAlpha === 0) ? fillAlpha : (this.fillAlpha || 1);
     this.background.clear();
     this.background.beginFill(this.fillColor, this.fillAlpha);
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
     this.background.endFill();
-    this.filterArea = new PIXI.Rectangle(this.x, this.y, this.rectWidth, this.rectHeight);
+    this.filterArea = new PIXI.Rectangle(this.x - this.pivot.x,
+      this.y - this.pivot.y,
+      this.rectWidth + this.pivot.x,
+      this.rectHeight + this.pivot.y);
     return this;
   }
 

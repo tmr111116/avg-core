@@ -18,4 +18,4 @@
  * limitations under the License.
  */
 
-export Window from './Window';
+export Dialog from './Dialog';
