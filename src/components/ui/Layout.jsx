@@ -1,5 +1,5 @@
 /**
- * @file        Dialog component
+ * @file        Layout component
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
