@@ -47,10 +47,15 @@ const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 export const Layer = React.createClass({
   displayName: 'Layer',
   propTypes: {
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
     x: React.PropTypes.number,
     y: React.PropTypes.number,
+    opacity: React.PropTypes.number,
+    visible: React.PropTypes.bool,
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    fillColor: React.PropTypes.number,
+    fillAlpha: React.PropTypes.number,
+    anchor: React.PropTypes.arrayOf(React.PropTypes.number),
     children: React.PropTypes.any,
   },
   render() {
