@@ -22,15 +22,16 @@ import React from 'react';
 const PIXI = require('pixi.js');
 import { Layer } from '../Layer';
 import { Image } from '../Image';
+import combineProps from 'utils/combineProps';
+
+function getValidValueInRange(min, max, value) {
+  return Math.min(Math.max(min, value), max);
+}
 
 export default class Dialog extends React.Component {
   static propTypes = {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
+    ...Layer.propTypes,
     modal: React.PropTypes.bool,
-    visible: React.PropTypes.bool,
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
     dragable: React.PropTypes.bool,
     dragArea: React.PropTypes.arrayOf(React.PropTypes.number),
     children: React.PropTypes.any,
@@ -39,7 +40,7 @@ export default class Dialog extends React.Component {
     x: 0,
     y: 0,
     dragable: false,
-    dragArea: [0, 0, 0, 0],
+    dragArea: [0, 0, Infinity, Infinity],
   }
   state = {
     clicked: false,
@@ -71,24 +72,28 @@ export default class Dialog extends React.Component {
   handleMouseMove(e) {
     if (this.state.clicked) {
       const state = this.state;
+      const xMin = this.props.width * (0 + this.props.anchor[0] || 0);
+      const xMax = PIXI.currentRenderer.width - this.props.width * (1 - this.props.anchor[0] || 0);
+      const x = state.startX + (e.global.x - state.startGlobalX);
+      const yMin = this.props.height * (0 + this.props.anchor[1] || 0);
+      const yMax = PIXI.currentRenderer.height - this.props.height * (1 - this.props.anchor[1] || 0);
+      const y = state.startY + (e.global.y - state.startGlobalY);
       this.setState({
-        x: Math.min(Math.max(this.props.width * (0 + this.props.anchor[0] || 0), state.startX + (e.global.x - state.startGlobalX)), PIXI.currentRenderer.width - this.props.width * (1 - this.props.anchor[0] || 0)),
-        y: Math.min(Math.max(this.props.height * (0 + this.props.anchor[1] || 0), state.startY + (e.global.y - state.startGlobalY)), PIXI.currentRenderer.height - this.props.height * (1 - this.props.anchor[1] || 0)),
+        x: getValidValueInRange(xMin, xMax, x),
+        y: getValidValueInRange(yMin, yMax, y),
       });
     }
     // e.stopPropagation();
   }
   render() {
-    const { anchor, width, height, opacity, visible } = this.props;
-    const props = { anchor, width, height, opacity, visible };
     const core =  (
-      <Layer
-        x={this.state.x} y={this.state.y} {...props}
+      <Layer {...combineProps(this.props, Layer.propTypes)}
+        x={this.state.x} y={this.state.y}
         onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp}
         onMouseMove={::this.handleMouseMove}>
         {this.props.children}
       </Layer>
     );
-    return this.props.modal ? (<Layer visible={visible}>{core}</Layer>) : core;
+    return this.props.modal ? (<Layer visible={this.props.visible}>{core}</Layer>) : core;
   }
 }
