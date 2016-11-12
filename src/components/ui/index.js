@@ -19,3 +19,4 @@
  */
 
 export Dialog from './Dialog';
+export Layout from './Layout';
