@@ -43,8 +43,8 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
       layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
     }
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
+    layer.x = props.x || layer.x || 0;
+    layer.y = props.y || layer.y || 0;
   },
 
 });
