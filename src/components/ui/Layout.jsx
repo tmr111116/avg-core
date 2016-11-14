@@ -57,6 +57,7 @@ export default class Layout extends React.Component {
     innerY: 0,
     overflowX: 'scroll',
     overflowY: 'scroll',
+    scrollStyle: {},
   }
   componentDidMount() {
     let maxWidth = 0;
@@ -153,8 +154,8 @@ export default class Layout extends React.Component {
     let backWidthH, backHeightH, xH, yH, lengthH;
     const visibleV = (this.props.maxHeight < this.state.height) && this.props.overflowY === 'scroll';
     const visibleH = (this.props.maxWidth < this.state.width) && this.props.overflowX === 'scroll';
-    backWidthV = 10;
-    backHeightH = 10;
+    backWidthV = this.props.scrollStyle.backgroundWidth || 10;
+    backHeightH = this.props.scrollStyle.backgroundWidth || 10;
     if (visibleV) {
       backHeightV = this.props.maxHeight - (visibleH ? backHeightH : 0);
       xV = this.props.maxWidth - backWidthV;
@@ -170,7 +171,6 @@ export default class Layout extends React.Component {
     this.setState({
       scrollBackColorV: 0xffffff,
       scrollBackAlphaV: 0.6,
-      scrollBackWidthV: backWidthV,
       scrollBackHeightV: backHeightV,
       scrollXV: xV,
       scrollYV: yV,
@@ -179,14 +179,35 @@ export default class Layout extends React.Component {
       scrollBackColorH: 0xffffff,
       scrollBackAlphaH: 0.6,
       scrollBackWidthH: backWidthH,
-      scrollBackHeightH: backHeightH,
       scrollXH: xH,
       scrollYH: yH,
       scrollVisibleH: visibleH,
       scrollButtonLengthH: lengthH,
     })
   }
+  scrollDragV(e) {
+    this.tempScrollHandler({ deltaX: 0, deltaY: e.deltaY });
+  }
+  scrollDragH() {
+    this.tempScrollHandler({ deltaX: e.deltaX, deltaY: 0 });
+  }
   render() {
+    const {
+      backgroundColor,
+      backgroundAlpha,
+      backgroundWidth,
+      buttonColor,
+      buttonAlpha,
+      buttonWidth
+    } = {
+      backgroundColor: 0xffffff,
+      backgroundAlpha: 0.6,
+      backgroundWidth: 10,
+      buttonColor: 0xffffff,
+      buttonAlpha: 1,
+      buttonWidth: 6,
+      ...this.props.scrollStyle
+    }
     return (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         ref={node => this.node = node}
@@ -198,35 +219,41 @@ export default class Layout extends React.Component {
             return React.cloneElement(element, { ref: idx, key: idx });
           })}
         </Layer>
-        <Scroller backgroundColor={0xffffff}
-                  backgroundAlpha={0.6}
-                  backgroundWidth={this.state.scrollBackWidthV}
+        <Scroller backgroundColor={backgroundColor}
+                  backgroundAlpha={backgroundAlpha}
+                  backgroundWidth={backgroundWidth}
                   backgroundHeight={this.state.scrollBackHeightV}
                   x={this.state.scrollXV} y={this.state.scrollYV}
                   visible={this.state.scrollVisibleV}
                   direction='vertical'
-                  buttonWidth={6}
-                  buttonColor={0xffffff}
-                  buttonAlpha={1}
+                  buttonWidth={buttonWidth}
+                  buttonColor={buttonColor}
+                  buttonAlpha={this.state.scrollButtonAlphaV || buttonAlpha}
                   buttonLength={this.state.scrollButtonLengthV}
-                  buttonPosition={this.state.scrollButtonPosV} key='scrollV' />
-        <Scroller backgroundColor={0xffffff}
-                  backgroundAlpha={0.6}
+                  buttonPosition={this.state.scrollButtonPosV} key='scrollV'
+                  onDrag={::this.scrollDragV}
+                  onMouseover={() => this.setState({ scrollButtonAlphaV: 1 })}
+                  onMouseout={() => this.setState({ scrollButtonAlphaV: buttonAlpha})} />
+        <Scroller backgroundColor={backgroundColor}
+                  backgroundAlpha={backgroundAlpha}
                   backgroundWidth={this.state.scrollBackWidthH}
-                  backgroundHeight={this.state.scrollBackHeightH}
+                  backgroundHeight={backgroundWidth}
                   x={this.state.scrollXH} y={this.state.scrollYH}
                   visible={this.state.scrollVisibleH}
                   direction='horizental'
-                  buttonWidth={6}
-                  buttonColor={0xffffff}
-                  buttonAlpha={1}
+                  buttonWidth={buttonWidth}
+                  buttonColor={buttonColor}
+                  buttonAlpha={this.state.scrollButtonAlphaH || buttonAlpha}
                   buttonLength={this.state.scrollButtonLengthH}
-                  buttonPosition={this.state.scrollButtonPosH} key='scrollH' />
+                  buttonPosition={this.state.scrollButtonPosH} key='scrollH'
+                  onDrag={::this.scrollDragH}
+                  onMouseover={() => this.setState({ scrollButtonAlphaH: 1 })}
+                  onMouseout={() => this.setState({ scrollButtonAlphaH: buttonAlpha})} />
         <Layer visible={this.state.scrollVisibleV && this.state.scrollVisibleH}
                width={this.state.scrollBackWidthV}
                height={this.state.scrollBackHeightH}
                x={this.state.scrollXV} y={this.state.scrollYH}
-               fillColor={0xffffff} fillAlpha={0.6} />
+               fillColor={backgroundColor} fillAlpha={backgroundAlpha} />
       </Layer>
     );
   }
