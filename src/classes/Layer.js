@@ -62,9 +62,9 @@ class Layer extends PIXI.Container {
      * @returns {Sprite} - this
      */
   setProperties({ x, y, opacity, visible=true, width, height, fillColor, fillAlpha, anchor=[0,0] }) {
-    this.x = x || this.x || 0;
-    this.y = y || this.y || 0;
-    this.alpha = opacity || 1;
+    this.x = (x != null) ? x : (this.x || 0);
+    this.y = (y != null) ? y : (this.y || 0);
+    this.alpha = (opacity != null) ? opacity : 1;
     this.visible = visible;
     this.rectWidth = width || this.rectWidth || 10;
     this.rectHeight = height || this.rectHeight || 10;

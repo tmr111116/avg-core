@@ -62,7 +62,7 @@ export const Layer = React.createClass({
     const props = {
       width: PIXI.currentRenderer.width,
       height: PIXI.currentRenderer.height,
-      opacity: 0,
+      opacity: 1,
       ...this.props,
     };
     return React.createElement(RawLayer, props, this.props.children);
