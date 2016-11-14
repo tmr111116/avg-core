@@ -35,10 +35,90 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
   mountNode(props) {
     this.setProperties(props);
     const layer = this.node;
+    const button = this.node.children[0];
+    layer.interactive = true;
+    button.interactive = true;
+    button.buttonMode = true;
+    const buttonMouseDown = (e) => {
+      button.cachedX = button.x;
+      button.cachedY = button.y;
+      button.clear();
+      button.beginFill(button.buttonColor, button.buttonAlpha);
+
+      if (layer.direction === 'vertical') {
+        const radius = layer.backgroundWidth / 2;
+        button.drawRoundedRect(0, 0, layer.backgroundWidth, button.buttonLength, radius);
+        button.x = 0;
+      } else {
+        const radius = layer.backgroundHeight / 2;
+        button.drawRoundedRect(0, 0, button.buttonLength, layer.backgroundHeight, radius);
+        button.y = 0;
+      }
+      button.endFill();
+
+      button.isPressDown = true;
+      button.startPointerGlobalX = e.data.global.x;
+      button.startPointerGlobalY = e.data.global.y;
+
+      e.stopPropagation();
+    };
+    const buttonMouseUp = (e) => {
+      button.clear();
+      button.beginFill(button.buttonColor, button.buttonAlpha);
+
+      if (layer.direction === 'vertical') {
+        const radius = button.buttonWidth / 2;
+        button.drawRoundedRect(0, 0, button.buttonWidth, button.buttonLength, radius);
+        button.x = button.cachedX;
+      } else {
+        const radius = button.buttonWidth / 2;
+        button.drawRoundedRect(0, 0, button.buttonLength, button.buttonWidth, radius);
+        button.y = button.cachedY;
+      }
+      button.endFill();
+
+      button.isPressDown = false;
+
+      e.stopPropagation();
+    };
+    button.on('mousedown', buttonMouseDown);
+    button.on('touchstart', buttonMouseDown);
+    button.on('mouseup', buttonMouseUp);
+    button.on('touchend', buttonMouseUp);
+    button.on('mouseupoutside', buttonMouseUp);
+    button.on('touchendoutside', buttonMouseUp);
+
+    /* set event */
+    layer._ongoto = props.onGoto;
+    button._ondrag = props.onDrag;
+
+    const layerMouseDown = (e) => {
+      layer._ongoto && layer._ongoto(e);
+    };
+    layer.on('mousedown', layerMouseDown);
+    layer.on('touchstart', layerMouseDown);
+
+    const buttonMouseMove = (e) => {
+      if (button.isPressDown) {
+        button._ondrag && button._ondrag({
+          deltaX: e.data.global.x - button.startPointerGlobalX,
+          deltaY: e.data.global.y - button.startPointerGlobalY,
+        });
+        button.startPointerGlobalX = e.data.global.x;
+        button.startPointerGlobalY = e.data.global.y;
+      }
+    };
+    button.on('mousemove', buttonMouseMove);
+    button.on('touchmove', buttonMouseMove);
+
     return layer;
   },
   updateNode(prevProps, props) {
     this.setProperties(props);
+    const layer = this.node;
+    const button = this.node.children[0];
+    layer._ongoto = props.onGoto;
+    button._ondrag = props.onDrag;
   },
   setProperties(props) {
     const p = {
@@ -67,23 +147,40 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
     layer.visible = p.visible;
 
     const button = this.node.children[0];
-    button.clear();
-    button.beginFill(p.buttonColor, p.buttonAlpha);
 
-    if (p.direction === 'vertical') {
-      button.drawRect(0, 0, p.buttonWidth, p.buttonLength);
-    } else {
-      button.drawRect(0, 0, p.buttonLength, p.buttonWidth);
+    // 若为按下状态，说明当前滚动条正在被拖动，不进行样式重绘，也没必要重绘
+    if (!button.isPressDown) {
+      button.clear();
+      button.beginFill(p.buttonColor, p.buttonAlpha);
+
+      if (p.direction === 'vertical') {
+        const radius = p.buttonWidth / 2;
+        button.drawRoundedRect(0, 0, p.buttonWidth, p.buttonLength, radius);
+      } else {
+        const radius = p.buttonWidth / 2;
+        button.drawRoundedRect(0, 0, p.buttonLength, p.buttonWidth, radius);
+      }
+      button.endFill();
     }
-    button.endFill();
 
     if (p.direction === 'vertical') {
-      button.x = (p.backgroundWidth - p.buttonWidth) / 2;
+      !button.isPressDown && (button.x = (p.backgroundWidth - p.buttonWidth) / 2);
       button.y = (p.backgroundHeight - p.buttonLength) * p.buttonPosition;
     } else {
-      button.y = (p.backgroundHeight - p.buttonWidth) / 2;
+      !button.isPressDown && (button.y = (p.backgroundHeight - p.buttonWidth) / 2);
       button.x = (p.backgroundWidth - p.buttonLength) * p.buttonPosition;
     }
+
+    /* store size info for event */
+    layer.backgroundColor = p.backgroundColor;
+    layer.backgroundAlpha = p.backgroundAlpha;
+    layer.backgroundWidth = p.backgroundWidth;
+    layer.backgroundHeight = p.backgroundHeight;
+    button.buttonColor = p.buttonColor;
+    button.buttonAlpha = p.buttonAlpha;
+    button.buttonWidth = p.buttonWidth;
+    button.buttonLength = p.buttonLength;
+    layer.direction = p.direction
 
   }
 });
