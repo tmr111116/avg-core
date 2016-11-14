@@ -130,13 +130,27 @@ export default class Layout extends React.Component {
     this.drawScrollBar();
   }
   tempScrollHandler(e) {
-    const deltaX = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0;
-    const deltaY = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? 0 : e.deltaY;
+    // const deltaX = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0;
+    // const deltaY = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? 0 : e.deltaY;
+    let deltaX, deltaY, x, y;
+    if (e.deltaX != null) {
+      deltaX = e.deltaX;
+      x = this.state.innerX - deltaX;
+    } else {
+      x = e.x;
+    }
+    if (e.deltaY != null) {
+      deltaY = e.deltaY;
+      y = this.state.innerY - deltaY;
+    } else {
+      y = e.y;
+    }
+
     const maxWidth = this.props.maxWidth || this.state.width;
     const maxHeight = this.props.maxHeight || this.state.height;
 
-    const innerX = getValidValueInRange(maxWidth - this.state.width, 0, this.state.innerX - deltaX);
-    const innerY = getValidValueInRange(maxHeight - this.state.height, 0, this.state.innerY - deltaY);
+    const innerX = getValidValueInRange(maxWidth - this.state.width, 0, x);
+    const innerY = getValidValueInRange(maxHeight - this.state.height, 0, y);
 
     let posV, posH;
     posV = Math.min(1, Math.abs(innerY) / (this.state.height - this.props.maxHeight));
@@ -188,8 +202,22 @@ export default class Layout extends React.Component {
   scrollDragV(e) {
     this.tempScrollHandler({ deltaX: 0, deltaY: e.deltaY });
   }
-  scrollDragH() {
+  scrollDragH(e) {
     this.tempScrollHandler({ deltaX: e.deltaX, deltaY: 0 });
+  }
+  handleTouchStart(e) {
+    this.setState({
+      touching: true,
+      touchX: e.local.x,
+      touchY: e.local.y,
+      originX: this.state.innerX,
+      originY: this.state.innerY,
+    });
+  }
+  handleTouchMove(e) {
+    const x = this.state.originX - this.state.touchX + e.local.x;
+    const y = this.state.originY - this.state.touchY + e.local.y;
+    this.tempScrollHandler({ x: x, y: y });
   }
   render() {
     const {
@@ -212,7 +240,9 @@ export default class Layout extends React.Component {
       <Layer {...combineProps(this.props, Layer.propTypes)}
         ref={node => this.node = node}
         width={this.props.maxWidth || this.state.width}
-        height={this.props.maxHeight || this.state.height}>
+        height={this.props.maxHeight || this.state.height}
+        onTouchStart={::this.handleTouchStart}
+        onTouchMove={::this.handleTouchMove}>
         <Layer x={this.state.innerX} y={this.state.innerY}
           width={this.state.width} height={this.state.height}>
           {React.Children.map(this.props.children, (element, idx) => {

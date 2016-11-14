@@ -107,6 +107,7 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
         button.startPointerGlobalX = e.data.global.x;
         button.startPointerGlobalY = e.data.global.y;
       }
+      e.stopPropagation();
     };
     button.on('mousemove', buttonMouseMove);
     button.on('touchmove', buttonMouseMove);
