@@ -78,7 +78,6 @@ const NodeMixin = {
         delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
       }
     }
-
     this.node.buttonMode = false;
     const keys = Object.keys(props);
     for (const key of keys) {
