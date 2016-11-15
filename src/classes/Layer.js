@@ -82,6 +82,10 @@ class Layer extends PIXI.Container {
     return this;
   }
 
+  containsPoint(...args) {
+    return this.background.containsPoint(...args);
+  }
+
   removeChildren() {
     super.removeChildren();
     this.addChild(this.background);
