@@ -34,6 +34,15 @@ export function attachToSprite(sprite) {
   sprite.on('touchmove', handleEvent);
   sprite.on('touchend', handleEvent);
   sprite.on('touchendoutside', handleEvent);
+
+  sprite.on('pointerover', pointerHandler);
+  sprite.on('pointerenter', pointerHandler);
+  sprite.on('pointerdown', pointerHandler);
+  sprite.on('pointermove', pointerHandler);
+  sprite.on('pointerup', pointerHandler);
+  sprite.on('pointercancel', pointerHandler);
+  sprite.on('pointerout', pointerHandler);
+  sprite.on('pointerleave', pointerHandler);
 }
 
 // let Handler;
@@ -50,22 +59,34 @@ function handleEvent(evt) {
   // if (Handler) {
   //   Handler(e);
   // } else {
-  const defaultHandler = e.target[`_on${e.type}`];
-  defaultHandler && defaultHandler(e);
+  const handler = e.target ? e.target[`_on${e.type}`] : null;
+  const defaultHandler = e.target ? e.target[`_on${e.type}default`] : null;
+  handler && handler(e);
+  if (!e._preventDefault) {
+    defaultHandler && defaultHandler(e);
+  }
   // }
+}
+
+function pointerHandler(evt) {
+  const e = new EventData(evt);
+  // console.log(e.type)
+  const defaultHandler = e.target ? e.target[`_on${e.type}`] : null;
+  defaultHandler && defaultHandler(e);
 }
 
 class EventData {
   constructor(evt) {
     this.type = evt.type;
+    this._preventDefault = false;
     this.originalEvent = evt;
-    this.index = evt.target.index;
+    // this.index = evt.target.index;
     this.target = evt.target;
     this.global = {
       x: evt.data.global.x,
       y: evt.data.global.y,
     };
-    this.local = evt.target.toLocal(this.global);
+    this.local = evt.target ? evt.target.toLocal(this.global) : null;
 
     // 有时候会有奇怪的触发，导致 data.originalEvent 是 null……
     if (evt.data.originalEvent) {
@@ -76,6 +97,9 @@ class EventData {
     } else {
       this.movement = { x: 0, y: 0 };
     }
+  }
+  preventDefault() {
+    this._preventDefault = true;
   }
   stopPropagation() {
     this.originalEvent.stopped = true;
