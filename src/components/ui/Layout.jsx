@@ -118,13 +118,16 @@ export default class Layout extends React.Component {
     }
 
     PIXI.currentRenderer.view.addEventListener('wheel', evt => {
-      this.tempScrollHandler({
-        deltaX: evt.deltaX,
-        deltaY: evt.deltaY,
-        deltaZ: evt.deltaZ,
-      });
-      evt.preventDefault();
-      evt.stopPropagation();
+      const point = new PIXI.Point(evt.offsetX, evt.offsetY);
+      if (this._reactInternalInstance._mountImage.containsPoint(point)) {
+        this.tempScrollHandler({
+          deltaX: evt.deltaX,
+          deltaY: evt.deltaY,
+          deltaZ: evt.deltaZ,
+        });
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
     }, true);
 
     this.drawScrollBar();
@@ -183,15 +186,15 @@ export default class Layout extends React.Component {
       lengthH = this.props.maxWidth / this.state.width * this.props.maxWidth;
     }
     this.setState({
-      scrollBackColorV: 0xffffff,
-      scrollBackAlphaV: 0.6,
+      scrollBackColorV: this.state.scrollBackColorV,
+      scrollBackAlphaV: this.state.scrollBackAlphaV,
       scrollBackHeightV: backHeightV,
       scrollXV: xV,
       scrollYV: yV,
       scrollVisibleV: visibleV,
       scrollButtonLengthV: lengthV,
-      scrollBackColorH: 0xffffff,
-      scrollBackAlphaH: 0.6,
+      scrollBackColorH: this.state.scrollBackColorH,
+      scrollBackAlphaH: this.state.scrollBackAlphaH,
       scrollBackWidthH: backWidthH,
       scrollXH: xH,
       scrollYH: yH,
@@ -200,10 +203,10 @@ export default class Layout extends React.Component {
     })
   }
   scrollDragV(e) {
-    this.tempScrollHandler({ deltaX: 0, deltaY: e.deltaY });
+    this.tempScrollHandler({ deltaX: 0, deltaY: e.deltaY * this.state.height });
   }
   scrollDragH(e) {
-    this.tempScrollHandler({ deltaX: e.deltaX, deltaY: 0 });
+    this.tempScrollHandler({ deltaX: e.deltaX * this.state.width, deltaY: 0 });
   }
   handleTouchStart(e) {
     this.setState({
@@ -263,7 +266,10 @@ export default class Layout extends React.Component {
                   buttonPosition={this.state.scrollButtonPosV} key='scrollV'
                   onDrag={::this.scrollDragV}
                   onMouseover={() => this.setState({ scrollButtonAlphaV: 1 })}
-                  onMouseout={() => this.setState({ scrollButtonAlphaV: buttonAlpha})} />
+                  onMouseout={() => this.setState({ scrollButtonAlphaV: buttonAlpha})}
+                  onTouchStart={() => this.setState({ scrollButtonAlphaV: 1 })}
+                  onTouchEnd={() => this.setState({ scrollButtonAlphaV: buttonAlpha})}
+                  onTouchEndOutside={() => this.setState({ scrollButtonAlphaV: buttonAlpha})} />
         <Scroller backgroundColor={backgroundColor}
                   backgroundAlpha={backgroundAlpha}
                   backgroundWidth={this.state.scrollBackWidthH}
@@ -278,10 +284,13 @@ export default class Layout extends React.Component {
                   buttonPosition={this.state.scrollButtonPosH} key='scrollH'
                   onDrag={::this.scrollDragH}
                   onMouseover={() => this.setState({ scrollButtonAlphaH: 1 })}
-                  onMouseout={() => this.setState({ scrollButtonAlphaH: buttonAlpha})} />
+                  onMouseout={() => this.setState({ scrollButtonAlphaH: buttonAlpha})}
+                  onTouchStart={() => this.setState({ scrollButtonAlphaH: 1 })}
+                  onTouchEnd={() => this.setState({ scrollButtonAlphaH: buttonAlpha})}
+                  onTouchEndOutside={() => this.setState({ scrollButtonAlphaH: buttonAlpha})} />
         <Layer visible={this.state.scrollVisibleV && this.state.scrollVisibleH}
-               width={this.state.scrollBackWidthV}
-               height={this.state.scrollBackHeightH}
+               width={backgroundWidth}
+               height={backgroundWidth}
                x={this.state.scrollXV} y={this.state.scrollYH}
                fillColor={backgroundColor} fillAlpha={backgroundAlpha} />
       </Layer>
