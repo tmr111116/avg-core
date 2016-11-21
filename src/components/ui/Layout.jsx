@@ -58,6 +58,7 @@ export default class Layout extends React.Component {
     overflowX: 'scroll',
     overflowY: 'scroll',
     scrollStyle: {},
+    childPositions: [],
   }
   componentDidMount() {
     let maxWidth = 0;
@@ -94,27 +95,39 @@ export default class Layout extends React.Component {
 
     const refs = Object.keys(this.refs);
     let count = refs.length;
+    const childPositions = [];
     for (let ref of refs) {
       const child = this.refs[ref];
       const node = child._reactInternalInstance._mountImage;
 
       if (direction === 'vertical') {
-        node.x = lastRight + (maxWidth - node.width) * baseline;
-        node.y = lastBottom;
+        childPositions.push(lastRight + (maxWidth - node.width) * baseline);
+        childPositions.push(lastBottom);
+        // node.x = lastRight + (maxWidth - node.width) * baseline;
+        // node.y = lastBottom;
         lastBottom += interval + node.height;
       } else {
-        node.x = lastRight;
-        node.y = lastBottom + (maxHeight - node.height) * baseline;
+        childPositions.push(lastRight);
+        childPositions.push(lastBottom + (maxHeight - node.height) * baseline);
+        // node.x = lastRight;
+        // node.y = lastBottom + (maxHeight - node.height) * baseline;
         lastRight += interval + node.width;
       }
     }
 
     if (direction === 'vertical') {
-      this::setLayerSize(paddingLeft + maxWidth + paddingRight,
-        lastBottom - interval + paddingBottom);
+      this.setState({
+        width: paddingLeft + maxWidth + paddingRight,
+        height: lastBottom - interval + paddingBottom,
+        childPositions: childPositions
+      });
+
     } else {
-      this::setLayerSize(lastRight - interval + paddingRight,
-        paddingTop + maxHeight + paddingBottom);
+      this.setState({
+        width: lastRight - interval + paddingRight,
+        height: paddingTop + maxHeight + paddingBottom,
+        childPositions: childPositions
+      });
     }
 
     PIXI.currentRenderer.view.addEventListener('wheel', evt => {
@@ -248,8 +261,14 @@ export default class Layout extends React.Component {
         onTouchMove={::this.handleTouchMove}>
         <Layer x={this.state.innerX} y={this.state.innerY}
           width={this.state.width} height={this.state.height}>
-          {React.Children.map(this.props.children, (element, idx) => {
-            return React.cloneElement(element, { ref: idx, key: idx });
+          {React.Children.map(this.props.children, (element, index) => {
+            return React.cloneElement(element,
+              {
+                ref: index,
+                key: index,
+                x: this.state.childPositions[index * 2],
+                y: this.state.childPositions[index * 2 + 1],
+              });
           })}
         </Layer>
         <Scroller backgroundColor={backgroundColor}
@@ -296,11 +315,4 @@ export default class Layout extends React.Component {
       </Layer>
     );
   }
-}
-
-function setLayerSize(w, h) {
-  this.setState({
-    width: w,
-    height: h
-  });
 }

@@ -38,7 +38,17 @@ class Layer extends PIXI.Container {
     this.background = new PIXI.Graphics();
     this.addChild(this.background);
 
-    this.setProperties({});
+    this.setProperties({
+      x: 0,
+      y: 0,
+      opacity: 1,
+      visible: true,
+      width: 10,
+      height: 10,
+      fillColor: 0x000000,
+      fillAlpha: 0,
+      anchor: [0, 0]
+    });
 
     this.filters = [new TransitionFilter()];
   }
@@ -61,16 +71,16 @@ class Layer extends PIXI.Container {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-  setProperties({ x, y, opacity, visible=true, width, height, fillColor, fillAlpha, anchor=[0,0] }) {
-    this.x = (x != null) ? x : (this.x || 0);
-    this.y = (y != null) ? y : (this.y || 0);
-    this.alpha = (opacity != null) ? opacity : 1;
-    this.visible = visible;
-    this.rectWidth = width || this.rectWidth || 10;
-    this.rectHeight = height || this.rectHeight || 10;
-    this.fillColor = fillColor || this.fillColor || 0x000000;
-    this.fillAlpha = fillAlpha || this.fillAlpha || 0;
-    this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1]));
+  setProperties({ x, y, opacity, visible, width, height, fillColor, fillAlpha, anchor }) {
+    (x != null) && (this.x = x);
+    (y != null) && (this.y = y);
+    (opacity != null) && (this.alpha = opacity);
+    (visible != null) && (this.visible = visible);
+    (width != null) && (this.rectWidth = width);
+    (height != null) && (this.rectHeight = height);
+    (fillColor != null) && (this.fillColor = fillColor);
+    (fillAlpha != null) && (this.fillAlpha = fillAlpha);
+    (anchor != null) && (this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1])));
     this.background.clear();
     this.background.beginFill(this.fillColor, this.fillAlpha);
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);

@@ -39,9 +39,9 @@ const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, 
   },
   updateNode(prevProps, props) {
     const layer = this.node;
-    layer.x = props.x || layer.x || 0;
-    layer.y = props.y || layer.x || 0;
-    layer.alpha = props.opactiy || layer.opacity || 1;
+    layer.x = props.x || 0;
+    layer.y = props.y || 0;
+    layer.alpha = props.opactiy || 1;
   },
 
 });
