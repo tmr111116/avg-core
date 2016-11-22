@@ -50,7 +50,11 @@ export const Surface = React.createClass({
   },
 
   componentWillMount() {
-    preloaderInit(this.props.source);
+    let source = this.props.source;
+    if (!source.endsWith('/')) {
+      source = source + '/';
+    }
+    preloaderInit(source);
   },
 
   componentDidMount() {
