@@ -86,6 +86,9 @@ class Layer extends PIXI.Container {
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
     this.background.endFill();
 
+    // 以下是一个糟糕的 hack，因为 mountNode 是自底向上的，而 filterArea 需要全局坐标
+    // 即当节点挂载在父节点之上后，得到的才是正确的全局坐标，也就是自顶向下的
+    // 所以设置一个延时轮训，每隔 50ms 一次，若超过 1s 则放弃（例如，野精灵是永远不会有父节点的）
     {
       let time = 0;
       const tick = () => {
