@@ -68,14 +68,21 @@ export default class Layout extends React.Component {
     for (let ref of refs) {
       const child = this.refs[ref];
       const node = child._reactInternalInstance._mountImage;
-      node.texture.on('update', i => {
-        maxWidth = Math.max(maxWidth, node.width);
-        maxHeight = Math.max(maxHeight, node.height);
+      if (!node.texture) {
         count--;
         if (count <= 0) {
           this.applyLayout(maxWidth, maxHeight);
         }
-      });
+      } else {
+        node.texture.on('update', i => {
+          maxWidth = Math.max(maxWidth, node.width);
+          maxHeight = Math.max(maxHeight, node.height);
+          count--;
+          if (count <= 0) {
+            this.applyLayout(maxWidth, maxHeight);
+          }
+        });
+      }
     }
   }
   // componentDidUpdate() {
