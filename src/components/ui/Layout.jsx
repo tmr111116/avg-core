@@ -49,15 +49,15 @@ export default class Layout extends React.Component {
     padding: [0, 0, 0, 0],
     interval: 10,
     direction: 'vertical',
+    overflowX: 'scroll',
+    overflowY: 'scroll',
+    scrollStyle: {},
   }
   state = {
     width: null,
     height: null,
     innerX: 0,
     innerY: 0,
-    overflowX: 'scroll',
-    overflowY: 'scroll',
-    scrollStyle: {},
     childPositions: [],
   }
   componentDidMount() {
@@ -68,15 +68,20 @@ export default class Layout extends React.Component {
     for (let ref of refs) {
       const child = this.refs[ref];
       const node = child._reactInternalInstance._mountImage;
-      if (!node.texture) {
+      if (!node.texture || node.texture === PIXI.Texture.EMPTY) {
+        const bound = node.getBounds();
+        console.log(bound)
+        maxWidth = Math.max(maxWidth, bound.width);
+        maxHeight = Math.max(maxHeight, bound.height);
         count--;
         if (count <= 0) {
           this.applyLayout(maxWidth, maxHeight);
         }
       } else {
         node.texture.on('update', i => {
-          maxWidth = Math.max(maxWidth, node.width);
-          maxHeight = Math.max(maxHeight, node.height);
+          const bound = node.getBounds();
+          maxWidth = Math.max(maxWidth, bound.width);
+          maxHeight = Math.max(maxHeight, bound.height);
           count--;
           if (count <= 0) {
             this.applyLayout(maxWidth, maxHeight);
@@ -106,19 +111,20 @@ export default class Layout extends React.Component {
     for (let ref of refs) {
       const child = this.refs[ref];
       const node = child._reactInternalInstance._mountImage;
+      const bound = node.getBounds();
 
       if (direction === 'vertical') {
-        childPositions.push(lastRight + (maxWidth - node.width) * baseline);
+        childPositions.push(lastRight + (maxWidth - bound.width) * baseline);
         childPositions.push(lastBottom);
         // node.x = lastRight + (maxWidth - node.width) * baseline;
         // node.y = lastBottom;
-        lastBottom += interval + node.height;
+        lastBottom += interval + bound.height;
       } else {
         childPositions.push(lastRight);
-        childPositions.push(lastBottom + (maxHeight - node.height) * baseline);
+        childPositions.push(lastBottom + (maxHeight - bound.height) * baseline);
         // node.x = lastRight;
         // node.y = lastBottom + (maxHeight - node.height) * baseline;
-        lastRight += interval + node.width;
+        lastRight += interval + bound.width;
       }
     }
 
