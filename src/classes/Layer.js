@@ -85,10 +85,28 @@ class Layer extends PIXI.Container {
     this.background.beginFill(this.fillColor, this.fillAlpha);
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
     this.background.endFill();
-    this.filterArea = new PIXI.Rectangle(this.x - this.pivot.x,
-      this.y - this.pivot.y,
-      this.rectWidth + this.pivot.x,
-      this.rectHeight + this.pivot.y);
+
+    {
+      let time = 0;
+      const tick = () => {
+        if (this.parent) {
+          const point = this.toGlobal(new PIXI.Point(0, 0));
+          // setTimeout(() => console.log(this.toGlobal(new PIXI.Point(0, 0)), this.parent), 500)
+          // console.log(point, this.pivot, this.parent)
+          // console.log(this.position.x, point.x)
+          // const point = this.position;
+          this.filterArea = new PIXI.Rectangle(point.x - this.pivot.x,
+            point.y - this.pivot.y,
+            this.rectWidth + this.pivot.x,
+            this.rectHeight + this.pivot.y);
+        } else if (!this.parent && time < 1000) {
+          time += 50;
+          setTimeout(tick, 50);
+        }
+      }
+      tick();
+    }
+
     return this;
   }
 
