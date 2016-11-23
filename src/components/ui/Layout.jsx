@@ -70,7 +70,6 @@ export default class Layout extends React.Component {
       const node = child._reactInternalInstance._mountImage;
       if (!node.texture || node.texture === PIXI.Texture.EMPTY) {
         const bound = node.getBounds();
-        console.log(bound)
         maxWidth = Math.max(maxWidth, bound.width);
         maxHeight = Math.max(maxHeight, bound.height);
         count--;

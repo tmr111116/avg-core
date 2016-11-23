@@ -103,8 +103,8 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
     const buttonMouseMove = (e) => {
       if (button.isPressDown) {
         button._ondrag && button._ondrag({
-          deltaX: (e.data.global.x - button.startPointerGlobalX) / button.buttonLength,
-          deltaY: (e.data.global.y - button.startPointerGlobalY) / button.buttonLength,
+          deltaX: (e.data.global.x - button.startPointerGlobalX) / layer.backgroundWidth,
+          deltaY: (e.data.global.y - button.startPointerGlobalY) / layer.backgroundHeight,
         });
         button.startPointerGlobalX = e.data.global.x;
         button.startPointerGlobalY = e.data.global.y;
