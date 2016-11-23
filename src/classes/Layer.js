@@ -51,6 +51,7 @@ class Layer extends PIXI.Container {
     });
 
     this.filters = [new TransitionFilter()];
+    this.localFilterArea = null;
   }
 
     /**
@@ -62,6 +63,32 @@ class Layer extends PIXI.Container {
   setIndex(index) {
     this.index = index;
     return this;
+  }
+
+  // 取代下面的通过 setTimeout 进行 hack 的方式，直接 hack `filterArea` 的取值过程
+  // 新设 `localFilterArea`，内部坐标全部相对于精灵本身
+  // 注：该方法会破坏 `filterArea` 原有的程序逻辑
+  //   （即 hack 之后，每次获得的 filterArea 会随着精灵移动而自动发生改变）
+  set filterArea(rect) {
+    if (rect instanceof PIXI.Rectangle) {
+      const gPoint = new PIXI.Point(rect.x, rect.y);
+      const lPoint = this.toLocal(gPoint);
+      this.localFilterArea = new PIXI.Rectangle(lPoint.x, lPoint.y, rect.width, rect.height);
+    } else {
+      this.localFilterArea = null;
+    }
+  }
+
+  get filterArea() {
+    const localFilterArea = this.localFilterArea;
+    if (localFilterArea) {
+      const x = localFilterArea.x;
+      const y = localFilterArea.y;
+      const point = this.toGlobal(new PIXI.Point(x, y));
+      return new PIXI.Rectangle(point.x, point.y, localFilterArea.width, localFilterArea.height);
+    } else {
+      return null;
+    }
   }
 
     /**
@@ -86,29 +113,35 @@ class Layer extends PIXI.Container {
     this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
     this.background.endFill();
 
+    this.localFilterArea = new PIXI.Rectangle(0 - this.pivot.x,
+      0 - this.pivot.y,
+      this.rectWidth + this.pivot.x,
+      this.rectHeight + this.pivot.y);
+
     // 以下是一个糟糕的 hack，因为 mountNode 是自底向上的，而 filterArea 需要全局坐标
     // 即当节点挂载在父节点之上后，得到的才是正确的全局坐标，也就是自顶向下的
     // 所以设置一个延时轮训，每隔 50ms 一次，若超过 1s 则放弃（例如，野精灵是永远不会有父节点的）
-    {
-      let time = 0;
-      const tick = () => {
-        if (this.parent) {
-          const point = this.toGlobal(new PIXI.Point(0, 0));
-          // setTimeout(() => console.log(this.toGlobal(new PIXI.Point(0, 0)), this.parent), 500)
-          // console.log(point, this.pivot, this.parent)
-          // console.log(this.position.x, point.x)
-          // const point = this.position;
-          this.filterArea = new PIXI.Rectangle(point.x - this.pivot.x,
-            point.y - this.pivot.y,
-            this.rectWidth + this.pivot.x,
-            this.rectHeight + this.pivot.y);
-        } else if (!this.parent && time < 1000) {
-          time += 50;
-          setTimeout(tick, 50);
-        }
-      }
-      tick();
-    }
+    // {
+    //   let time = 0;
+    //   const tick = () => {
+    //     if (this.parent) {
+    //       const point = this.toGlobal(new PIXI.Point(0, 0));
+    //       // setTimeout(() => console.log(this.toGlobal(new PIXI.Point(0, 0)), this.parent), 500)
+    //       // console.log(point, this.pivot, this.parent)
+    //       // console.log(this.position.x, point.x)
+    //       // const point = this.position;
+    //       console.log(this.fillColor === 0x123456)
+    //       this.filterArea = new PIXI.Rectangle(point.x - this.pivot.x,
+    //         point.y - this.pivot.y,
+    //         this.rectWidth + this.pivot.x,
+    //         this.rectHeight + this.pivot.y);
+    //     } else if (!this.parent && time < 1000) {
+    //       time += 50;
+    //       setTimeout(tick, 50);
+    //     }
+    //   }
+    //   tick();
+    // }
 
     return this;
   }
