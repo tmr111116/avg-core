@@ -158,6 +158,7 @@ class TextWindow extends PIXI.Container {
      */
   setTextRectangle(rect) {
     this.textRectangle = rect;
+    this.initTextRender(true);
   }
 
     /**
