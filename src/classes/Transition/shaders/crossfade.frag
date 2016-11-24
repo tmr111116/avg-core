@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 uniform sampler2D previousTexture;
 uniform sampler2D nextTexture;
 uniform float progress;
