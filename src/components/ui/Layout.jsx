@@ -243,9 +243,13 @@ export default class Layout extends React.Component {
     });
   }
   handleTouchMove(e) {
-    const x = this.state.originX - this.state.touchX + e.local.x;
-    const y = this.state.originY - this.state.touchY + e.local.y;
-    this.tempScrollHandler({ x: x, y: y });
+    const point = e.global;
+    if (this._reactInternalInstance._mountImage.containsPoint(point)) {
+      const x = this.state.originX - this.state.touchX + e.local.x;
+      const y = this.state.originY - this.state.touchY + e.local.y;
+      this.tempScrollHandler({ x: x, y: y });
+      e.stopPropagation();
+    }
   }
   render() {
     const {
