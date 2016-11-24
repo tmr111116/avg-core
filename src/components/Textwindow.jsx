@@ -95,7 +95,19 @@ export class Textwindow extends React.Component {
     let promise = Promise.resolve();
     let waitClick = false;
     let clickCallback = null;
-    if (flags.includes('clear')) {
+    let afterClick = null;
+    if (name === 'r') {
+      // waitClick = true;
+      promise = layer.drawText('\n', false);
+      clickCallback = () => layer.completeText();
+    } else if (name === 'l') {
+      waitClick = true;
+    } else if (name === 'p') {
+      waitClick = true;
+      // promise = layer.drawText('', true);
+      clickCallback = () => layer.completeText();
+      afterClick = () => layer.drawText('', true);
+    } else if (flags.includes('clear')) {
       // layer.clearText();
       layer.drawText('', true); // it is a hack
     } else if (flags.includes('set')) {
@@ -119,14 +131,15 @@ export class Textwindow extends React.Component {
       promise = layer.drawText(params.text, false);
       clickCallback = () => layer.completeText();
     } else {
-      waitClick = true;
-      promise = layer.drawText(params.text, true);
+      waitClick = false;
+      promise = layer.drawText(params.text, false);
       clickCallback = () => layer.completeText();
     }
     return {
       waitClick,
       promise: flags.includes('nowait') ? Promise.resolve() : promise,
       clickCallback,
+      afterClick,
     };
   }
   reset() {
