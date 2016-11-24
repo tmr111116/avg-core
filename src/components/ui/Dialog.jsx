@@ -90,7 +90,9 @@ export default class Dialog extends React.Component {
       <Layer {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
         onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp}
-        onMouseMove={::this.handleMouseMove}>
+        onMouseMove={::this.handleMouseMove}
+        onTouchStart={::this.handleMouseDown} onTouchEnd={::this.handleMouseUp}
+        onTouchMove={::this.handleMouseMove}>
         {this.props.children}
       </Layer>
     );
