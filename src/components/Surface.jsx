@@ -27,6 +27,8 @@ const PIXI = require('pixi.js');
 import Container from 'classes/Container';
 import { init as preloaderInit } from 'classes/Preloader';
 
+import isMobile from 'ismobilejs';
+
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
  * ReactCanvas components cannot be rendered outside a Surface.
@@ -78,6 +80,9 @@ export const Surface = React.createClass({
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
 
+    if (isMobile.any) {
+      this.scale();
+    }
     // Execute initial draw on mount.
     this.tick();
   },
@@ -110,7 +115,39 @@ export const Surface = React.createClass({
   // =======
 
   scale() {
-    // this.getContext().scale(this.props.scale, this.props.scale);
+    var width = window.screen.availWidth;
+    var height = window.screen.availHeight;
+    const renderer = this.renderer;
+
+    var ratio = renderer.width/renderer.height;
+
+    var offsetW, offsetH, contentW, contentH;
+    if (ratio > width / height) {
+        contentW = width;
+        contentH = width / ratio;
+        offsetW = 0;
+        offsetH = (height - width / ratio) / 2;
+    } else {
+        contentW = height * ratio;
+        contentH = height;
+        offsetW = (width - height * ratio) / 2;
+        offsetH = 0;
+    }
+
+    renderer.view.style.position = 'absolute';
+    renderer.view.style.width = contentW + "px";
+    renderer.view.style.height = contentH + "px";
+
+    renderer.view.style.left = offsetW + "px"
+    renderer.view.style.top = offsetH + "px"
+
+    // stats.domElement.style.left = offsetW + "px";
+    // stats.domElement.style.top = offsetH + "px";
+    //
+    // counter.style.left = offsetW + "px";
+    // counter.style.top = offsetH + 49 + "px";
+
+    console.log(contentW, contentH)
   },
 
   tick() {

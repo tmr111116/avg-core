@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.example.js --hot --colors --progress",
     "build": "webpack --progress --colors",
-    "buildmin": "webpack --inline --optimize-minimize",
+    "prepublish": "NODE_ENV=production webpack -p --progress --colors --inline --optimize-minimize",
     "docs": "esdoc -c esdoc.json",
     "test": "mocha --compilers js:babel-core/register"
   },
@@ -21,7 +21,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "avg-storyscript": "0.0.9",
+    "avg-storyscript": "^0.1.0",
     "babel-core": "^6.14.0",
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-class-properties": "^6.11.5",
@@ -39,6 +39,7 @@
     "glslify-loader": "^1.0.2",
     "howler": "^1.1.28",
     "ify-loader": "^1.0.3",
+    "ismobilejs": "^0.4.0",
     "json-loader": "^0.5.3",
     "pixi.js": "^4.0.3",
     "raw-loader": "^0.5.1",
