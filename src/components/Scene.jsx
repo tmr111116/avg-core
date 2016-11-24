@@ -174,6 +174,10 @@ export const Scene = React.createClass({
     }
   },
   async beginStory() {
+    if (this.afterClick) {
+      this.afterClick();
+      this.afterClick = null;
+    }
     let ret = this.parser.next();
     while (!ret.done) {
       const { command: name, flags, params } = ret.value;
@@ -181,9 +185,10 @@ export const Scene = React.createClass({
       const execute = component.execute;
       if (execute) {
         this.waiting = true;
-        const { promise, waitClick, clickCallback } = await execute.call(component,
+        const { promise, waitClick, clickCallback, afterClick } = await execute.call(component,
           params, flags, name);
         this.clickCallback = clickCallback;
+        this.afterClick = afterClick;
         if (promise) {
           await promise;
         }
