@@ -26,6 +26,7 @@ import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
 import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
+import fetchLocal from 'utils/fetchLocal';
 
 const RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
 
@@ -158,10 +159,10 @@ export const Scene = React.createClass({
       const scriptConfig = `${scriptName}.bkc`;
       this.loading = true;
       this.props.onLoading && this.props.onLoading();
-      const task1 = fetch(scriptConfig)
+      const task1 = fetchLocal(scriptConfig)
       .then(res => res.json())
       .then(json => loadResources(json.resources, this.props.onLoadingProgress));
-      const task2 = fetch(scriptFile)
+      const task2 = fetchLocal(scriptFile)
       .then(res => res.text())
       .then(text => this.parser.load(text.trim()));
 
