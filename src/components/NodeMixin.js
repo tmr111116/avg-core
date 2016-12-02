@@ -22,7 +22,7 @@ const NodeMixin = {
         if (key === 'onClick') {
           this.node.buttonMode = true;
         }
-        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = element.props[key].bind(element);
+        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = element.props[key];
       }
     }
   },
@@ -85,7 +85,7 @@ const NodeMixin = {
         if (key === 'onClick') {
           this.node.buttonMode = true;
         }
-        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key].bind(nextComponent);
+        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
       }
     }
 
