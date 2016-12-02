@@ -56,16 +56,8 @@ export function attachToSprite(sprite) {
 
 function handleEvent(evt) {
   const e = new EventData(evt);
-  // if (Handler) {
-  //   Handler(e);
-  // } else {
-  const handler = e.target ? e.target[`_on${e.type}`] : null;
-  const defaultHandler = e.target ? e.target[`_on${e.type}default`] : null;
+  const handler = e.currentTarget ? e.currentTarget[`_on${e.type}`] : null;
   handler && handler(e);
-  if (!e._preventDefault) {
-    defaultHandler && defaultHandler(e);
-  }
-  // }
 }
 
 function pointerHandler(evt) {
@@ -82,11 +74,12 @@ class EventData {
     this.originalEvent = evt;
     // this.index = evt.target.index;
     this.target = evt.target;
+    this.currentTarget = evt.currentTarget;
     this.global = {
       x: evt.data.global.x,
       y: evt.data.global.y,
     };
-    this.local = evt.target ? evt.target.toLocal(this.global) : null;
+    this.local = evt.currentTarget ? evt.currentTarget.toLocal(this.global) : null;
 
     // 有时候会有奇怪的触发，导致 data.originalEvent 是 null……
     if (evt.data.originalEvent) {
