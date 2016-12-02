@@ -27,7 +27,7 @@ function prepareTransition(renderer) {
   // const bounds = this.getBounds();
   // let bounds = getBoundsFromChildren(this);
   const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-    PIXI.SCALE_MODES.DEFAULT, renderer.resolution);
+    PIXI.settings.SCALE_MODE, renderer.resolution);
   // const texture = new PIXI.RenderTexture(baseTexture);
   if (this.visible) {
     renderer.render(this, texture);
@@ -43,7 +43,7 @@ function startTransition(renderer, filter) {
   // const bounds = this.getBounds();
   // let bounds = getBoundsFromChildren(this);
   const baseTexture = new PIXI.BaseRenderTexture(renderer.width, renderer.height,
-    PIXI.SCALE_MODES.DEFAULT, renderer.resolution);
+    PIXI.settings.SCALE_MODE, renderer.resolution);
   const texture = new PIXI.RenderTexture(baseTexture);
   this.filters[0].setBlocked(true);
   if (this.visible) {
