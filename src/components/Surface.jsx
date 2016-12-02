@@ -82,9 +82,10 @@ export const Surface = React.createClass({
 
     if (isMobile.any) {
       this.scale();
+      this.tickMobile();
+    } else {
+      this.tick();
     }
-    // Execute initial draw on mount.
-    this.tick();
   },
 
 
@@ -110,9 +111,6 @@ export const Surface = React.createClass({
     // Implemented in ReactMultiChild.Mixin
     this.node.removeChildren();
   },
-
-  // Drawing
-  // =======
 
   scale() {
     var width = window.screen.availWidth;
@@ -141,19 +139,15 @@ export const Surface = React.createClass({
     renderer.view.style.left = offsetW + "px"
     renderer.view.style.top = offsetH + "px"
 
-    // stats.domElement.style.left = offsetW + "px";
-    // stats.domElement.style.top = offsetH + "px";
-    //
-    // counter.style.left = offsetW + "px";
-    // counter.style.top = offsetH + 49 + "px";
-
-    console.log(contentW, contentH)
   },
 
   tick() {
     this.renderer.render(this.node);
     requestAnimationFrame(this.tick);
-    // setTimeout(this.tick, 33);
+  },
+  tickMobile() {
+    this.renderer.render(this.node);
+    setTimeout(this.tickMobile, 33);
   },
   render() {
     return (
