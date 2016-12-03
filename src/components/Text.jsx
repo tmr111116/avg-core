@@ -31,83 +31,61 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
   },
   mountNode(props) {
     const layer = this.node;
-    const options = {
-      color: 0xffffff,
-      size: 24,
-      font: 'sans-serif',
-      width: -1,
-      height: -1,
-      xinterval: 0,
-      yinterval: 3,
-      extrachar: '...',
-      bold: false,
-      italic: false,
-      strike: false,
+    const style = {
+      fill: 0xffffff,
+      breakWords: true,
+      fontFamily: 'sans-serif',
+      fontSize: 24,
+      fontStyle: 'normal',
+      wordWrap: false,
+      wordWrapWidth: 100,
+      letterSpacing: 0,
+      lineHeight: 27,
       under: false,
-      shadow: false,
-      shadowcolor: 0x0,
-      stroke: false,
-      strokecolor: 0x0,
-      ...props,
+      shadow: 'black',
+      shadowThickness: 0,
+      stroke: 'black',
+      strokeThickness: 0,
+      ...props.style,
     };
-    layer.setText(props.text || props.children || '').setAnchor(options.anchor)
-    .setColor(options.color).setSize(options.size)
-    .setFont(options.font)
-    .setTextWidth(options.width)
-    .setTextHeight(options.height)
-    .setXInterval(options.xinterval)
-    .setYInterval(options.yinterval)
-    .setExtraChar(options.extrachar)
-    .setBold(options.bold)
-    .setItalic(options.italic)
-    /* .setStrike(strike).setUnder(under) */
-    .setShadow(options.shadow)
-    .setShadowColor(options.shadowcolor)
-    .setStroke(options.stroke)
-    .setStrokeColor(options.strokecolor)
-    .exec();
     layer.x = props.x || 0;
     layer.y = props.y || 0;
+    layer.text = props.text || props.children || '';
+    if (props.anchor) {
+      const anchor = props.anchor;
+      this.node.anchor.x = anchor[0];
+      this.node.anchor.y = anchor[1];
+    }
+    layer.style = style;
     return layer;
   },
   updateNode(prevProps, props) {
     this.node.text = props.text || props.children || '';
     this.node.x = props.x || 0;
     this.node.y = props.y || 0;
-    const options = {
-      color: 0xffffff,
-      size: 24,
-      font: 'sans-serif',
-      width: -1,
-      height: -1,
-      xinterval: 0,
-      yinterval: 3,
-      extrachar: '...',
-      bold: false,
-      italic: false,
-      strike: false,
+    const style = {
+      fill: '#ffffff',
+      breakWords: true,
+      fontFamily: 'sans-serif',
+      fontSize: 24,
+      fontStyle: 'normal',
+      wordWrap: false,
+      wordWrapWidth: 100,
+      letterSpacing: 0,
+      lineHeight: 27,
       under: false,
-      shadow: false,
-      shadowcolor: 0x0,
-      stroke: false,
-      strokecolor: 0x0,
-      ...props,
+      dropShadow: false,
+      dropShadowColor: '#000000',
+      stroke: 'black',
+      strokeThickness: 0,
+      ...props.style,
     };
-    this.node.setAnchor(options.anchor).setColor(options.color).setSize(options.size)
-    .setFont(options.font)
-    .setTextWidth(options.width)
-    .setTextHeight(options.height)
-    .setXInterval(options.xinterval)
-    .setYInterval(options.yinterval)
-    .setExtraChar(options.extrachar)
-    .setBold(options.bold)
-    .setItalic(options.italic)
-    /* .setStrike(strike).setUnder(under) */
-    .setShadow(options.shadow)
-    .setShadowColor(options.shadowcolor)
-    .setStroke(options.stroke)
-    .setStrokeColor(options.strokecolor)
-    .exec();
+    if (props.anchor) {
+      const anchor = props.anchor;
+      this.node.anchor.x = anchor[0];
+      this.node.anchor.y = anchor[1];
+    }
+    this.node.style = style;
   },
 
 });
