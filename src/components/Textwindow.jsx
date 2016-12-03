@@ -151,10 +151,13 @@ export class Textwindow extends React.Component {
     const layer = this.layer;
     return { ...this.state.props, text: layer.text };
   }
-  setData(state) {
+  async setData(state) {
     this.setState({
       props: state,
     });
+    const layer = this.layer;
+    layer.drawText(state.text, true);
+    layer.completeText();
   }
   componentWillMount() {
     this.setState({
