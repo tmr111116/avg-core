@@ -1,5 +1,5 @@
 /**
- * @file        Main export of the AVG core library
+ * @file        middleware
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -19,11 +19,25 @@
  */
 
 /**
- * @namespace AVG
+ * Middleware in AVG.js is very important,
+ * you can use it to gain control of the entire framework permissions,
+ * such as writing components or plug-ins
+ *
+ * Example, you want plug your own data in saving achieves, you should write a middleware like this:
+ * ```js
+ * async function saveMiddleware(ctx, next) {
+ *   ctx.data.myKey = myValue;
+ *   await next();
+ * }
+ *
+ * AVG.core.use('save-achieve', saveMiddleware);
+ * ```
+ *
+ * or just:
+ * ```js
+ * AVG.core.use('save-achieve', async (ctx, next) => {
+ *   ctx.data.myKey = myValue;
+ *   await next();
+ * });
+ * ```
  */
-export * as components from 'components';
-export * as ui from 'components/ui';
-export * as plugins from 'plugins';
-export { load as loadResource } from 'classes/Preloader';
-export React, { Component } from 'react';
-export core from 'core/core';

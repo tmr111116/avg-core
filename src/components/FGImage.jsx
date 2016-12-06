@@ -19,9 +19,10 @@
  */
 
 import React from 'react';
+import core from 'core/core';
 import { Layer } from './Layer';
 import { Image } from './Image';
-import { transition } from 'decorators/transition';
+import TransitionPlugin from 'plugins/transition';
 
 export class FGImage extends React.Component {
   static propTypes = {
@@ -33,44 +34,49 @@ export class FGImage extends React.Component {
     center: null,
     right: null,
   };
-  @transition
-  execute(params, flags, name) {
-    this.setState({ ...params });
-    let positions = [];
-    if (flags.includes('left')) {
-      positions.push('left');
-    }
-    if (flags.includes('right')) {
-      positions.push('right');
-    }
-    if (flags.includes('center') || !positions.length) {
-      positions.push('center');
-    }
+  componentDidMount() {
+    core.use('script-exec', async (ctx, next) => {
+      if (ctx.command === 'fg') {
+        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
+          const { command, flags, params } = ctx;
+          this.setState(params);
+          let positions = [];
+          if (flags.includes('left')) {
+            positions.push('left');
+          }
+          if (flags.includes('right')) {
+            positions.push('right');
+          }
+          if (flags.includes('center') || !positions.length) {
+            positions.push('center');
+          }
 
-    const state = {};
-    if (flags.includes('clear')) {
-      positions.map(pos => state[pos] = null);
-    } else {
-      state[positions[0]] = params.file;
-    }
-    this.setState(state);
-
-    return {
-      promise: Promise.resolve(),
-    };
-  }
-  reset() {
-    this.setState({
-      left: null,
-      center: null,
-      right: null,
+          const state = {};
+          if (flags.includes('clear')) {
+            positions.map(pos => state[pos] = null);
+          } else {
+            state[positions[0]] = params.file;
+          }
+          this.setState(state);
+          await next();
+        })(ctx, next);
+      } else {
+        await next();
+      }
     });
-  }
-  getData() {
-    return this.state;
-  }
-  setData(state) {
-    this.setState(state);
+    core.use('save-achieve', async (ctx, next) => {
+      ctx.data.fgimage = Object.assign({}, this.state);
+      await next();
+    });
+    core.use('load-achieve', async (ctx, next) => {
+      this.setState({
+        left: null,
+        center: null,
+        right: null,
+        ...ctx.data.fgimage
+      });
+      await next();
+    });
   }
   render() {
     return (

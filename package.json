@@ -7,7 +7,7 @@
   "homepage": "https://avgjs.org/",
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.example.js --hot --colors --progress",
-    "build": "webpack --progress --colors",
+    "build": "webpack --progress --colors --devtool source-map",
     "prepublish": "NODE_ENV=production webpack -p --progress --colors --inline --optimize-minimize",
     "docs": "esdoc -c esdoc.json",
     "test": "mocha --compilers js:babel-core/register"
@@ -42,6 +42,7 @@
     "ify-loader": "^1.0.3",
     "ismobilejs": "^0.4.0",
     "json-loader": "^0.5.3",
+    "koa-compose": "^3.2.1",
     "pixi.js": "^4.2.3",
     "raw-loader": "^0.5.1",
     "react": "^15.3.1",

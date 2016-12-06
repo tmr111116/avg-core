@@ -24,7 +24,9 @@ import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
 const PIXI = require('pixi.js');
+import core from 'core/core';
 import Container from 'classes/Container';
+import { attachToSprite } from 'classes/EventManager';
 import { init as preloaderInit } from 'classes/Preloader';
 
 import isMobile from 'ismobilejs';
@@ -66,6 +68,9 @@ export const Surface = React.createClass({
     });
     PIXI.currentRenderer = this.renderer;
     this.node = new Container();
+    attachToSprite(this.node);
+    this.node._ontap = e => core.post('tap', e);
+    this.node._onclick = e => core.post('click', e);
     window.stage = this.node;
     // window.renderer = this.renderer;
 

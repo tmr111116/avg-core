@@ -19,13 +19,14 @@
  */
 
 import React from 'react';
+import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiTextwindow from 'classes/Textwindow';
 
 import { Layer } from './Layer';
-import { transition } from 'decorators/transition';
+import TransitionPlugin from 'plugins/transition';
 
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
@@ -89,24 +90,25 @@ export class Textwindow extends React.Component {
   state = {
     props: {},
   };
-  @transition
-  execute(params, flags, name) {
+  // @transition
+  async execute(ctx, next) {
+    const { command, flags, params } = ctx;
     const layer = this.layer;
     let promise = Promise.resolve();
     let waitClick = false;
-    let clickCallback = null;
-    let afterClick = null;
-    if (name === 'r') {
+    let clickCallback = false;
+    let switchPageAfterClick = false;
+    if (command === 'r') {
       // waitClick = true;
       promise = layer.drawText('\n', false);
-      clickCallback = () => layer.completeText();
-    } else if (name === 'l') {
+      clickCallback = true;
+    } else if (command === 'l') {
       waitClick = true;
-    } else if (name === 'p') {
+    } else if (command === 'p') {
       waitClick = true;
       // promise = layer.drawText('', true);
-      clickCallback = () => layer.completeText();
-      afterClick = () => layer.drawText('', true);
+      clickCallback = true;
+      switchPageAfterClick = true;
     } else if (flags.includes('clear')) {
       // layer.clearText();
       layer.drawText('', true); // it is a hack
@@ -129,35 +131,59 @@ export class Textwindow extends React.Component {
     } else if (flags.includes('continue')) {
       waitClick = true;
       promise = layer.drawText(params.text, false);
-      clickCallback = () => layer.completeText();
+      clickCallback = true;
     } else {
       waitClick = false;
       promise = layer.drawText(params.text, false);
-      clickCallback = () => layer.completeText();
+      clickCallback = true;
     }
-    return {
-      waitClick,
-      promise: flags.includes('nowait') ? Promise.resolve() : promise,
-      clickCallback,
-      afterClick,
-    };
+    this.state.clickCallback = clickCallback;
+    this.state.switchPageAfterClick = switchPageAfterClick;
+    ctx.break = waitClick;
+    await (flags.includes('nowait') ? Promise.resolve() : promise);
+    this.state.clickCallback = false;
+    await next();
   }
-  reset() {
-    this.setState({
-      props: this.props,
+  componentDidMount() {
+    core.use('click', async (ctx, next) => {
+      if (this.state.switchPageAfterClick) {
+        this.layer.drawText('', true);
+        this.state.switchPageAfterClick = false;
+      }
+      if (this.state.clickCallback) {
+        this.layer.completeText();
+        this.state.clickCallback = false;
+      } else {
+        await next();
+      }
     });
-  }
-  getData() {
-    const layer = this.layer;
-    return { ...this.state.props, text: layer.text };
-  }
-  async setData(state) {
-    this.setState({
-      props: state,
+    core.use('script-exec', async (ctx, next) => {
+      if (['text', 'r', 'l', 'p', '*'].includes(ctx.command)) {
+        if (ctx.params.raw) {
+          ctx.params.text = ctx.params.raw;
+        }
+        await TransitionPlugin.wrap(this.layer, this.execute.bind(this))(ctx, next);
+      } else {
+        await next();
+      }
     });
-    const layer = this.layer;
-    layer.drawText(state.text, true);
-    layer.completeText();
+    core.use('save-achieve', async (ctx, next) => {
+      const layer = this.layer;
+      ctx.data.textwindow = { ...this.state.props, text: layer.text };
+      await next();
+    });
+    core.use('load-achieve', async (ctx, next) => {
+      this.setState({
+        props: {
+          ...this.props,
+          ...ctx.data.textwindow
+        }
+      });
+      const layer = this.layer;
+      layer.drawText(ctx.data.textwindow.text, true);
+      layer.completeText();
+      await next();
+    });
   }
   componentWillMount() {
     this.setState({

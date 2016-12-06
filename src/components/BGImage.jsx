@@ -19,8 +19,9 @@
  */
 
 import React from 'react';
+import core from 'core/core';
 import { Image } from './Image';
-import { transition } from 'decorators/transition';
+import TransitionPlugin from 'plugins/transition';
 
 export class BGImage extends React.Component {
   constructor(props) {
@@ -32,24 +33,30 @@ export class BGImage extends React.Component {
       y: 0,
     };
   }
-  getData() {
-    return this.state;
-  }
-  setData(state) {
-    this.setState(state);
-  }
-  @transition
-  execute(params, flags, name) {
-    this.setState({ ...params });
-    return {
-      promise: Promise.resolve(),
-    };
-  }
-  reset() {
-    this.setState({
-      file: null,
-      x: 0,
-      y: 0,
+  componentDidMount() {
+    core.use('script-exec', async (ctx, next) => {
+      if (ctx.command === 'bg') {
+        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
+          const { command, flags, params } = ctx;
+          this.setState(params);
+          await next();
+        })(ctx, next);
+      } else {
+        await next();
+      }
+    });
+    core.use('save-achieve', async (ctx, next) => {
+      ctx.data.bgimage = Object.assign({}, this.state);
+      await next();
+    });
+    core.use('load-achieve', async (ctx, next) => {
+      this.setState({
+        file: null,
+        x: 0,
+        y: 0,
+        ...ctx.data.bgimage
+      });
+      await next();
     });
   }
   render() {

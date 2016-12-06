@@ -191,7 +191,7 @@ class TextWindow extends PIXI.Container {
     if (typeof value === 'undefined')
       this.visible = !this.visible;
     else
-            this.visible = !!value;
+      this.visible = !!value;
   }
 
     /**

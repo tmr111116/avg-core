@@ -20,6 +20,7 @@
 
 import React from 'react';
 import StoryScript from 'avg-storyscript';
+import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
@@ -68,90 +69,50 @@ export const Scene = React.createClass({
     };
   },
   async componentDidMount() {
-    this.bindCommand('stage', this);
+    core.use('click', async (ctx, next) => {
+      await next();
+      await this.handleClick(ctx);
+    });
+
+    core.use('script-exec', async (ctx, next) => {
+      const { command, flags, params } = ctx;
+      if (command === 'scene') {
+        if (flags.includes('goto')) {
+          this.script = params.file;
+          await this.loadScript(params.file);
+        } else if (flags.includes('reset')) {
+          // await this.reset();
+        } else if (flags.includes('save')) {
+          const name = params.name || 'default';
+          await core.post('save-achieve', { name: name });
+        } else if (flags.includes('load')) {
+          // await this.reset();
+          await core.post('load-achieve', { name: name });
+          // await this.setData(window.xxx);
+        }
+      } else {
+        await next();
+      }
+    });
+
+    core.use('save-achieve', async (ctx, next) => {
+      var $$scene = {
+        script: this.script || this.props.script,
+        data: this.parser.getData(),
+      };
+      ctx.data.$$scene = $$scene;
+      await next();
+    });
+
+    core.use('load-achieve', async (ctx, next) => {
+      const sceneData = ctx.data.$$scene;
+      await this.loadScript(sceneData.script);
+      this.parser.setData(sceneData.data);
+      await next();
+    });
+
     await this.loadScript(this.props.script);
     this.beginStory();
-    // this.bindCommand(this.getChildrenArray(this.props.children));
-  },
-  getChildrenArray(rawChildren) {
-    if (!rawChildren) {
-      return [];
-    } else if (rawChildren instanceof Array) {
-      return rawChildren;
-    }
-    return [rawChildren];
-  },
-  async execute(params, flags, name) {
-    let promise;
-    if (flags.includes('goto')) {
-      this.script = params.file;
-      await this.loadScript(params.file);
-    } else if (flags.includes('reset')) {
-      await this.reset();
-    } else if (flags.includes('save')) {
-      const saveData = await this.getData();
-      window.xxx = saveData;
-    } else if (flags.includes('load')) {
-      await this.reset();
-      await this.setData(window.xxx);
-    }
-    return {
-      waitClick: false,
-      promise,
-    };
-  },
-  async reset() {
-    const keys = Object.keys(this.components);
-    for (const key of keys) {
-      const component = this.components[key];
-      if (component !== this) {
-        await component.reset();
-      }
-    }
-  },
-  async getData() {
-    const data = {};
-    const keys = Object.keys(this.components);
-    for (const key of keys) {
-      const component = this.components[key];
-      if (component !== this) {
-        const subData = await component.getData();
-        data[key] = subData;
-      }
-    }
-    data.$$scene = {
-      script: this.script || this.props.script,
-      data: this.parser.getData(),
-    };
-    return data;
-  },
-  async setData(data) {
-    const keys = Object.keys(this.components);
-    for (const key of keys) {
-      const component = this.components[key];
-      const subData = data[key];
-      if (component !== this && subData) {
-        await component.setData(subData);
-      }
-    }
-    const sceneData = data.$$scene;
-    await this.loadScript(sceneData.script);
-    this.parser.setData(sceneData.data);
-  },
-  bindCommand(names, provider) {
-    if (provider.execute && provider.reset && provider.getData && provider.setData) {
-      if (typeof names === 'string') {
-        this.components[names] = provider;
-        console.log(`已绑定命令<${names}>`);
-      } else {
-        for (const name of names) {
-          this.components[name] = provider;
-          console.log(`已绑定命令<${name}>`);
-        }
-      }
-    } else {
-      Err.warn(`${provider.constructor.name} is not a valid command component`);
-    }
   },
   async loadScript(scriptName) {
     if (scriptName) {
@@ -181,26 +142,11 @@ export const Scene = React.createClass({
     }
     let ret = this.parser.next();
     while (!ret.done) {
-      const { command: name, flags, params } = ret.value;
-      const component = this.components[name];
-      const execute = component.execute;
-      if (execute) {
-        this.waiting = true;
-        const { promise, waitClick, clickCallback, afterClick } = await execute.call(component,
-          params, flags, name);
-        this.clickCallback = clickCallback;
-        this.afterClick = afterClick;
-        if (promise) {
-          await promise;
-        }
-        // await promise;
-        this.waiting = false;
-        this.clickCallback = null;
-        if (waitClick) {
-          break;
-        }
-      } else {
-        Err.warn(`Command <${name}> is not found, ignored`);
+      // const { command: name, flags, params } = ret.value;
+      const context = Object.assign({}, ret.value);
+      await core.post('script-exec', context);
+      if (context.break) {
+        break;
       }
       ret = this.parser.next();
     }
@@ -221,8 +167,9 @@ export const Scene = React.createClass({
     }
   },
   render() {
+    // onClick={this.handleClick} onTap={this.handleClick}
     return (
-      <RawScene {...this.props} onClick={this.handleClick} onTap={this.handleClick}>
+      <RawScene {...this.props}>
         {this.state.empty ? null : this.props.children}
       </RawScene>
     );
