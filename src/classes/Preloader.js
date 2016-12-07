@@ -22,7 +22,26 @@ const PIXI = require('pixi.js');
 const Err = require('./ErrorHandler');
 
 let TEXTURES = {};
+let AUDIOS = {};
+let VIDEOS = {};
+let SCRIPTS = {};
 let HOST = '/';
+
+const Resource = PIXI.loaders.Loader.Resource;
+
+Resource.setExtensionLoadType('wav', Resource.LOAD_TYPE.AUDIO);
+Resource.setExtensionLoadType('mp3', Resource.LOAD_TYPE.AUDIO);
+Resource.setExtensionLoadType('ogg', Resource.LOAD_TYPE.AUDIO);
+
+Resource.setExtensionLoadType('mp4', Resource.LOAD_TYPE.VIDEO);
+Resource.setExtensionLoadType('webm', Resource.LOAD_TYPE.VIDEO);
+
+Resource.setExtensionXhrType('bkc', Resource.XHR_RESPONSE_TYPE.JSON);
+Resource.setExtensionXhrType('bks', Resource.XHR_RESPONSE_TYPE.TEXT);
+
+Resource.setExtensionXhrType('ttf', Resource.XHR_RESPONSE_TYPE.BUFFER);
+Resource.setExtensionXhrType('otf', Resource.XHR_RESPONSE_TYPE.BUFFER);
+
 
 export function init(host) {
   TEXTURES = {};
@@ -40,7 +59,18 @@ export function load(resources, onProgress) {
     loader.on('progress', onProgress);
   });
   loader.load((loader, resources) => {
-    Object.assign(TEXTURES, resources);
+    // `resources` is a Object
+    for (let name in resources){
+      let res = resources[name];
+      if (res.isImage) {
+        TEXTURES[name] = res.texture;
+      } else if (res.isAudio) {
+        AUDIOS[name] = res.data;  // audio object
+      } else if (res.isVideo) {
+        VIDEO[name] = res.data;
+      }
+    }
+    // Object.assign(TEXTURES, resources);
   });
   return promise;
 }
@@ -48,8 +78,21 @@ export function load(resources, onProgress) {
 export function getTexture(url) {
   const obj = TEXTURES[url];
   if (obj) {
-    return obj.texture;
+    return obj;
   } else {
     return PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+  }
+}
+
+export function getAudio(url) {
+  const obj = AUDIOS[url];
+  if (obj) {
+    return obj;
+  } else {
+    const audio = new Audio();
+    audio.src = `${HOST}${url}`;
+    audio.preload = 'auto';
+    audio.load();
+    return audio;
   }
 }
