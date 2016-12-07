@@ -32,7 +32,9 @@ class Script {
 
     this.parser = new StoryScript();
     this.scriptName = null;
-    this.loading = true;
+    this.loading = false;
+    this.waiting = false;
+
 
     core.use('storyscript-init', this.init.bind(this));
   }
@@ -119,7 +121,9 @@ class Script {
     let ret = this.parser.next();
     while (!ret.done) {
       const context = Object.assign({}, ret.value);
+      this.waiting = true;
       await core.post('script-exec', context);
+      this.waiting = false;
       if (context.break) {
         break;
       }
@@ -131,7 +135,7 @@ class Script {
   }
   async trigger(ctx, next) {
     if (!this.loading) {
-      this.beginStory();
+      !this.waiting && this.beginStory();
     }
     await next();
   }
