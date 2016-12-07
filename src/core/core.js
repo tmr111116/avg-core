@@ -20,6 +20,7 @@
 
 import compose from 'koa-compose';
 import { render as renderReact } from 'react-dom';
+import sayHello from 'utils/sayHello';
 
 /**
  * Core of AVG.js, you can start your game development from here.
@@ -81,7 +82,7 @@ class Core {
   }
 
   init() {
-    // sayHello();
+    sayHello();
     this._init = true;
   }
 
@@ -90,15 +91,22 @@ class Core {
    *
    * @param {React.Component} component
    * @param {HTMLDOMElement} target
+   * @return {Promise}
    */
   render(component, target) {
     if (!this._init) {
       this.init();
     }
-    renderReact(component, target);
+    return new Promise(function(resolve, reject) {
+      renderReact(component, target, resolve);
+    });
   }
 }
 
+/**
+ * @export
+ * @type {Core}
+ */
 const core = new Core();
 // Object.freeze(core);
 
