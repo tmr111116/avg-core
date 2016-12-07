@@ -145,7 +145,7 @@ export class Textwindow extends React.Component {
     await next();
   }
   componentDidMount() {
-    core.use('click', async (ctx, next) => {
+    core.use('script-trigger', async (ctx, next) => {
       if (this.state.switchPageAfterClick) {
         this.layer.drawText('', true);
         this.state.switchPageAfterClick = false;

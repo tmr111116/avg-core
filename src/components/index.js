@@ -22,7 +22,6 @@ export * from 'components/Image';
 export * from 'components/Text';
 export * from 'components/Container';
 export * from 'components/Layer';
-export * from 'components/Scene';
 export * from 'components/Textwindow';
 export * from 'components/BGImage';
 export * from 'components/FGImage';

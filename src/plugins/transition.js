@@ -32,7 +32,7 @@ export default class TransitionPlugin {
     this.method = method;
     this.clickCallback = false;
 
-    core.use('click', async (ctx, next) => {
+    core.use('script-trigger', async (ctx, next) => {
       if (this.clickCallback) {
         this.node.completeTransition();
         this.clickCallback = false;

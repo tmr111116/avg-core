@@ -1,5 +1,5 @@
 const path = require('path');
-// var webpack = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
@@ -27,7 +27,7 @@ module.exports = {
       },
     ],
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader', query: { compact: true } },
+      { test: /\.js$/, exclude: /node_modules\/(?!koa-compose)/, loader: 'babel-loader', query: { compact: true } },
       { test: /\.jsx$/, exclude: /node_modules/, loader: 'babel-loader', query: { compact: true } },
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.(glsl|frag|vert)$/, loader: 'raw', exclude: /node_modules/ },
@@ -35,6 +35,11 @@ module.exports = {
       { test: path.resolve(__dirname, 'node_modules', 'pixi.js'), loader: 'ify' },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(require("./package.json").version)
+    })
+  ],
   devServer: {
     contentBase: './example',
     historyApiFallback: true,

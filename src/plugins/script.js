@@ -1,5 +1,5 @@
 /**
- * @file        Scene component
+ * @file        Script plugin
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,78 +18,45 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import StoryScript from 'avg-storyscript';
 import core from 'core/core';
-import createComponent from 'components/createComponent';
-import ContainerMixin from 'components/ContainerMixin';
-import NodeMixin from 'components/NodeMixin';
-import PixiLayer from 'classes/Layer';
 import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 import fetchLocal from 'utils/fetchLocal';
 
-const RawScene = createComponent('RawScene', ContainerMixin, NodeMixin, {
+/**
+ *
+ */
+class Script {
+  constructor() {
 
-  createNode(element) {
-    this.node = new PixiLayer();
-  },
-  mountNode(props) {
-    // color, opacity, width, height, x, y, etc.
-    const layer = this.node;
-    layer.setProperties(props);
-    //  layer.x = props.x || 0;
-    //  layer.y = props.y || 0;
-    return layer;
-  },
-  updateNode(prevProps, props) {
-    const layer = this.node;
-    layer.setProperties(props);
-  },
-});
+    this.parser = new StoryScript();
+    this.scriptName = null;
+    this.loading = true;
 
-export const Scene = React.createClass({
-  displayName: 'Scene',
-  propTypes: {
-    script: React.PropTypes.string.isRequired,
-    onLoading: React.PropTypes.func,
-    onLoadingComplete: React.PropTypes.func,
-    onLoadingProgress: React.PropTypes.func,
-    children: React.PropTypes.any,
-  },
-  components: {},
-  parser: new StoryScript(),
-  script: '',
-  clickCallback: null,
-  loading: false,
-  waiting: false,
-  getInitialState() {
-    return {
-      empty: false,
-    };
-  },
-  async componentDidMount() {
-    core.use('click', async (ctx, next) => {
-      await next();
-      await this.handleClick(ctx);
-    });
+    core.use('storyscript-init', this.init.bind(this));
+  }
+  async init(ctx, next) {
+    core.use('script-load', this.load.bind(this));
+    core.use('script-trigger', this.trigger.bind(this));
 
     core.use('script-exec', async (ctx, next) => {
       const { command, flags, params } = ctx;
-      if (command === 'scene') {
+
+      if (command === 'story') {
         if (flags.includes('goto')) {
-          this.script = params.file;
-          await this.loadScript(params.file);
-        } else if (flags.includes('reset')) {
-          // await this.reset();
+          this.script = params.name;
+          await this.load({ name: params.name, autoStart: true }, next);
+          // await this.beginStory();
+
         } else if (flags.includes('save')) {
           const name = params.name || 'default';
           await core.post('save-achieve', { name: name });
+
         } else if (flags.includes('load')) {
-          // await this.reset();
           await core.post('load-achieve', { name: name });
-          // await this.setData(window.xxx);
         }
+
       } else {
         await next();
       }
@@ -97,7 +64,7 @@ export const Scene = React.createClass({
 
     core.use('save-achieve', async (ctx, next) => {
       var $$scene = {
-        script: this.script || this.props.script,
+        script: this.scriptName,
         data: this.parser.getData(),
       };
       ctx.data.$$scene = $$scene;
@@ -111,38 +78,46 @@ export const Scene = React.createClass({
       await next();
     });
 
-    await this.loadScript(this.props.script);
-    this.beginStory();
-  },
-  async loadScript(scriptName) {
+  }
+  async load(ctx, next) {
+    const scriptName = ctx.name;
     if (scriptName) {
       const scriptFile = `${scriptName}.bks`;
       const scriptConfig = `${scriptName}.bkc`;
       this.loading = true;
-      this.props.onLoading && this.props.onLoading();
+      // this.props.onLoading && this.props.onLoading();
+      await core.post('script-loading');
       const task1 = fetchLocal(scriptConfig)
       .then(res => res.json())
-      .then(json => loadResources(json.resources, this.props.onLoadingProgress));
+      .then(json => loadResources(json.resources, loader => {
+        return core.post('script-loading-progress', loader);
+      }));
       const task2 = fetchLocal(scriptFile)
       .then(res => res.text())
       .then(text => this.parser.load(text.trim()));
 
       await Promise.all([task1, task2]);
 
-      this.props.onLoadingComplete && this.props.onLoadingComplete();
+      this.scriptName = scriptName;
+
+      // this.props.onLoadingComplete && this.props.onLoadingComplete();
+      await core.post('script-loaded');
       this.loading = false;
+
+      await next();
+
+      if (ctx.autoStart) {
+        this.beginStory();
+      }
+
     } else {
       Err.error('You must pass a script url');
+      await next();
     }
-  },
+  }
   async beginStory() {
-    if (this.afterClick) {
-      this.afterClick();
-      this.afterClick = null;
-    }
     let ret = this.parser.next();
     while (!ret.done) {
-      // const { command: name, flags, params } = ret.value;
       const context = Object.assign({}, ret.value);
       await core.post('script-exec', context);
       if (context.break) {
@@ -153,27 +128,15 @@ export const Scene = React.createClass({
     if (ret.done) {
       Err.warn(`Script executed to end`);
     }
-  },
-  handleClick(e) {
-    if (this.loading) {
-      return;
+  }
+  async trigger(ctx, next) {
+    if (!this.loading) {
+      this.beginStory();
     }
-    e.stopPropagation();
-    const callback = this.clickCallback;
-    if (callback) {
-      callback(e);
-    } else {
-      !this.waiting && this.beginStory();
-    }
-  },
-  render() {
-    // onClick={this.handleClick} onTap={this.handleClick}
-    return (
-      <RawScene {...this.props}>
-        {this.state.empty ? null : this.props.children}
-      </RawScene>
-    );
-  },
-});
+    await next();
+  }
+}
 
-// module.exports = Layer;
+const script = new Script();
+
+export default script;
