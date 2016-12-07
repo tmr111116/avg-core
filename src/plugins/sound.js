@@ -18,61 +18,82 @@
  * limitations under the License.
  */
 
+import core from 'core/core';
 import * as SoundManager from 'classes/SoundManager';
 
-export default class Sound {
+class Sound {
   constructor() {
-
+    core.use('sound-init', this.init.bind(this));
   }
-  execute(params, flags, name) {
-    let channel = params.channel;
-    if (flags.includes('bgm')) {
-      channel = -1;
-    } else if (flags.includes('se')) {
-      channel = -2;
-    } else if (flags.includes('voice')) {
-      channel = -3;
-    }
-    const wait = flags.includes('wait');
-    let promise = Promise.resolve();
-    if (flags.includes('play')) {
-      promise = SoundManager.play(channel);
-    } else if (flags.includes('pause')) {
-      promise = SoundManager.pause(channel);
-    } else if (flags.includes('stop')) {
-      promise = SoundManager.stop(channel);
-    } else if (flags.includes('stopall')) {
-      promise = SoundManager.stopAll();
-    } else if (flags.includes('fade')) {
-      promise = SoundManager.fade(channel, params.from, params.to, params.duration);
-    } else if (flags.includes('set')) {
-      promise = SoundManager.getChannel(channel)
+  async init(ctx, next) {
+    core.use('script-exec', this.exec.bind(this));
+    core.use('save-achieve', this.save.bind(this));
+    core.use('load-achieve', this.load.bind(this));
+  }
+  /**
+  * @method exec
+  * @private
+  * @param  {object}   ctx
+  * @param  {Function} next
+  * @return {Promise}
+  */
+  async exec(ctx, next) {
+    const { command, flags, params } = ctx;
+    if (command === 'sound') {
+      let channel = params.channel;
+      if (flags.includes('bgm')) {
+        channel = -1;
+      } else if (flags.includes('se')) {
+        channel = -2;
+      } else if (flags.includes('voice')) {
+        channel = -3;
+      }
+      const wait = flags.includes('wait');
+      let promise = Promise.resolve();
+      if (flags.includes('play')) {
+        promise = SoundManager.play(channel);
+      } else if (flags.includes('pause')) {
+        promise = SoundManager.pause(channel);
+      } else if (flags.includes('stop')) {
+        promise = SoundManager.stop(channel);
+      } else if (flags.includes('stopall')) {
+        promise = SoundManager.stopAll();
+      } else if (flags.includes('fade')) {
+        promise = SoundManager.fade(channel, params.from, params.to, params.duration);
+      } else if (flags.includes('set')) {
+        promise = SoundManager.getChannel(channel)
         .then((ch) => {
           params.volume != null && ch.volume(params.volume);
           params.position != null && ch.pos(params.position);
         });
+      } else {
+        promise = SoundManager.setChannel(channel || 0, {
+          file: params.file,
+          ...params,
+          // autoplay: params.autoplay,
+          // loop: params.loop,
+          // volume: params.volume,
+          // buffer: params.buffer
+        });
+      }
+      await (wait ? promise : Promise.resolve());
     } else {
-      promise = SoundManager.setChannel(channel || 0, {
-        file: params.file,
-        ...params,
-        // autoplay: params.autoplay,
-        // loop: params.loop,
-        // volume: params.volume,
-        // buffer: params.buffer
-      });
+      await next();
     }
-    return {
-      waitClick: false,
-      promise: wait ? promise : Promise.resolve(),
-    };
   }
-  reset() {
+  async save(ctx, next) {
+
+  }
+  async load(ctx, next) {
     SoundManager.stopAll();
   }
-  getData() {
-
-  }
-  setData() {
-
-  }
 }
+
+/**
+ * [sound description]
+ * @export
+ * @type {Sound}
+ */
+const sound = new Sound();
+
+export default sound;
