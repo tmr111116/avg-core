@@ -56,6 +56,7 @@ class Script {
           await core.post('save-achieve', { name: name });
 
         } else if (flags.includes('load')) {
+          const name = params.name || 'default';
           await core.post('load-achieve', { name: name });
         }
 
@@ -75,7 +76,7 @@ class Script {
 
     core.use('load-achieve', async (ctx, next) => {
       const sceneData = ctx.data.$$scene;
-      await this.loadScript(sceneData.script);
+      await this.load({ name: sceneData.script, autoStart: false }, () => {});
       this.parser.setData(sceneData.data);
       await next();
     });
