@@ -30,11 +30,10 @@ import fetchLocal from 'utils/fetchLocal';
 class Script {
   constructor() {
 
-    this.parser = new StoryScript();
+    this.parser = new StoryScript(this.handleGlobalChanged.bind(this));
     this.scriptName = null;
     this.loading = false;
     this.waiting = false;
-
 
     core.use('storyscript-init', this.init.bind(this));
   }
@@ -42,6 +41,7 @@ class Script {
     core.use('script-load', this.load.bind(this));
     core.use('script-trigger', this.trigger.bind(this));
 
+    // listen script execute
     core.use('script-exec', async (ctx, next) => {
       const { command, flags, params } = ctx;
 
@@ -53,11 +53,11 @@ class Script {
 
         } else if (flags.includes('save')) {
           const name = params.name || 'default';
-          await core.post('save-achieve', { name: name });
+          await core.post('save-archive', { name: name });
 
         } else if (flags.includes('load')) {
           const name = params.name || 'default';
-          await core.post('load-achieve', { name: name });
+          await core.post('load-archive', { name: name });
         }
 
       } else {
@@ -65,22 +65,51 @@ class Script {
       }
     });
 
-    core.use('save-achieve', async (ctx, next) => {
+    // listen archive saving
+    core.use('save-archive', async (ctx, next) => {
+      // const { blocks, saveScope } = this.parser.getData();
+      const blocks = this.parser.getBlockData();
+      const saveScope = this.parser.getSaveScope();
       var $$scene = {
         script: this.scriptName,
-        data: this.parser.getData(),
+        blocks,
+        saveScope
       };
       ctx.data.$$scene = $$scene;
+      // ctx.globalData.$$scene = { globalScope };
       await next();
     });
 
-    core.use('load-achieve', async (ctx, next) => {
-      const sceneData = ctx.data.$$scene;
-      await this.load({ name: sceneData.script, autoStart: false }, () => {});
-      this.parser.setData(sceneData.data);
+    // listen archive loading
+    core.use('load-archive', async (ctx, next) => {
+      const { script, blocks, saveScope } = ctx.data.$$scene;
+      const globalScope = this.globalScope;
+      // const { globalScope } = ctx.globalData.$$scene;
+      await this.load({ name: script, autoStart: false }, () => {});
+      // this.parser.setData({ blocks, saveScope, globalScope });
+      this.parser.setSaveScope(saveScope);
+      this.parser.setBlockData(blocks);
       await next();
     });
 
+    // restore global variables
+    const g = {};
+    await core.post('load-global', g);
+    console.log(g)
+    g.globalData.$$scene = g.globalData.$$scene || {}
+    this.parser.setGlobalScope(g.globalData.$$scene.globalScope || {});
+
+    // save global variables once any of them changed
+    core.use('save-global', async (ctx, next) => {
+      const globalScope = this.parser.getGlobalScope();
+      ctx.globalData.$$scene = { globalScope };
+      await next();
+    });
+
+  }
+  handleGlobalChanged() {
+    const g = {};
+    core.post('save-global', g);
   }
   async load(ctx, next) {
     const scriptName = ctx.name;

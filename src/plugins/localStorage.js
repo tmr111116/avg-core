@@ -25,31 +25,88 @@ class Localstorage {
     core.use('localstorage-init', this.init.bind(this));
   }
   async init(ctx, next) {
-    core.use('save-achieve', this.save.bind(this));
-    core.use('load-achieve', this.load.bind(this));
-    core.use('remove-achieve', this.remove.bind(this));
-    core.use('exist-achieve', this.exist.bind(this));
+    core.use('save-archive', this.save.bind(this));
+    core.use('load-archive', this.load.bind(this));
+    core.use('remove-archive', this.remove.bind(this));
+    core.use('exist-archive', this.exist.bind(this));
+    core.use('list-archive', this.list.bind(this));
+    core.use('info-archive', this.info.bind(this));
+
+    core.use('save-global', this.saveGlobal.bind(this));
+    core.use('load-global', this.loadGlobal.bind(this));
   }
   async save(ctx, next) {
     ctx.data = {};
+    // ctx.globalData = {};
     await next();
-    console.log('存档上下文：', ctx);
+    console.log('存档上下文：', ctx.data);
+    // console.log('全局存档上下文：', ctx.globalData);
     const localStorage = window.localStorage;
     localStorage.setItem(ctx.name, JSON.stringify(ctx.data));
+    // localStorage.setItem('__global__', JSON.stringify(ctx.data));
+
+    const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
+    archiveInfo[ctx.name] = {
+      time: Date.now(),
+      extra: ctx.extra
+    };
+    localStorage.setItem('__archiveInfo__', JSON.stringify(archiveInfo));
+
+  }
+  async saveGlobal(ctx, next) {
+    ctx.globalData = {};
+    await next();
+    console.log('全局存档上下文：', ctx);
+    const localStorage = window.localStorage;
+    localStorage.setItem('__global__', JSON.stringify(ctx.globalData));
   }
   async load(ctx, next) {
     const localStorage = window.localStorage;
     ctx.data = JSON.parse(localStorage.getItem(ctx.name));
+    ctx.globalData = JSON.parse(localStorage.getItem('__global__')) || {};
+
+    const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
+    const info = archiveInfo[ctx.name];
+    ctx.time = info.time;
+    ctx.extra = info.extra;
+
+    await next();
+  }
+  async loadGlobal(ctx, next) {
+    const localStorage = window.localStorage;
+    ctx.globalData = JSON.parse(localStorage.getItem('__global__')) || {};
+
     await next();
   }
   async remove(ctx, next) {
     const localStorage = window.localStorage;
     localStorage.removeItem(ctx.name);
+
+    const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
+    delete archiveInfo[ctx.name];
+    localStorage.setItem('__archiveInfo__', JSON.stringify(archiveInfo));
+
     await next();
   }
   async exist(ctx, next) {
     const localStorage = window.localStorage;
     ctx.exist = localStorage.hasOwnProperty(ctx.name);
+    await next();
+  }
+  async list(ctx, next) {
+    const localStorage = window.localStorage;
+    ctx.list = Object.keys(localStorage);
+    await next();
+  }
+  async info(ctx, next) {
+    const localStorage = window.localStorage;
+    const keys = ctx.keys || Object.keys(localStorage);
+    const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
+    const data = {};
+    for (let key of keys) {
+      data[key] = archiveInfo[key];
+    }
+    ctx.infos = data;
     await next();
   }
 }
