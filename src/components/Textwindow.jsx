@@ -167,12 +167,12 @@ export class Textwindow extends React.Component {
         await next();
       }
     });
-    core.use('save-achieve', async (ctx, next) => {
+    core.use('save-archive', async (ctx, next) => {
       const layer = this.layer;
       ctx.data.textwindow = { ...this.state.props, text: layer.text };
       await next();
     });
-    core.use('load-achieve', async (ctx, next) => {
+    core.use('load-archive', async (ctx, next) => {
       this.setState({
         props: {
           ...this.props,

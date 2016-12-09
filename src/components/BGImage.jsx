@@ -45,11 +45,11 @@ export class BGImage extends React.Component {
         await next();
       }
     });
-    core.use('save-achieve', async (ctx, next) => {
+    core.use('save-archive', async (ctx, next) => {
       ctx.data.bgimage = Object.assign({}, this.state);
       await next();
     });
-    core.use('load-achieve', async (ctx, next) => {
+    core.use('load-archive', async (ctx, next) => {
       this.setState({
         file: null,
         x: 0,

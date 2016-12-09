@@ -64,11 +64,11 @@ export class FGImage extends React.Component {
         await next();
       }
     });
-    core.use('save-achieve', async (ctx, next) => {
+    core.use('save-archive', async (ctx, next) => {
       ctx.data.fgimage = Object.assign({}, this.state);
       await next();
     });
-    core.use('load-achieve', async (ctx, next) => {
+    core.use('load-archive', async (ctx, next) => {
       this.setState({
         left: null,
         center: null,

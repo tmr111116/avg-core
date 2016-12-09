@@ -23,19 +23,19 @@
  * you can use it to gain control of the entire framework permissions,
  * such as writing components or plug-ins
  *
- * Example, you want plug your own data in saving achieves, you should write a middleware like this:
+ * Example, you want plug your own data in saving archives, you should write a middleware like this:
  * ```js
  * async function saveMiddleware(ctx, next) {
  *   ctx.data.myKey = myValue;
  *   await next();
  * }
  *
- * AVG.core.use('save-achieve', saveMiddleware);
+ * AVG.core.use('save-archive', saveMiddleware);
  * ```
  *
  * or just:
  * ```js
- * AVG.core.use('save-achieve', async (ctx, next) => {
+ * AVG.core.use('save-archive', async (ctx, next) => {
  *   ctx.data.myKey = myValue;
  *   await next();
  * });

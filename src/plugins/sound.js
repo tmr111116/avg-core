@@ -27,8 +27,8 @@ class Sound {
   }
   async init(ctx, next) {
     core.use('script-exec', this.exec.bind(this));
-    core.use('save-achieve', this.save.bind(this));
-    core.use('load-achieve', this.load.bind(this));
+    core.use('save-archive', this.save.bind(this));
+    core.use('load-archive', this.load.bind(this));
   }
   /**
   * @method exec
