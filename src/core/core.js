@@ -73,10 +73,10 @@ class Core {
    * @param {object} [context={}] context to process
    * @return {promise}
    */
-  post(name, context) {
+  post(name, context, next) {
     const middlewares = this.middlewares[name];
     if (middlewares) {
-      return compose(middlewares)(context);
+      return compose(middlewares)(context, next);
     }
     return Promise.resolve();
   }
