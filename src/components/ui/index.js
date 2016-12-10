@@ -20,3 +20,4 @@
 
 export Dialog from './Dialog';
 export Layout from './Layout';
+export Button from './Button';
