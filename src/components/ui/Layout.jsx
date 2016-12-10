@@ -41,6 +41,8 @@ export default class Layout extends React.Component {
     maxHeight: React.PropTypes.number,
     overflowX: React.PropTypes.string,
     overflowY: React.PropTypes.string,
+    scrollerOffsetX: React.PropTypes.number,
+    scrollerOffsetY: React.PropTypes.number,
     children: React.PropTypes.any,
   }
   static defaultProps = {
@@ -52,6 +54,8 @@ export default class Layout extends React.Component {
     overflowX: 'scroll',
     overflowY: 'scroll',
     scrollStyle: {},
+    scrollerOffsetX: 10,
+    scrollerOffsetY: 10
   }
   state = {
     width: null,
@@ -291,7 +295,7 @@ export default class Layout extends React.Component {
                   backgroundAlpha={backgroundAlpha}
                   backgroundWidth={backgroundWidth}
                   backgroundHeight={this.state.scrollBackHeightV}
-                  x={this.state.scrollXV} y={this.state.scrollYV}
+                  x={this.state.scrollXV - this.props.scrollerOffsetX} y={this.state.scrollYV}
                   visible={this.state.scrollVisibleV}
                   direction='vertical'
                   buttonWidth={buttonWidth}
@@ -309,7 +313,7 @@ export default class Layout extends React.Component {
                   backgroundAlpha={backgroundAlpha}
                   backgroundWidth={this.state.scrollBackWidthH}
                   backgroundHeight={backgroundWidth}
-                  x={this.state.scrollXH} y={this.state.scrollYH}
+                  x={this.state.scrollXH} y={this.state.scrollYH - this.props.scrollerOffsetY}
                   visible={this.state.scrollVisibleH}
                   direction='horizental'
                   buttonWidth={buttonWidth}
