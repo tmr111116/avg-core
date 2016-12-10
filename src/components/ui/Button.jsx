@@ -74,7 +74,7 @@
     frame.height = height;
     layer.texture.frame = frame;
 
-    e.stopped = true;
+    // e.stopped = true;
     return false;
   }
  });
