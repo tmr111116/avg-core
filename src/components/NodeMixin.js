@@ -3,6 +3,8 @@ import emptyObject from 'fbjs/lib/emptyObject';
 import { attachToSprite } from 'classes/EventManager';
 import Err from 'classes/ErrorHandler';
 
+import deepEqual from 'deep-equal';
+
 const NodeMixin = {
   _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
   construct(element) {
@@ -70,35 +72,37 @@ const NodeMixin = {
     const prevProps = this._currentElement.props;
     const props = nextComponent.props;
 
-    this.updateNode(prevProps, props);
+    if (!deepEqual(prevProps, props)) {
+      this.updateNode(prevProps, props);
 
-    const prevKeys = Object.keys(prevProps);
-    for (const key of prevKeys) {
-      if (/^on[A-Z]/.test(key)) {
-        delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
-      }
-    }
-    this.node.buttonMode = false;
-    const keys = Object.keys(props);
-    for (const key of keys) {
-      if (/^on[A-Z]/.test(key)) {
-        if (key === 'onClick') {
-          this.node.buttonMode = true;
+      const prevKeys = Object.keys(prevProps);
+      for (const key of prevKeys) {
+        if (/^on[A-Z]/.test(key)) {
+          delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
         }
-        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
       }
+      this.node.buttonMode = false;
+      const keys = Object.keys(props);
+      for (const key of keys) {
+        if (/^on[A-Z]/.test(key)) {
+          if (key === 'onClick') {
+            this.node.buttonMode = true;
+          }
+          this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
+        }
+      }
+      var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+      transaction.perform(
+        this.updateChildren,
+        this,
+        props.children,
+        transaction
+      );
+      ReactUpdates.ReactReconcileTransaction.release(transaction);
+
+      this._currentElement = nextComponent;
     }
 
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-    transaction.perform(
-      this.updateChildren,
-      this,
-      props.children,
-      transaction
-    );
-    ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    this._currentElement = nextComponent;
   },
 };
 
