@@ -43,6 +43,9 @@ export default class Layout extends React.Component {
     overflowY: React.PropTypes.string,
     scrollerOffsetX: React.PropTypes.number,
     scrollerOffsetY: React.PropTypes.number,
+    onScroll: React.PropTypes.func,
+    vertical: React.PropTypes.number,
+    horizental: React.PropTypes.number,
     children: React.PropTypes.any,
   }
   static defaultProps = {
@@ -55,7 +58,8 @@ export default class Layout extends React.Component {
     overflowY: 'scroll',
     scrollStyle: {},
     scrollerOffsetX: 10,
-    scrollerOffsetY: 10
+    scrollerOffsetY: 10,
+    onScroll: null
   }
   state = {
     width: null,
@@ -181,18 +185,30 @@ export default class Layout extends React.Component {
     const maxWidth = this.props.maxWidth || this.state.width;
     const maxHeight = this.props.maxHeight || this.state.height;
 
-    const innerX = getValidValueInRange(maxWidth - this.state.width, 0, x);
-    const innerY = getValidValueInRange(maxHeight - this.state.height, 0, y);
+    let innerX = getValidValueInRange(maxWidth - this.state.width, 0, x);
+    let innerY = getValidValueInRange(maxHeight - this.state.height, 0, y);
 
     let posV, posH;
     posV = Math.min(1, Math.abs(innerY) / (this.state.height - this.props.maxHeight));
     posH = Math.min(1, Math.abs(innerX) / (this.state.width - this.props.maxWidth));
 
+    this.props.onScroll && this.props.onScroll({
+      vertical: posV,
+      horizental: posH
+    });
+
+    if (this.props.vertical) {
+      innerY = - (this.state.height - this.props.maxHeight) * this.props.vertical
+    }
+    if (this.props.horizental) {
+      innerX = - (this.state.width - this.props.maxWidth) * this.props.horizental
+    }
+
     this.setState({
       innerX: this.props.overflowX === 'scroll' ? innerX : 0,
       innerY: this.props.overflowY === 'scroll' ? innerY : 0,
-      scrollButtonPosV: posV,
-      scrollButtonPosH: posH,
+      scrollButtonPosV: this.props.vertical || posV,
+      scrollButtonPosH: this.props.horizental || posH,
     });
   }
   drawScrollBar() {
