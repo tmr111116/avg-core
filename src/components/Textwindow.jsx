@@ -157,12 +157,16 @@ export class Textwindow extends React.Component {
         await next();
       }
     });
+
+    const transitionHandler = TransitionPlugin.wrap(this.layer, this.execute.bind(this));
+
     core.use('script-exec', async (ctx, next) => {
+
       if (['text', 'r', 'l', 'p', '*'].includes(ctx.command)) {
         if (ctx.params.raw) {
           ctx.params.text = ctx.params.raw;
         }
-        await TransitionPlugin.wrap(this.layer, this.execute.bind(this))(ctx, next);
+        await transitionHandler(ctx, next);
       } else {
         await next();
       }

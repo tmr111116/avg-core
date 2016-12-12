@@ -34,13 +34,15 @@ export class BGImage extends React.Component {
     };
   }
   componentDidMount() {
+    const transitionHandler = TransitionPlugin.wrap(this.node, async (ctx, next) => {
+      const { command, flags, params } = ctx;
+      this.setState(params);
+      await next();
+    });
+
     core.use('script-exec', async (ctx, next) => {
       if (ctx.command === 'bg') {
-        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
-          const { command, flags, params } = ctx;
-          this.setState(params);
-          await next();
-        })(ctx, next);
+        await transitionHandler(ctx, next);
       } else {
         await next();
       }

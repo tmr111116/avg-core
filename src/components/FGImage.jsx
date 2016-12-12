@@ -35,31 +35,33 @@ export class FGImage extends React.Component {
     right: null,
   };
   componentDidMount() {
+    const transitionHandler = TransitionPlugin.wrap(this.node, async (ctx, next) => {
+      const { command, flags, params } = ctx;
+      this.setState(params);
+      let positions = [];
+      if (flags.includes('left')) {
+        positions.push('left');
+      }
+      if (flags.includes('right')) {
+        positions.push('right');
+      }
+      if (flags.includes('center') || !positions.length) {
+        positions.push('center');
+      }
+
+      const state = {};
+      if (flags.includes('clear')) {
+        positions.map(pos => state[pos] = null);
+      } else {
+        state[positions[0]] = params.file;
+      }
+      this.setState(state);
+      await next();
+    });
+
     core.use('script-exec', async (ctx, next) => {
       if (ctx.command === 'fg') {
-        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
-          const { command, flags, params } = ctx;
-          this.setState(params);
-          let positions = [];
-          if (flags.includes('left')) {
-            positions.push('left');
-          }
-          if (flags.includes('right')) {
-            positions.push('right');
-          }
-          if (flags.includes('center') || !positions.length) {
-            positions.push('center');
-          }
-
-          const state = {};
-          if (flags.includes('clear')) {
-            positions.map(pos => state[pos] = null);
-          } else {
-            state[positions[0]] = params.file;
-          }
-          this.setState(state);
-          await next();
-        })(ctx, next);
+        await transitionHandler(ctx, next);
       } else {
         await next();
       }
