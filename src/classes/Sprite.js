@@ -19,8 +19,8 @@
  */
 
 const PIXI = require('pixi.js');
-import { TransitionPlugin } from './Transition/TransitionPlugin';
-import { TransitionFilter } from './Transition/TransitionFilter';
+// import { TransitionPlugin } from './Transition/TransitionPlugin';
+// import { TransitionFilter } from './Transition/TransitionFilter';
 import { getTexture } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 
@@ -37,7 +37,7 @@ class Sprite extends PIXI.Sprite {
     super();
     this.zorder = 0;
 
-    this.filters = [new TransitionFilter()];
+    // this.filters = [new TransitionFilter()];
   }
 
   /**
@@ -98,7 +98,7 @@ class Sprite extends PIXI.Sprite {
 
 }
 
-TransitionPlugin(Sprite);
+// TransitionPlugin(Sprite);
 
 
 export default Sprite;

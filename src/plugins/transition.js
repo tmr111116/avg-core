@@ -21,6 +21,8 @@
 const PIXI = require('pixi.js');
 import core from 'core/core';
 import { CrossFadeFilter } from 'classes/Transition/Filters';
+import { TransitionFilter } from 'classes/Transition/TransitionFilter';
+import { TransitionPlugin as installPlugin } from 'classes/Transition/TransitionPlugin';
 
 export default class TransitionPlugin {
   constructor(node, method) {
@@ -31,6 +33,20 @@ export default class TransitionPlugin {
     }
     this.method = method;
     this.clickCallback = false;
+
+    let hasTransFilter = false;
+    for (let filter of (this.node.filters || [])) {
+      if (filter instanceof TransitionFilter) {
+        hasTransFilter = true;
+        break;
+      }
+    }
+    if (!hasTransFilter) {
+      this.node.filters = this.node.filters || [];
+      this.node.filters = [...this.node.filters, new TransitionFilter()];
+      installPlugin(this.node);
+      console.log('not installed')
+    }
 
     core.use('script-trigger', async (ctx, next) => {
       if (this.clickCallback) {

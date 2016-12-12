@@ -19,8 +19,8 @@
  */
 
 const PIXI = require('pixi.js');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
+// import { TransitionPlugin } from './Transition/TransitionPlugin'
+// import { TransitionFilter } from './Transition/TransitionFilter'
 import { getTexture } from 'classes/Preloader';
 
 /**
@@ -34,7 +34,7 @@ class TextWindow extends PIXI.Container {
     this.visible = false;
     this.zorder = 50;
 
-    this.filters = [new TransitionFilter()];
+    // this.filters = [new TransitionFilter()];
 
     // text layer
     this.textCanvas = document.createElement('canvas');
@@ -525,7 +525,7 @@ class TextWindow extends PIXI.Container {
 
 }
 
-TransitionPlugin(TextWindow);
+// TransitionPlugin(TextWindow);
 
 function clone(origin) {
   const originProto = Object.getPrototypeOf(origin);

@@ -20,8 +20,8 @@
 
 const PIXI = require('pixi.js');
 const Err = require('./ErrorHandler');
-import { TransitionPlugin } from './Transition/TransitionPlugin';
-import { TransitionFilter } from './Transition/TransitionFilter';
+// import { TransitionPlugin } from './Transition/TransitionPlugin';
+// import { TransitionFilter } from './Transition/TransitionFilter';
 
 import { deprecated } from 'core-decorators';
 
@@ -43,7 +43,7 @@ class TextSprite extends PIXI.Text {
 
     this.m_style = {};
     this.zorder = 0;
-    this.filters = [new TransitionFilter()];
+    // this.filters = [new TransitionFilter()];
   }
 
   /**
@@ -299,6 +299,6 @@ class TextSprite extends PIXI.Text {
 
 }
 
-TransitionPlugin(TextSprite);
+// TransitionPlugin(TextSprite);
 
 module.exports = TextSprite;

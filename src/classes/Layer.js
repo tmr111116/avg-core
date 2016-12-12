@@ -19,8 +19,8 @@
  */
 
 const PIXI = require('pixi.js');
-import { TransitionPlugin } from './Transition/TransitionPlugin';
-import { TransitionFilter } from './Transition/TransitionFilter';
+// import { TransitionPlugin } from './Transition/TransitionPlugin';
+// import { TransitionFilter } from './Transition/TransitionFilter';
 
 /**
  * Class representing a Layer.
@@ -50,7 +50,9 @@ class Layer extends PIXI.Container {
       anchor: [0, 0]
     });
 
-    this.filters = [new TransitionFilter()];
+    const voidFilter = new PIXI.filters.VoidFilter();
+    voidFilter.padding = 0;
+    this.filters = [voidFilter];
     this.localFilterArea = null;
   }
 
@@ -162,7 +164,7 @@ class Layer extends PIXI.Container {
 
 }
 
-TransitionPlugin(Layer);
+// TransitionPlugin(Layer);
 
 
 export default Layer;

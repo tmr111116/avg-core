@@ -20,6 +20,7 @@
 
 const PIXI = require('pixi.js');
 import ErrorHandler from '../ErrorHandler';
+import { TransitionFilter } from './TransitionFilter';
 
 
 function prepareTransition(renderer) {
@@ -35,32 +36,35 @@ function prepareTransition(renderer) {
   // let extract = new PIXI.extract.webGL(renderer);
   // document.body.appendChild(extract.image(texture));
   // document.body.appendChild(document.createTextNode('pretrans'));
-  this.filters[0].setPreviousTexture(texture);
+  const filter = getTransitionFilter(this.filters);
+  filter.setPreviousTexture(texture);
 }
 
-function startTransition(renderer, filter) {
+function startTransition(renderer, ruleFilter) {
   this.updateTransform();
   // const bounds = this.getBounds();
   // let bounds = getBoundsFromChildren(this);
   const baseTexture = new PIXI.BaseRenderTexture(renderer.width, renderer.height,
     PIXI.settings.SCALE_MODE, renderer.resolution);
   const texture = new PIXI.RenderTexture(baseTexture);
-  this.filters[0].setBlocked(true);
+  const filter = getTransitionFilter(this.filters);
+  filter.setBlocked(true);
   if (this.visible) {
-    this.filters[0].enabled = false;
+    filter.enabled = false;
     renderer.render(this, texture);
-    this.filters[0].enabled = true;
+    filter.enabled = true;
   }
   // let extract = new PIXI.extract.webGL(renderer);
   // document.body.appendChild(extract.image(texture));
   // document.body.appendChild(document.createTextNode('trans'));
-  const promise = this.filters[0].startTransition(texture, filter);
-  this.filters[0].setBlocked(false);
+  const promise = filter.startTransition(texture, ruleFilter);
+  filter.setBlocked(false);
   return promise;
 }
 
 function completeTransition() {
-  this.filters[0].completeTransition();
+  const filter = getTransitionFilter(this.filters);
+  filter.completeTransition();
 }
 
 export function TransitionPlugin(obj) {
@@ -73,6 +77,17 @@ export function TransitionPlugin(obj) {
     obj.startTransition = startTransition;
     obj.completeTransition = completeTransition;
   }
+}
+
+/* utils */
+
+function getTransitionFilter(filters) {
+  for (let filter of filters) {
+    if (filter instanceof TransitionFilter) {
+      return filter;
+    }
+  }
+  return null;
 }
 
 // function getBoundsFromChildren(parent) {
