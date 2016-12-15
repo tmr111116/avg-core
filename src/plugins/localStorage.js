@@ -100,8 +100,8 @@ class Localstorage {
   }
   async info(ctx, next) {
     const localStorage = window.localStorage;
-    const keys = ctx.keys || Object.keys(localStorage);
     const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
+    const keys = ctx.keys || Object.keys(archiveInfo || {});
     const data = {};
     for (let key of keys) {
       data[key] = archiveInfo[key];
