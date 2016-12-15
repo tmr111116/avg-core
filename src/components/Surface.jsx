@@ -138,8 +138,11 @@ export const Surface = React.createClass({
     }
 
     renderer.view.style.position = 'absolute';
-    renderer.view.style.width = contentW + "px";
-    renderer.view.style.height = contentH + "px";
+    // renderer.view.style.width = contentW + "px";
+    // renderer.view.style.height = contentH + "px";
+    renderer.view.style.backfaceVisibility = 'hidden';
+    renderer.view.style.transformOrigin = 'left top';
+    renderer.view.style.transform = `scale(${contentW/renderer.width}, ${contentH/renderer.height}) translateZ(0)`;
 
     renderer.view.style.left = offsetW + "px"
     renderer.view.style.top = offsetH + "px"
