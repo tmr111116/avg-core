@@ -89,10 +89,11 @@ export default class Dialog extends React.Component {
     const core =  (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
-        onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp}
-        onMouseMove={::this.handleMouseMove}
-        onTouchStart={::this.handleMouseDown} onTouchEnd={::this.handleMouseUp}
-        onTouchMove={::this.handleMouseMove}>
+        onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp} onMouseUpOutside={::this.handleMouseUp}
+        onMouseMove={::this.handleMouseMove} onClick={(e) => e.stopPropagation()}
+        onTouchStart={::this.handleMouseDown} onTouchEnd={::this.handleMouseUp} onTouchEndOutside={::this.handleMouseUp}
+        onTouchMove={::this.handleMouseMove} onTap={(e) => e.stopPropagation()}
+      >
         {this.props.children}
       </Layer>
     );
