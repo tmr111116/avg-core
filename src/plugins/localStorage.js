@@ -48,10 +48,9 @@ class Localstorage {
     const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
     archiveInfo[ctx.name] = {
       time: Date.now(),
-      extra: ctx.extra
+      extra: JSON.stringify(ctx.extra),
     };
     localStorage.setItem('__archiveInfo__', JSON.stringify(archiveInfo));
-
   }
   async saveGlobal(ctx, next) {
     ctx.globalData = {};
@@ -68,7 +67,7 @@ class Localstorage {
     const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
     const info = archiveInfo[ctx.name];
     ctx.time = info.time;
-    ctx.extra = info.extra;
+    ctx.extra = JSON.parse(info.extra);
 
     await next();
   }
@@ -103,8 +102,12 @@ class Localstorage {
     const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
     const keys = ctx.keys || Object.keys(archiveInfo || {});
     const data = {};
-    for (let key of keys) {
-      data[key] = archiveInfo[key];
+    for (const key of keys) {
+      const { time, extra } = archiveInfo[key];
+      data[key] = {
+        time,
+        extra: JSON.parse(extra),
+      };
     }
     ctx.infos = data;
     await next();
