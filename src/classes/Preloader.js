@@ -76,12 +76,12 @@ export function load(resources, onProgress) {
 }
 
 export function getTexture(url) {
-  const obj = TEXTURES[url];
-  if (obj) {
-    return obj;
-  } else {
-    return PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+  let obj = TEXTURES[url];
+  if (!obj) {
+    obj = PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+    TEXTURES[url] = obj;
   }
+  return new PIXI.Texture(obj.baseTexture);
 }
 
 export function getAudio(url) {
