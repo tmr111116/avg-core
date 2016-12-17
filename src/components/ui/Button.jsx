@@ -35,11 +35,11 @@
     const layer = this.node;
 
     layer.buttonMode = true;
-    layer.on('mouseover', e => this.setFrame(e, 1));
-    layer.on('mouseout', e => this.setFrame(e, 0));
-    layer.on('mousedown', e => this.setFrame(e, 2));
-    layer.on('mouseup', e => this.setFrame(e, 1));
-    layer.on('mouseupoutside', e => this.setFrame(e, 0));
+    layer.on('mouseover', e => this.setFrame(1));
+    layer.on('mouseout', e => this.setFrame(0));
+    layer.on('mousedown', e => this.setFrame(2));
+    layer.on('mouseup', e => this.setFrame(1));
+    layer.on('mouseupoutside', e => this.setFrame(0));
 
     return layer;
   },
@@ -54,10 +54,11 @@
     // frame: idle, hover, active
     layer.texture = getTexture(props.file);
 
-    layer.texture.baseTexture.on('loaded', e => this.setFrame(e, 0));
+    layer.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    this.setFrame(0);
 
   },
-  setFrame(e, num) {
+  setFrame(num) {
     const layer = this.node;
 
     if (!layer.texture || !layer.texture.baseTexture.hasLoaded) {
