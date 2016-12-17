@@ -76,6 +76,8 @@ class TextWindow extends PIXI.Container {
     this.resolution = 1;
 
     this.textSprite = new PIXI.Sprite(this.textTexture);
+    this.textSprite.x = this.textRectangle[0];
+    this.textSprite.y = this.textRectangle[1];
 
     this.addChildAt(this.textSprite, this.children.length);
   }
@@ -158,6 +160,8 @@ class TextWindow extends PIXI.Container {
      */
   setTextRectangle(rect) {
     this.textRectangle = rect;
+    this.textSprite.x = this.textRectangle[0];
+    this.textSprite.y = this.textRectangle[1];
     this.initTextRender(true);
   }
 
@@ -340,7 +344,7 @@ class TextWindow extends PIXI.Container {
      * @method newline
      */
   newline() {
-    this.m_currentTextWidth = this.textRectangle[0];
+    this.m_currentTextWidth = 0;
     this.m_currentTextHeight += this.style.size * this.resolution + this.style.yInterval * this.resolution;
   }
 
@@ -412,8 +416,8 @@ class TextWindow extends PIXI.Container {
 
     if (clear) {
       this.textIndex = 0;
-      this.m_currentTextWidth = this.textRectangle[0] * this.resolution;
-      this.m_currentTextHeight = this.textRectangle[1] * this.resolution;
+      this.m_currentTextWidth = 0;
+      this.m_currentTextHeight = 0;
     }
   }
 
@@ -441,7 +445,17 @@ class TextWindow extends PIXI.Container {
       this.textCursor.visible = false;
 
     for (let i = this.textIndex; i < this.textIndex + count; i++) {
-      const character = this.text[i];
+      let character;
+      if (this.text.codePointAt(i) > 0xFFFF) {
+        character = this.text.at(i);
+        i++;
+        // if the last character is a emoji or ext-hanzi, must avoid it be cut.
+        if (i === this.textIndex + count) {
+          count++;
+        }
+      } else {
+        character = this.text[i];
+      }
       if (character === '\n') {
         this.newline();
         continue;
@@ -451,9 +465,8 @@ class TextWindow extends PIXI.Container {
       if (this.style.stroke) this.textContext.strokeText(character, this.m_currentTextWidth, this.m_currentTextHeight);
       const width = this.textContext.measureText(character).width;   // 字号已经*this.resolution，无需再乘
       this.m_currentTextWidth += width + this.style.xInterval * this.resolution;
-      if (this.m_currentTextWidth + width >= this.textRectangle[2] * this.resolution)
-            {
-        this.m_currentTextWidth = this.textRectangle[0];
+      if (this.m_currentTextWidth + width >= this.textRectangle[2] * this.resolution) {
+        this.m_currentTextWidth = 0;
         this.m_currentTextHeight += this.style.size * this.resolution + this.style.yInterval * this.resolution;
       }
     }
