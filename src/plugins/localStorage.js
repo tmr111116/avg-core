@@ -67,7 +67,7 @@ class Localstorage {
     const archiveInfo = JSON.parse(localStorage.getItem('__archiveInfo__')) || {};
     const info = archiveInfo[ctx.name];
     ctx.time = info.time;
-    ctx.extra = JSON.parse(info.extra);
+    ctx.extra = JSON.parse(info.extra || null);
 
     await next();
   }
@@ -106,7 +106,7 @@ class Localstorage {
       const { time, extra } = archiveInfo[key];
       data[key] = {
         time,
-        extra: JSON.parse(extra),
+        extra: JSON.parse(extra || null),
       };
     }
     ctx.infos = data;
