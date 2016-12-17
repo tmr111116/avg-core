@@ -50,14 +50,14 @@ class Script {
           this.script = params.name;
           await this.load({ name: params.name, autoStart: true }, next);
           // await this.beginStory();
-
         } else if (flags.includes('save')) {
           const name = params.name || 'default';
-          await core.post('save-archive', { name: name });
-
+          const extra = Object.assign({}, params);
+          delete extra.name;
+          await core.post('save-archive', { name, extra });
         } else if (flags.includes('load')) {
           const name = params.name || 'default';
-          await core.post('load-archive', { name: name });
+          await core.post('load-archive', { name });
         }
 
       } else {
@@ -121,7 +121,7 @@ class Script {
       await core.post('script-loading');
       const task1 = fetchLocal(scriptConfig)
       .then(res => res.json())
-      .then(json => loadResources(json.resources, loader => {
+      .then(json => loadResources(json.resources, (loader) => {
         return core.post('script-loading-progress', loader);
       }));
       const task2 = fetchLocal(scriptFile)
