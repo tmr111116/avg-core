@@ -89,7 +89,7 @@ export default class TransitionPlugin {
       this.clickCallback = true;
 
       // FIXME
-      if (layer.visible) {
+      if (layer.visible && !flags.includes('nowait')) {
         await promise;
       }
 
