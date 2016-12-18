@@ -76,7 +76,7 @@ class Core {
   post(name, context, next) {
     const middlewares = this.middlewares[name];
     if (middlewares) {
-      return compose(middlewares)(context, next);
+      return compose(middlewares)(context || {}, next);
     }
     return Promise.resolve();
   }
