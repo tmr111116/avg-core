@@ -62,35 +62,41 @@ export default class TransitionPlugin {
     return wrapped.process.bind(wrapped);
   }
   async process(ctx, next) {
-    let layer = this.node;
-    let method = this.method;
+    const layer = this.node;
+    const method = this.method;
 
     const { flags, params, command } = ctx;
 
+    const isSkip = flags.includes('_skip_');
+
     if (flags.includes('pretrans')) {
-      let renderer = PIXI.currentRenderer;
-      if (layer._transitionStatus !== 'prepare') {
-        layer._transitionStatus = 'prepare';
+      const renderer = PIXI.currentRenderer;
+      if (layer.transitionStatus !== 'prepare') {
+        layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
       }
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
       params.trans = params.trans || 'crossfade';
-      let renderer = PIXI.currentRenderer;
-      if (layer._transitionStatus !== 'prepare') {
-        layer._transitionStatus = 'prepare';
+      const renderer = PIXI.currentRenderer;
+      if (layer.transitionStatus !== 'prepare') {
+        layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
       }
       await method(ctx, next);
-      layer._transitionStatus = 'start';
+      layer.transitionStatus = 'start';
       const promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration))
-        .then(() => layer._transitionStatus = null);
+        .then(() => layer.transitionStatus = null);
 
       this.clickCallback = true;
 
       // FIXME
-      if (layer.visible && !flags.includes('nowait')) {
+      if (layer.visible && !flags.includes('nowait') && !isSkip) {
         await promise;
+      }
+
+      if (isSkip) {
+        layer.completeTransition();
       }
 
       this.clickCallback = false;

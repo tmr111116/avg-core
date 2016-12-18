@@ -39,7 +39,7 @@ class Flow {
   async exec(ctx, next) {
     const { command, flags, params } = ctx;
     if (command === 'flow') {
-      if (flags.includes('wait')) {
+      if (flags.includes('wait') && !flags.includes('_skip_')) {
         await new Promise((resolve, reject) => {
           setTimeout(resolve, params.time || 0);
         });

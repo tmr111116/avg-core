@@ -373,6 +373,10 @@ class TextWindow extends PIXI.Container {
 
   completeText() {
     this.m_lastTime = -99999999;
+    if (this.textRendering) {
+      return this.wait();
+    }
+    return null;
   }
 
     /**
@@ -513,9 +517,13 @@ class TextWindow extends PIXI.Container {
   }
 
   wait() {
-    return new Promise((resolve, reject) => {
-      this.m_resolve = resolve;
-    });
+    if (!this.m_promise) {
+      this.m_promise = new Promise((resolve, reject) => {
+        this.m_resolve = resolve;
+      })
+      .then(() => this.m_promise = null);
+    }
+    return this.m_promise;
   }
 
   removeChildren() {

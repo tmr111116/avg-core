@@ -140,14 +140,17 @@ export class Textwindow extends React.Component {
     this.state.clickCallback = clickCallback;
     this.state.switchPageAfterClick = switchPageAfterClick;
     ctx.break = waitClick;
-    await (flags.includes('nowait') ? Promise.resolve() : promise);
+    await ((flags.includes('nowait') || flags.includes('_skip_')) ? Promise.resolve() : promise);
+    if (flags.includes('_skip_')) {
+      await this.layer.completeText();
+    }
     this.state.clickCallback = false;
     await next();
   }
   componentDidMount() {
     core.use('script-trigger', async (ctx, next) => {
       if (this.state.switchPageAfterClick) {
-        this.layer.drawText('', true);
+        await this.layer.drawText('', true);
         this.state.switchPageAfterClick = false;
       }
       if (this.state.clickCallback) {

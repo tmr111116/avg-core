@@ -24,6 +24,13 @@ import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 import fetchLocal from 'utils/fetchLocal';
 
+// utils
+function getTimeoutPromise(time) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
+
 /**
  *
  */
@@ -34,6 +41,10 @@ class Script {
     this.scriptName = null;
     this.loading = false;
     this.waiting = false;
+
+    this.isSkip = false;
+    this.isAuto = false;
+    this.autoInterval = 1000;
 
     core.use('storyscript-init', this.init.bind(this));
   }
@@ -58,10 +69,39 @@ class Script {
         } else if (flags.includes('load')) {
           const name = params.name || 'default';
           await core.post('load-archive', { name });
+        } else if (flags.includes('mode')) {
+          this.isAuto = false;
+          this.isSkip = false;
+          if (flags.includes('auto')) {
+            this.autoInterval = params.interval || this.autoInterval;
+            this.isAuto = true;
+          } else if (flags.includes('skip')) {
+            this.isSkip = true;
+          } else if (flags.includes('normal')) {
+            // do nothing
+          }
         }
-
       } else {
         await next();
+      }
+    });
+
+    core.use('script-set-autointerval', async (ctx, next) => {
+      this.autoInterval = ctx.autoInterval || this.autoInterval;
+    });
+    core.use('script-get-autointerval', async (ctx, next) => {
+      ctx.autoInterval = this.autoInterval;
+      return this.autoInterval;
+    });
+    core.use('script-mode', async (ctx, next) => {
+      this.isAuto = false;
+      this.isSkip = false;
+      if (ctx.mode === 'auto') {
+        this.isAuto = true;
+        core.post('script-trigger', { DONOTSTOPAUTOORSKIP: true });
+      } else if (ctx.mode === 'skip') {
+        this.isSkip = true;
+        core.post('script-trigger', { DONOTSTOPAUTOORSKIP: true });
       }
     });
 
@@ -73,7 +113,8 @@ class Script {
       var $$scene = {
         script: this.scriptName,
         blocks,
-        saveScope
+        saveScope,
+        autoInterval: this.autoInterval,
       };
       ctx.data.$$scene = $$scene;
       // ctx.globalData.$$scene = { globalScope };
@@ -82,21 +123,18 @@ class Script {
 
     // listen archive loading
     core.use('load-archive', async (ctx, next) => {
-      const { script, blocks, saveScope } = ctx.data.$$scene;
-      const globalScope = this.globalScope;
-      // const { globalScope } = ctx.globalData.$$scene;
+      const { script, blocks, saveScope, autoInterval } = ctx.data.$$scene;
       await this.load({ name: script, autoStart: false }, () => {});
-      // this.parser.setData({ blocks, saveScope, globalScope });
       this.parser.setSaveScope(saveScope);
       this.parser.setBlockData(blocks);
+      this.autoInterval = autoInterval;
       await next();
     });
 
     // restore global variables
     const g = {};
     await core.post('load-global', g);
-    console.log(g)
-    g.globalData.$$scene = g.globalData.$$scene || {}
+    g.globalData.$$scene = g.globalData.$$scene || {};
     this.parser.setGlobalScope(g.globalData.$$scene.globalScope || {});
 
     // save global variables once any of them changed
@@ -105,7 +143,6 @@ class Script {
       ctx.globalData.$$scene = { globalScope };
       await next();
     });
-
   }
   handleGlobalChanged() {
     const g = {};
@@ -151,23 +188,42 @@ class Script {
     let ret = this.parser.next();
     while (!ret.done) {
       const context = Object.assign({}, ret.value);
+      if (this.isSkip) {
+        context.flags.push('_skip_');
+      }
+      if (this.isAuto) {
+        context.flags.push('_auto_');
+      }
       this.waiting = true;
       await core.post('script-exec', context);
       this.waiting = false;
-      if (context.break) {
+      if (context.break && this.isAuto) {
+        await getTimeoutPromise(this.autoInterval);
+        return core.post('script-trigger', { DONOTSTOPAUTOORSKIP: true });
+      } else if (context.break && this.isSkip) {
+        // avoid executing to the end directly...
+        await getTimeoutPromise(80);
+        return core.post('script-trigger', { DONOTSTOPAUTOORSKIP: true });
+      } else if (context.break) {
         break;
       }
       ret = this.parser.next();
     }
     if (ret.done) {
+      this.isAuto = false;
+      this.isSkip = false;
       Err.warn(`Script executed to end`);
     }
   }
   async trigger(ctx, next) {
+    await next();
     if (!this.loading) {
+      if (!ctx.DONOTSTOPAUTOORSKIP) {
+        this.isAuto = false;
+        this.isSkip = false;
+      }
       !this.waiting && this.beginStory();
     }
-    await next();
   }
 }
 
