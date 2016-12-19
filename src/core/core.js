@@ -67,6 +67,27 @@ class Core {
   }
 
   /**
+   * uninstall a middleware.
+   *
+   * @param {string} name signal name
+   * @param {function} middleware instance of middleware
+   * @see AVG.core.Middleware
+   */
+  unuse(name, middleware) {
+    const middlewares = this.middlewares[name];
+    if (middlewares) {
+      const pos = middlewares.indexOf(middleware);
+      if (pos !== -1) {
+        middlewares.splice(pos, 1);
+      } else {
+        console.warn(`Do not find the given middleware in ${name}.`);
+      }
+    } else {
+      console.warn(`Do not find the given middleware in ${name}.`);
+    }
+  }
+
+  /**
    * send a signal to core
    *
    * @param {string} name signal name
