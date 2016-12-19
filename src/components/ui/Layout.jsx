@@ -310,7 +310,7 @@ export default class Layout extends React.Component {
         <Scroller backgroundColor={backgroundColor}
                   backgroundAlpha={backgroundAlpha}
                   backgroundWidth={backgroundWidth}
-                  backgroundHeight={this.state.scrollBackHeightV}
+                  backgroundHeight={this.state.scrollBackHeightV - this.props.scrollerOffsetY}
                   x={this.state.scrollXV - this.props.scrollerOffsetX} y={this.state.scrollYV}
                   visible={this.state.scrollVisibleV}
                   direction='vertical'
@@ -327,7 +327,7 @@ export default class Layout extends React.Component {
                   onTouchEndOutside={() => this.setState({ scrollButtonAlphaV: buttonAlpha})} />
         <Scroller backgroundColor={backgroundColor}
                   backgroundAlpha={backgroundAlpha}
-                  backgroundWidth={this.state.scrollBackWidthH}
+                  backgroundWidth={this.state.scrollBackWidthH - this.props.scrollerOffsetX}
                   backgroundHeight={backgroundWidth}
                   x={this.state.scrollXH} y={this.state.scrollYH - this.props.scrollerOffsetY}
                   visible={this.state.scrollVisibleH}
@@ -346,7 +346,7 @@ export default class Layout extends React.Component {
         <Layer visible={this.state.scrollVisibleV && this.state.scrollVisibleH}
                width={backgroundWidth}
                height={backgroundWidth}
-               x={this.state.scrollXV} y={this.state.scrollYH}
+               x={this.state.scrollXV - this.props.scrollerOffsetX} y={this.state.scrollYH - this.props.scrollerOffsetY}
                fillColor={backgroundColor} fillAlpha={backgroundAlpha} />
       </Layer>
     );
