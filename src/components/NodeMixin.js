@@ -40,11 +40,6 @@ const NodeMixin = {
     );
   },
 
-  unmountComponent() {
-    // this.destroyEventListeners();
-    this.node.removeChildren();
-  },
-
   getHostNode(...props) {
     // React@15.0 之后新添加的东西
     // 不知道干啥用的，先放着吧……
@@ -102,7 +97,12 @@ const NodeMixin = {
 
       this._currentElement = nextComponent;
     }
+  },
 
+  unmountComponent() {
+    // this.destroyEventListeners();
+    this.unmountChildren();
+    this.node.removeChildren();
   },
 };
 

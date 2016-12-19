@@ -114,6 +114,7 @@ export const Surface = React.createClass({
 
   componentWillUnmount() {
     // Implemented in ReactMultiChild.Mixin
+    this.unmountChildren();
     this.node.removeChildren();
   },
 
