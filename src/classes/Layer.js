@@ -149,12 +149,28 @@ class Layer extends PIXI.Container {
   }
 
   containsPoint(...args) {
-    return this.background.containsPoint(...args);
+    // TODO: Problem same as .removeChildren()
+    try {
+      return this.background.containsPoint(...args);
+    } catch (e) {
+      return false;
+    }
   }
 
   removeChildren() {
     super.removeChildren();
-    this.addChild(this.background);
+
+    /**
+     * It is a bit confusing.
+     * When .destroy() was called, it will call .removeChildren()
+     * because of the implement of Container.destory(),
+     * but that time `this.background` had been destroyed, so .addChild() will throw an error.
+     * 
+     * TODO: find reason
+     */
+    try {
+      this.addChild(this.background);
+    } catch (e) { }
   }
 
   destroy() {

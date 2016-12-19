@@ -528,9 +528,20 @@ class TextWindow extends PIXI.Container {
 
   removeChildren() {
     super.removeChildren();
-    this.addChild(this.background);
-    this.addChild(this.textSprite);
-    this.addChild(this.textCursor);
+
+    /**
+     * It is a bit confusing.
+     * When .destroy() was called, it will call .removeChildren()
+     * because of the implement of Container.destory(),
+     * but that time `this.background` had been destroyed, so .addChild() will throw an error.
+     * 
+     * TODO: find reason
+     */
+    try {
+      this.addChild(this.background);
+      this.addChild(this.textSprite);
+      this.addChild(this.textCursor);
+    } catch (e) {}
   }
 
     // addChild(...args) {
