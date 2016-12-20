@@ -6,7 +6,7 @@
   "author": "Icemic Jia <bingfeng.web@gmail.com>",
   "homepage": "https://avgjs.org/",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.example.js --hot --colors --progress",
+    "dev": "webpack-dev-server --config webpack.config.example.js --hot --colors --progress --host 0.0.0.0",
     "build": "webpack --progress --colors --devtool source-map",
     "build-watch": "webpack --progress --colors --devtool source-map --watch",
     "prepublish": "NODE_ENV=production webpack -p --progress --colors --inline --optimize-minimize",
