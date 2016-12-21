@@ -18,6 +18,7 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
     // console.log('move:', child._mountImage.filename, 'to', toIndex);
     const childNode = child._mountImage;
     const layer = this.node;
+    // TODO: wrong implementation
     layer.addChild(childNode);
   },
 
