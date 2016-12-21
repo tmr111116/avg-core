@@ -51,6 +51,10 @@
     layer.x = props.x;
     layer.y = props.y;
 
+    if (props.anchor) {
+      layer.anchor = new PIXI.Point(props.anchor[0], props.anchor[1]);
+    }
+
     // frame: idle, hover, active
     layer.texture = getTexture(props.file);
 
