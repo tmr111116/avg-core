@@ -211,8 +211,9 @@ export class Textwindow extends React.Component {
       }
     });
     const layer = this.layer;
+    layer.setVisible(true);
     layer.drawText(ctx.data.textwindow.text, true);
-    layer.completeText();
+    // layer.completeText();
     await next();
   }
   render() {
