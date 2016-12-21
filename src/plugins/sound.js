@@ -23,12 +23,17 @@ import * as SoundManager from 'classes/SoundManager';
 
 class Sound {
   constructor() {
+    this.initialed = false;
+
     core.use('sound-init', this.init.bind(this));
   }
   async init(ctx, next) {
-    core.use('script-exec', this.exec.bind(this));
-    core.use('save-archive', this.save.bind(this));
-    core.use('load-archive', this.load.bind(this));
+    if (!this.initialed) {
+      core.use('script-exec', this.exec.bind(this));
+      core.use('save-archive', this.save.bind(this));
+      core.use('load-archive', this.load.bind(this));
+      this.initialed = true;
+    }
   }
   /**
   * @method exec

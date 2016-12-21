@@ -22,10 +22,15 @@ import core from 'core/core';
 
 class Flow {
   constructor() {
+    this.initialed = false;
+
     core.use('flow-init', this.init.bind(this));
   }
   async init(ctx, next) {
-    core.use('script-exec', this.exec.bind(this));
+    if (!this.initialed) {
+      core.use('script-exec', this.exec.bind(this));
+      this.initialed = true;
+    }
   }
   /**
   * Supply flow-control commands:
