@@ -1,5 +1,5 @@
 import ReactUpdates from 'react/lib/ReactUpdates';
-import emptyObject from 'fbjs/lib/emptyObject';
+import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import { attachToSprite } from 'classes/EventManager';
 import Err from 'classes/ErrorHandler';
 
@@ -56,7 +56,8 @@ const NodeMixin = {
       this.mountAndInjectChildren,
       this,
       props.children,
-      transaction
+      transaction,
+      context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
 
@@ -91,7 +92,8 @@ const NodeMixin = {
         this.updateChildren,
         this,
         props.children,
-        transaction
+        transaction,
+        context
       );
       ReactUpdates.ReactReconcileTransaction.release(transaction);
 
