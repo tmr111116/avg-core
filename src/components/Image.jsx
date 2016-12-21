@@ -33,7 +33,9 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
   },
   mountNode(props) {
     const layer = this.node;
-    layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
+    props.file && layer.setFile(props.file);
+    props.dataUri && layer.setDataUri(props.dataUri);
+    layer.setRect(props.rect).setAnchor(props.anchor).execSync();
     layer.x = props.x || 0;
     layer.y = props.y || 0;
     return layer;
@@ -42,6 +44,9 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     const layer = this.node;
     if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
       layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
+    }
+    if (prevProps.dataUri !== props.dataUri || !equal(prevProps.rect, props.rect)) {
+      layer.setDataUri(props.dataUri).setRect(props.rect).setAnchor(props.anchor).execSync();
     }
     layer.x = props.x || 0;
     layer.y = props.y || 0;
@@ -52,7 +57,8 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 export const Image = React.createClass({
   displayName: 'Image',
   propTypes: {
-    file: React.PropTypes.string.isRequired,
+    file: React.PropTypes.string,
+    dataUri: React.PropTypes.string,
     x: React.PropTypes.number,
     y: React.PropTypes.number,
     rect: React.PropTypes.arrayOf(React.PropTypes.number),

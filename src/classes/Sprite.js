@@ -51,6 +51,17 @@ class Sprite extends PIXI.Sprite {
     return this;
   }
 
+  /**
+     * Specify sprite image.
+     * This method do not take effect until {@link Sprite#execSync} is called.
+     * @param {string} filename
+     * @returns {Sprite} - this
+     */
+  setDataUri(datauri) {
+    this.dataUri = datauri;
+    return this;
+  }
+
     /**
      * Specify sprite index.
      * This method do not take effect until {@link Sprite#execSync} is called.
@@ -86,7 +97,12 @@ class Sprite extends PIXI.Sprite {
      * Load the sprite.
      */
   execSync() {
-    let tex = getTexture(this.filename);
+    let tex;
+    if (this.dataUri) {
+      tex = PIXI.Texture.fromImage(this.dataUri);
+    } else {
+      tex = getTexture(this.filename);
+    }
     try {
       if (this.m_rect)
         tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0], this.m_rect[1], this.m_rect[2], this.m_rect[3]));
