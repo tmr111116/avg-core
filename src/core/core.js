@@ -136,9 +136,7 @@ class Core {
     });
 
     if (options.fitWindow) {
-      const availWidth = window.innerWidth;
-      const availHeight = window.innerHeight;
-      fitWindow(this.renderer, availWidth, availHeight);
+      fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
 
     this.stage = new Container();
