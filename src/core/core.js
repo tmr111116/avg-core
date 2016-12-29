@@ -19,6 +19,7 @@
  */
 
 import compose from 'koa-compose';
+import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
 import sayHello from 'utils/sayHello';
 
@@ -102,7 +103,17 @@ class Core {
     return Promise.resolve();
   }
 
-  init() {
+  /**
+   * Initial AVG.js core functions
+   * 
+   * @param {object} [options]
+   * @param {string|array<string>} [options.fontFamily] load custom web-font
+   */
+  async init(options = {}) {
+    if (options.fontFamily) {
+      const font = new FontFaceObserver('Demo_font');
+      await font.load();
+    }
     sayHello();
     this._init = true;
   }
@@ -114,9 +125,9 @@ class Core {
    * @param {HTMLDOMElement} target
    * @return {Promise}
    */
-  render(component, target) {
+  async render(component, target) {
     if (!this._init) {
-      this.init();
+      await this.init();
     }
     return new Promise(function(resolve, reject) {
       renderReact(component, target, resolve);
