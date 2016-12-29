@@ -21,7 +21,11 @@
 import compose from 'koa-compose';
 import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
+import Container from 'classes/Container';
+import { attachToSprite } from 'classes/EventManager';
 import sayHello from 'utils/sayHello';
+
+const PIXI = require('pixi.js');
 
 /**
  * Core of AVG.js, you can start your game development from here.
@@ -38,6 +42,10 @@ class Core {
      * @readonly
      */
     this._init = false;
+
+    this.renderer = null;
+    this.stage = null;
+    this.canvas = null;
 
     /**
      * Currently used middleware
@@ -106,16 +114,49 @@ class Core {
   /**
    * Initial AVG.js core functions
    * 
+   * @param {number} width width of screen
+   * @param {number} height height of screen
    * @param {object} [options]
+   * @param {HTMLCanvasElement} [options.view] custom canvas element
    * @param {string|array<string>} [options.fontFamily] load custom web-font
    */
-  async init(options = {}) {
+  async init(width, height, options = {}) {
     if (options.fontFamily) {
       const font = new FontFaceObserver('Demo_font');
       await font.load();
     }
+
+    /* create PIXI renderer */
+
+
+    this.renderer = new PIXI.WebGLRenderer(width, height, {
+      view: options.view,
+      autoResize: true,
+      roundPixels: true,
+    });
+    PIXI.currentRenderer = this.renderer;
+    this.stage = new Container();
+    attachToSprite(this.stage);
+    this.stage._ontap = e => this.post('tap', e);
+    this.stage._onclick = e => this.post('click', e);
+
     sayHello();
     this._init = true;
+  }
+
+  getRenderer() {
+    if (this._init) {
+      return this.renderer;
+    }
+    console.error('[Hasn\'t initialed.]');
+    return null;
+  }
+  getStage() {
+    if (this._init) {
+      return this.stage;
+    }
+    console.error('[Hasn\'t initialed.]');
+    return null;
   }
 
   /**
@@ -127,10 +168,12 @@ class Core {
    */
   async render(component, target) {
     if (!this._init) {
-      await this.init();
+      throw 'not initialed';
     }
     return new Promise(function(resolve, reject) {
       renderReact(component, target, resolve);
+    }).then(() => {
+      target.appendChild(this.renderer.view);
     });
   }
 }

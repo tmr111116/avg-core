@@ -23,10 +23,11 @@ import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
-const PIXI = require('pixi.js');
+// const PIXI = require('pixi.js');
+// import core from 'core/core';
+// import Container from 'classes/Container';
+// import { attachToSprite } from 'classes/EventManager';
 import core from 'core/core';
-import Container from 'classes/Container';
-import { attachToSprite } from 'classes/EventManager';
 import { init as preloaderInit } from 'classes/Preloader';
 
 import isMobile from 'ismobilejs';
@@ -39,8 +40,6 @@ import isMobile from 'ismobilejs';
 export const Surface = React.createClass({
 
   propTypes: {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
     source: React.PropTypes.string,
     children: React.PropTypes.any,
   },
@@ -63,18 +62,20 @@ export const Surface = React.createClass({
 
   componentDidMount() {
     // Prepare the <canvas> for drawing.
-    this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
-      view: this.canvas,
-      autoResize: true,
-      roundPixels: true,
-    });
-    PIXI.currentRenderer = this.renderer;
-    this.node = new Container();
-    attachToSprite(this.node);
-    this.node._ontap = e => core.post('tap', e);
-    this.node._onclick = e => core.post('click', e);
-    window.stage = this.node;
+    // this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
+    //   view: this.canvas,
+    //   autoResize: true,
+    //   roundPixels: true,
+    // });
+    // PIXI.currentRenderer = this.renderer;
+    // this.node = new Container();
+    // attachToSprite(this.node);
+    // this.node._ontap = e => core.post('tap', e);
+    // this.node._onclick = e => core.post('click', e);
+    // window.stage = this.node;
     // window.renderer = this.renderer;
+    this.renderer = core.getRenderer();
+    this.node = core.getStage();
 
     // This is the integration point between custom canvas components and React
     const transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
@@ -161,13 +162,7 @@ export const Surface = React.createClass({
     setTimeout(this.tickMobile, 33);
   },
   render() {
-    return (
-      React.createElement('canvas', {
-        ref: canvas => this.canvas = canvas,
-        width: this.props.width,
-        height: this.props.height,
-      })
-    );
+    return null;
   },
 });
 
