@@ -33,6 +33,7 @@ export default class TransitionPlugin {
     }
     this.method = method;
     this.clickCallback = false;
+    this.unskippable = false;
 
     let hasTransFilter = false;
     for (let filter of (this.node.filters || [])) {
@@ -49,9 +50,10 @@ export default class TransitionPlugin {
     }
 
     core.use('script-trigger', async (ctx, next) => {
-      if (this.clickCallback) {
+      if (this.clickCallback && !this.unskippable) {
         this.node.completeTransition();
         this.clickCallback = false;
+        this.unskippable = false;
       } else {
         await next();
       }
@@ -89,6 +91,10 @@ export default class TransitionPlugin {
         .then(() => layer.transitionStatus = null);
 
       this.clickCallback = true;
+
+      if (flags.includes('unskippable')) {
+        this.unskippable = true;
+      }
 
       // FIXME
       if (layer.visible && !flags.includes('nowait') && !isSkip) {
