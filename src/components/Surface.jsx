@@ -65,6 +65,8 @@ export const Surface = React.createClass({
     // Prepare the <canvas> for drawing.
     this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
       view: this.canvas,
+      autoResize: true,
+      roundPixels: true,
     });
     PIXI.currentRenderer = this.renderer;
     this.node = new Container();
