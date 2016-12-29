@@ -89,7 +89,7 @@ export const Surface = React.createClass({
     ReactUpdates.ReactReconcileTransaction.release(transaction);
 
     if (isMobile.any) {
-      this.scale();
+      // this.scale();
       this.tickMobile();
     } else {
       this.tick();
@@ -119,38 +119,6 @@ export const Surface = React.createClass({
     // Implemented in ReactMultiChild.Mixin
     this.unmountChildren();
     this.node.removeChildren();
-  },
-
-  scale() {
-    var width = window.screen.availWidth;
-    var height = window.screen.availHeight;
-    const renderer = this.renderer;
-
-    var ratio = renderer.width/renderer.height;
-
-    var offsetW, offsetH, contentW, contentH;
-    if (ratio > width / height) {
-        contentW = width;
-        contentH = width / ratio;
-        offsetW = 0;
-        offsetH = (height - width / ratio) / 2;
-    } else {
-        contentW = height * ratio;
-        contentH = height;
-        offsetW = (width - height * ratio) / 2;
-        offsetH = 0;
-    }
-
-    renderer.view.style.position = 'absolute';
-    // renderer.view.style.width = contentW + "px";
-    // renderer.view.style.height = contentH + "px";
-    renderer.view.style.backfaceVisibility = 'hidden';
-    renderer.view.style.transformOrigin = 'left top';
-    renderer.view.style.transform = `scale(${contentW/renderer.width}, ${contentH/renderer.height}) translateZ(0)`;
-
-    renderer.view.style.left = offsetW + "px"
-    renderer.view.style.top = offsetH + "px"
-
   },
 
   tick() {

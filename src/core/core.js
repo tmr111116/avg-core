@@ -24,6 +24,7 @@ import { render as renderReact } from 'react-dom';
 import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
 import sayHello from 'utils/sayHello';
+import fitWindow from 'utils/fitWindow';
 
 const PIXI = require('pixi.js');
 
@@ -119,6 +120,7 @@ class Core {
    * @param {object} [options]
    * @param {HTMLCanvasElement} [options.view] custom canvas element
    * @param {string|array<string>} [options.fontFamily] load custom web-font
+   * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
    */
   async init(width, height, options = {}) {
     if (options.fontFamily) {
@@ -135,6 +137,13 @@ class Core {
       roundPixels: true,
     });
     PIXI.currentRenderer = this.renderer;
+
+    if (options.fitWindow) {
+      const availWidth = window.innerWidth;
+      const availHeight = window.innerHeight;
+      fitWindow(this.renderer, availWidth, availHeight);
+    }
+
     this.stage = new Container();
     attachToSprite(this.stage);
     this.stage._ontap = e => this.post('tap', e);
@@ -170,7 +179,7 @@ class Core {
     if (!this._init) {
       throw 'not initialed';
     }
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve) => {
       renderReact(component, target, resolve);
     }).then(() => {
       target.appendChild(this.renderer.view);
