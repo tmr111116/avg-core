@@ -19,12 +19,12 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-const PIXI = require('pixi.js');
+import core from 'core/core';
 import { Layer } from '../Layer';
-import { Image } from '../Image';
 import { Scroller } from './Scroller';
 import combineProps from 'utils/combineProps';
+
+const PIXI = require('pixi.js');
 
 function getValidValueInRange(min, max, value) {
   return Math.min(Math.max(min, value), max);
@@ -109,7 +109,7 @@ export default class Layout extends React.Component {
     }
   }
   componentWillUnmount() {
-    PIXI.currentRenderer.view.removeEventListener('wheel', this.handleWheel, true);
+    core.getRenderer().view.removeEventListener('wheel', this.handleWheel, true);
   }
   applyLayout(maxWidth, maxHeight) {
     const paddingLeft   = this.props.padding[0],
@@ -161,7 +161,7 @@ export default class Layout extends React.Component {
       }, () => this.drawScrollBar());
     }
 
-    PIXI.currentRenderer.view.addEventListener('wheel', this.handleWheel, true);
+    core.getRenderer().view.addEventListener('wheel', this.handleWheel, true);
   }
   handleWheel(evt) {
     const point = new PIXI.Point(evt.offsetX, evt.offsetY);

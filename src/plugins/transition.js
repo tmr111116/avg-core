@@ -72,7 +72,7 @@ export default class TransitionPlugin {
     const isSkip = flags.includes('_skip_');
 
     if (flags.includes('pretrans')) {
-      const renderer = PIXI.currentRenderer;
+      const renderer = core.getRenderer();
       if (layer.transitionStatus !== 'prepare') {
         layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
@@ -80,7 +80,7 @@ export default class TransitionPlugin {
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
       params.trans = params.trans || 'crossfade';
-      const renderer = PIXI.currentRenderer;
+      const renderer = core.getRenderer();
       if (layer.transitionStatus !== 'prepare') {
         layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);

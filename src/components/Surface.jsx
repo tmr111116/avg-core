@@ -54,7 +54,6 @@ export const Surface = React.createClass({
   },
 
   componentDidMount() {
-    this.renderer = core.getRenderer();
     this.node = core.getStage();
 
     // This is the integration point between custom canvas components and React

@@ -71,25 +71,27 @@ class Screenshot {
   * @return {Promise}
   */
   async shot(ctx, next) {
-    const width = ctx.width || PIXI.currentRenderer.width;
-    const height = ctx.height || PIXI.currentRenderer.height;
+    const renderer = core.getRenderer();
+
+    const width = ctx.width || renderer.width;
+    const height = ctx.height || renderer.height;
 
     // const targetTexture = PIXI.RenderTexture.create(width, height);
-    // const CONTEXT_UID = PIXI.currentRenderer.CONTEXT_UID;
+    // const CONTEXT_UID = renderer.CONTEXT_UID;
     // targetTexture.baseTexture._glRenderTargets[CONTEXT_UID] = {
-    //   resolution: PIXI.currentRenderer.resolution
+    //   resolution: renderer.resolution
     // };
 
-    // TODO: PIXI.currentRenderer.extract seems to have bugs, now using a custom implementation;
+    // TODO: renderer.extract seems to have bugs, now using a custom implementation;
     let base64;
     if (ctx.type === 'canvas') {
-      base64 = PIXI.currentRenderer.extract.canvas();
+      base64 = renderer.extract.canvas();
     } else if (ctx.type === 'image') {
-      base64 = PIXI.currentRenderer.extract.image();
+      base64 = renderer.extract.image();
     } else if (ctx.type === 'pixels') {
-      base64 = PIXI.currentRenderer.extract.pixels();
+      base64 = renderer.extract.pixels();
     } else {
-      base64 = PIXI.currentRenderer.extract.base64(window.stage);
+      base64 = renderer.extract.base64(window.stage);
     }
 
     ctx.data = await resizeImage(base64, width, height);

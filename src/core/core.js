@@ -129,14 +129,11 @@ class Core {
     }
 
     /* create PIXI renderer */
-
-
     this.renderer = new PIXI.WebGLRenderer(width, height, {
       view: options.view,
       autoResize: true,
       roundPixels: true,
     });
-    PIXI.currentRenderer = this.renderer;
 
     if (options.fitWindow) {
       const availWidth = window.innerWidth;

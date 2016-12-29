@@ -19,10 +19,12 @@
  */
 
 import React from 'react';
+import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
+
 const PIXI = require('pixi.js');
 
 const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
@@ -59,9 +61,10 @@ export const Layer = React.createClass({
     children: React.PropTypes.any,
   },
   render() {
+    const renderer = core.getRenderer();
     const props = {
-      width: PIXI.currentRenderer.width,
-      height: PIXI.currentRenderer.height,
+      width: renderer.width,
+      height: renderer.height,
       ...this.props,
     };
     return React.createElement(RawLayer, props, this.props.children);
