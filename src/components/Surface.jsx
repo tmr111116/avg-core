@@ -23,20 +23,13 @@ import ReactUpdates from 'react/lib/ReactUpdates';
 import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
-// const PIXI = require('pixi.js');
-// import core from 'core/core';
-// import Container from 'classes/Container';
-// import { attachToSprite } from 'classes/EventManager';
 import core from 'core/core';
 import { init as preloaderInit } from 'classes/Preloader';
-
-import isMobile from 'ismobilejs';
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
  * ReactCanvas components cannot be rendered outside a Surface.
  */
-
 export const Surface = React.createClass({
 
   propTypes: {
@@ -61,19 +54,6 @@ export const Surface = React.createClass({
   },
 
   componentDidMount() {
-    // Prepare the <canvas> for drawing.
-    // this.renderer = new PIXI.WebGLRenderer(this.props.width, this.props.height, {
-    //   view: this.canvas,
-    //   autoResize: true,
-    //   roundPixels: true,
-    // });
-    // PIXI.currentRenderer = this.renderer;
-    // this.node = new Container();
-    // attachToSprite(this.node);
-    // this.node._ontap = e => core.post('tap', e);
-    // this.node._onclick = e => core.post('click', e);
-    // window.stage = this.node;
-    // window.renderer = this.renderer;
     this.renderer = core.getRenderer();
     this.node = core.getStage();
 
@@ -87,13 +67,6 @@ export const Surface = React.createClass({
       ReactInstanceMap.get(this)._context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    if (isMobile.any) {
-      // this.scale();
-      this.tickMobile();
-    } else {
-      this.tick();
-    }
   },
 
 
@@ -108,11 +81,6 @@ export const Surface = React.createClass({
       ReactInstanceMap.get(this)._context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    // Re-scale the <canvas> when changing size.
-    // if (prevProps.width !== this.props.width || prevProps.height !== this.props.height) {
-    //   this.scale();
-    // }
   },
 
   componentWillUnmount() {
@@ -121,14 +89,6 @@ export const Surface = React.createClass({
     this.node.removeChildren();
   },
 
-  tick() {
-    this.renderer.render(this.node);
-    requestAnimationFrame(this.tick);
-  },
-  tickMobile() {
-    this.renderer.render(this.node);
-    setTimeout(this.tickMobile, 33);
-  },
   render() {
     return null;
   },

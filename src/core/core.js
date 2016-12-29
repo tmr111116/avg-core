@@ -185,6 +185,18 @@ class Core {
       target.appendChild(this.renderer.view);
     });
   }
+
+  tick() {
+    if (this._init) {
+      this.renderer.render(this.stage);
+    }
+    this.animationRequestId = requestAnimationFrame(this.tick.bind(this));
+  }
+
+  stop() {
+    cancelAnimationFrame(this.animationRequestId);
+    this.animationRequestId = null;
+  }
 }
 
 /**
