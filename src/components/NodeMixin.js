@@ -105,6 +105,8 @@ const NodeMixin = {
     // this.destroyEventListeners();
     this.unmountChildren();
     this.node.removeChildren();
+    this.node.destroy();
+    this.node = null;
   },
 };
 

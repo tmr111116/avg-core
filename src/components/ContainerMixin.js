@@ -45,7 +45,7 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
   removeChild(child) {
     // console.log('remove:', child._mountImage.filename)
     this.node.removeChild(child._mountImage);
-    child._mountImage.destroy();
+    // child._mountImage.destroy();
     child._mountImage = null;
   },
 
