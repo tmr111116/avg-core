@@ -21,8 +21,18 @@
 /**
  * @namespace AVG
  */
-export * as components from 'components';
-export * as ui from 'components/ui';
-export * as plugins from 'plugins';
-export React, { Component } from 'react';
-export core from 'core/core';
+import * as components from 'components';
+import * as ui from 'components/ui';
+import * as plugins from 'plugins';
+
+import React, { Component } from 'react';
+import core from 'core/core';
+
+export {
+  React,
+  Component,
+  core,
+  components,
+  ui,
+  plugins,
+};

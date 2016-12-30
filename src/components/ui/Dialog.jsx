@@ -43,10 +43,18 @@ export default class Dialog extends React.Component {
     dragable: false,
     dragArea: [0, 0, Infinity, Infinity],
   }
-  state = {
-    clicked: false,
-    x: this.props.x || 0,
-    y: this.props.y || 0,
+  constructor(props) {
+    super(props);
+
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+
+    this.state = {
+      clicked: false,
+      x: this.props.x || 0,
+      y: this.props.y || 0,
+    };
   }
   handleMouseDown(e) {
     const [left, top, right, bottom] = this.props.dragArea;
@@ -91,10 +99,10 @@ export default class Dialog extends React.Component {
     const core =  (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
-        onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp} onMouseUpOutside={::this.handleMouseUp}
-        onMouseMove={::this.handleMouseMove} onClick={(e) => e.stopPropagation()}
-        onTouchStart={::this.handleMouseDown} onTouchEnd={::this.handleMouseUp} onTouchEndOutside={::this.handleMouseUp}
-        onTouchMove={::this.handleMouseMove} onTap={(e) => e.stopPropagation()}
+        onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp} onMouseUpOutside={this.handleMouseUp}
+        onMouseMove={this.handleMouseMove} onClick={(e) => e.stopPropagation()}
+        onTouchStart={this.handleMouseDown} onTouchEnd={this.handleMouseUp} onTouchEndOutside={this.handleMouseUp}
+        onTouchMove={this.handleMouseMove} onTap={(e) => e.stopPropagation()}
       >
         {this.props.children}
       </Layer>
