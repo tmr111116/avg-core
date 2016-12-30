@@ -31,7 +31,6 @@
     "babel-plugin-transform-object-rest-spread": "^6.20.2",
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-polyfill": "^6.20.0",
-    "babel-preset-babili": "0.0.9",
     "babel-preset-latest": "^6.16.0",
     "babelify": "^7.3.0",
     "brfs": "^1.4.3",

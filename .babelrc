@@ -1,7 +1,7 @@
 {
     "sourceMaps": true,
     "comments": false,
-    "presets": ["latest","babili"],
+    "presets": ["latest"],
     "plugins": ["transform-react-jsx",
                 "transform-decorators-legacy",
                 "transform-class-properties",
