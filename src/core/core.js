@@ -23,7 +23,7 @@ import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
 import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
-import { init as preloaderInit } from 'classes/Preloader';
+import { init as preloaderInit, getTexture } from 'classes/Preloader';
 import sayHello from 'utils/sayHello';
 import fitWindow from 'utils/fitWindow';
 
@@ -180,6 +180,9 @@ class Core {
   }
   getAssetsPath() {
     return this.assetsPath;
+  }
+  getTexture(url) {
+    return getTexture(url);
   }
 
   /**

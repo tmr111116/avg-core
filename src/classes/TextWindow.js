@@ -21,7 +21,7 @@
 const PIXI = require('pixi.js');
 // import { TransitionPlugin } from './Transition/TransitionPlugin'
 // import { TransitionFilter } from './Transition/TransitionFilter'
-import { getTexture } from 'classes/Preloader';
+import core from 'core/core';
 
 /**
  * Class representing a TextWindow. <br>
@@ -103,7 +103,7 @@ class TextWindow extends PIXI.Container {
     this.removeChild(this.background);
     this.background && this.background.destroy();
     if (filename) {
-      this.background = new PIXI.Sprite(getTexture(filename));
+      this.background = new PIXI.Sprite(core.getTexture(filename));
       this.addChildAt(this.background, 0);
     } else {
       this.background = null;

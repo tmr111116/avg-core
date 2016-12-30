@@ -21,7 +21,7 @@
 const PIXI = require('pixi.js');
 // import { TransitionPlugin } from './Transition/TransitionPlugin';
 // import { TransitionFilter } from './Transition/TransitionFilter';
-import { getTexture } from 'classes/Preloader';
+import core from 'core/core';
 import Err from 'classes/ErrorHandler';
 
 /**
@@ -101,7 +101,7 @@ class Sprite extends PIXI.Sprite {
     if (this.dataUri) {
       tex = PIXI.Texture.fromImage(this.dataUri);
     } else {
-      tex = getTexture(this.filename);
+      tex = core.getTexture(this.filename);
     }
     try {
       if (this.m_rect)

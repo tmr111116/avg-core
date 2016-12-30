@@ -18,14 +18,15 @@
  * limitations under the License.
  */
 
- import React from 'react';
- import createComponent from 'components/createComponent';
- import ContainerMixin from 'components/ContainerMixin';
- import NodeMixin from 'components/NodeMixin';
- const PIXI = require('pixi.js');
- import { getTexture } from 'classes/Preloader';
+import React from 'react';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import core from 'core/core';
 
- const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
+const PIXI = require('pixi.js');
+
+const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
 
   createNode(element) {
     this.node = new PIXI.Sprite();
@@ -56,7 +57,7 @@
     }
 
     // frame: idle, hover, active
-    layer.texture = getTexture(props.file);
+    layer.texture = core.getTexture(props.file);
 
     layer.texture.baseTexture.on('loaded', e => this.setFrame(0));
     this.setFrame(0);
