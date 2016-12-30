@@ -150,8 +150,9 @@ class Script {
   async load(ctx, next) {
     const scriptName = ctx.name;
     if (scriptName) {
-      const scriptFile = `${scriptName}.bks`;
-      const scriptConfig = `${scriptName}.bkc`;
+      const assetsPath = core.getAssetsPath();
+      const scriptFile = `${assetsPath}${scriptName}.bks`;
+      const scriptConfig = `${assetsPath}${scriptName}.bkc`;
       this.loading = true;
       // this.props.onLoading && this.props.onLoading();
       await core.post('script-loading');
