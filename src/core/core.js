@@ -23,6 +23,7 @@ import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
 import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
+import { init as preloaderInit } from 'classes/Preloader';
 import sayHello from 'utils/sayHello';
 import fitWindow from 'utils/fitWindow';
 
@@ -56,6 +57,7 @@ class Core {
      */
     this.middlewares = {};
 
+    this.assetsPath = null;
   }
 
   /**
@@ -121,8 +123,15 @@ class Core {
    * @param {HTMLCanvasElement} [options.view] custom canvas element
    * @param {string|array<string>} [options.fontFamily] load custom web-font
    * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
+   * @param {string} [options.assetsPath='assets'] assets path
    */
-  async init(width, height, options = {}) {
+  async init(width, height, _options = {}) {
+    const options = {
+      fitWindow: false,
+      assetsPath: '/',
+      ..._options,
+    };
+
     if (options.fontFamily) {
       const font = new FontFaceObserver('Demo_font');
       await font.load();
@@ -138,6 +147,13 @@ class Core {
     if (options.fitWindow) {
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
+
+    let assetsPath = options.assetsPath;
+    if (!assetsPath.endsWith('/')) {
+      assetsPath += '/';
+    }
+    this.assetsPath = assetsPath;
+    preloaderInit(assetsPath);
 
     this.stage = new Container();
     attachToSprite(this.stage);
@@ -161,6 +177,9 @@ class Core {
     }
     console.error('[Hasn\'t initialed.]');
     return null;
+  }
+  getAssetsPath() {
+    return this.assetsPath;
   }
 
   /**

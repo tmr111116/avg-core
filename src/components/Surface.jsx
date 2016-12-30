@@ -24,34 +24,13 @@ import ReactInstanceMap from 'react/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
 import core from 'core/core';
-import { init as preloaderInit } from 'classes/Preloader';
 
 /**
  * Surface is a standard React component and acts as the main drawing canvas.
  * ReactCanvas components cannot be rendered outside a Surface.
  */
 export const Surface = React.createClass({
-
-  propTypes: {
-    source: React.PropTypes.string,
-    children: React.PropTypes.any,
-  },
-
   mixins: [ContainerMixin],
-
-  getDefaultProps() {
-    return {
-      source: './',
-    };
-  },
-
-  componentWillMount() {
-    let source = this.props.source;
-    if (!source.endsWith('/')) {
-      source = source + '/';
-    }
-    preloaderInit(source);
-  },
 
   componentDidMount() {
     this.node = core.getStage();
