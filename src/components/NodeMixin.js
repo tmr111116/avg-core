@@ -1,5 +1,5 @@
-import ReactUpdates from 'react/lib/ReactUpdates';
-import ReactInstanceMap from 'react/lib/ReactInstanceMap';
+import ReactUpdates from 'react-dom/lib/ReactUpdates';
+import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
 import { attachToSprite } from 'classes/EventManager';
 import Err from 'classes/ErrorHandler';
 

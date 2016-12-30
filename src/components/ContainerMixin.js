@@ -2,7 +2,7 @@
 // https://github.com/reactjs/react-art
 
 const React = require('react');
-const ReactMultiChild = require('react/lib/ReactMultiChild');
+const ReactMultiChild = require('react-dom/lib/ReactMultiChild');
 
 const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
 

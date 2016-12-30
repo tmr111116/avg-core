@@ -19,8 +19,8 @@
  */
 
 import React from 'react';
-import ReactUpdates from 'react/lib/ReactUpdates';
-import ReactInstanceMap from 'react/lib/ReactInstanceMap';
+import ReactUpdates from 'react-dom/lib/ReactUpdates';
+import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
 
 import core from 'core/core';
