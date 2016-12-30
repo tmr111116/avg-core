@@ -23,9 +23,10 @@ import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
 import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
-import { init as preloaderInit, getTexture } from 'classes/Preloader';
 import sayHello from 'utils/sayHello';
 import fitWindow from 'utils/fitWindow';
+
+import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
 
 const PIXI = require('pixi.js');
 
@@ -183,6 +184,11 @@ class Core {
   }
   getTexture(url) {
     return getTexture(url);
+  }
+
+  // TODO: need more elegent code
+  loadAssets(list) {
+    return loadResources(list);
   }
 
   /**

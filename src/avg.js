@@ -24,6 +24,5 @@
 export * as components from 'components';
 export * as ui from 'components/ui';
 export * as plugins from 'plugins';
-export { load as loadResource } from 'classes/Preloader';
 export React, { Component } from 'react';
 export core from 'core/core';

@@ -19,7 +19,7 @@
  */
 
 const PIXI = require('pixi.js');
-const Err = require('./ErrorHandler');
+const Err = require('classes/ErrorHandler');
 
 let TEXTURES = {};
 let AUDIOS = {};

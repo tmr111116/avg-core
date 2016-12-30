@@ -20,7 +20,6 @@
 
 import StoryScript from 'avg-storyscript';
 import core from 'core/core';
-import { load as loadResources } from 'classes/Preloader';
 import Err from 'classes/ErrorHandler';
 import fetchLocal from 'utils/fetchLocal';
 
@@ -158,7 +157,7 @@ class Script {
       await core.post('script-loading');
       const task1 = fetchLocal(scriptConfig)
       .then(res => res.json())
-      .then(json => loadResources(json.resources, (loader) => {
+      .then(json => core.loadAssets(json.resources, (loader) => {
         return core.post('script-loading-progress', loader);
       }));
       const task2 = fetchLocal(scriptFile)
