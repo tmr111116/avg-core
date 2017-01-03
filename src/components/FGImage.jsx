@@ -46,7 +46,7 @@ export class FGImage extends React.Component {
     };
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this.node, this.execute);
+    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, this.execute);
     core.use('script-exec', this.handleScriptExec);
     core.use('save-archive', this.handleArchiveSave);
     core.use('load-archive', this.handleArchiveLoad);
@@ -103,7 +103,7 @@ export class FGImage extends React.Component {
     const width = this.props.width;
     const height = this.props.height;
     return (
-      <Layer ref={node => this.node = node}>
+      <Layer>
         {this.state.center ? <Image file={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key="center" /> : null}
         {this.state.left ? <Image file={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key="left" /> : null}
         {this.state.right ? <Image file={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key="right" /> : null}

@@ -24,10 +24,8 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiTextwindow from 'classes/Textwindow';
-
-import { Layer } from './Layer';
 import TransitionPlugin from 'plugins/transition';
-
+import pixiPropTypes from './pixi/propTypes';
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
 
@@ -80,13 +78,7 @@ const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin
 
 export class Textwindow extends React.Component {
   static displayName = 'Textwindow';
-  static propTypes = {
-    // width: React.PropTypes.number.isRequired,
-    // height: React.PropTypes.number.isRequired,
-    // x: React.PropTypes.number,
-    // y: React.PropTypes.number
-    children: React.PropTypes.any,
-  };
+  static propTypes = pixiPropTypes;
   constructor(props) {
     super(props);
 
@@ -218,11 +210,9 @@ export class Textwindow extends React.Component {
   }
   render() {
     return (
-      <Layer ref={node => this.node = node}>
-        <RawTextwindow {...this.state.props} ref={layer => this.layer = layer}>
-          {this.props.children}
-        </RawTextwindow>
-      </Layer>
+      <RawTextwindow {...this.state.props} ref={layer => this.layer = layer}>
+        {this.props.children}
+      </RawTextwindow>
     );
   }
 }

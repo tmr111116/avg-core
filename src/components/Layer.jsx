@@ -24,6 +24,7 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
+import pixiPropTypes from './pixi/propTypes';
 
 const PIXI = require('pixi.js');
 
@@ -49,16 +50,13 @@ const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 export const Layer = React.createClass({
   displayName: 'Layer',
   propTypes: {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    opacity: React.PropTypes.number,
-    visible: React.PropTypes.bool,
+    ...pixiPropTypes,
+    // TODO: check: rename to alpha
+    // opacity: React.PropTypes.number,
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     fillColor: React.PropTypes.number,
     fillAlpha: React.PropTypes.number,
-    anchor: React.PropTypes.arrayOf(React.PropTypes.number),
-    children: React.PropTypes.any,
   },
   render() {
     const renderer = core.getRenderer();

@@ -19,12 +19,12 @@
  */
 
 import React from 'react';
+import equal from 'deep-equal';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
-
-import equal from 'deep-equal';
+import pixiPropTypes from './pixi/propTypes';
 
 const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
@@ -59,10 +59,8 @@ export const Image = React.createClass({
   propTypes: {
     file: React.PropTypes.string,
     dataUri: React.PropTypes.string,
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
     rect: React.PropTypes.arrayOf(React.PropTypes.number),
-    children: React.PropTypes.any,
+    ...pixiPropTypes,
   },
   render() {
     return React.createElement(RawImage, this.props, this.props.children);

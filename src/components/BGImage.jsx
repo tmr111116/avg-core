@@ -40,7 +40,7 @@ export class BGImage extends React.Component {
     };
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this.node, async (ctx, next) => {
+    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, async (ctx, next) => {
       const { command, flags, params } = ctx;
       this.setState(params);
       await next();
@@ -76,6 +76,6 @@ export class BGImage extends React.Component {
   }
   render() {
     // TODO: It's weired that if you wrap Image with Layer.
-    return <Image file={this.state.file || ''} x={0} y={0} ref={node => this.node = node} />;
+    return <Image file={this.state.file || ''} x={0} y={0} />;
   }
 }

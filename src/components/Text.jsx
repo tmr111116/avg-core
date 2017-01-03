@@ -23,6 +23,7 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import TextSprite from 'classes/TextSprite';
+import pixiPropTypes from './pixi/propTypes';
 
 const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 
@@ -94,9 +95,7 @@ export class Text extends React.Component {
   static displayName = 'Text';
   static propTypes = {
     text: React.PropTypes.string,
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    children: React.PropTypes.any,
+    ...pixiPropTypes,
   }
   render() {
     return React.createElement(RawText, this.props, this.props.children);
