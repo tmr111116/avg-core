@@ -19,11 +19,13 @@
  */
 
 import core from 'core/core';
+import Logger from 'utils/logger';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
 
-var PIXI = require('pixi.js');
-var Err = require('./ErrorHandler');
+const PIXI = require('pixi.js');
+
+const logger = Logger.create('Animation');
 
 @TransitionPlugin
 class Animation extends PIXI.Sprite {
@@ -99,7 +101,7 @@ class Animation extends PIXI.Sprite {
 
   exec(){
     if(!this.index || !this.filename){
-      Err.error('参数不足');
+      logger.error('Lack of parameters.');
       return;
     }
 

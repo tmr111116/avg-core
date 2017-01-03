@@ -18,11 +18,15 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
 import core from 'core/core';
 import { CrossFadeFilter } from 'classes/Transition/Filters';
 import { TransitionFilter } from 'classes/Transition/TransitionFilter';
 import { TransitionPlugin as installPlugin } from 'classes/Transition/TransitionPlugin';
+import Logger from 'utils/logger';
+
+const PIXI = require('pixi.js');
+
+const logger = Logger.create('Transition Plugin');
 
 export default class TransitionPlugin {
   constructor(node, method) {
@@ -46,7 +50,7 @@ export default class TransitionPlugin {
       this.node.filters = this.node.filters || [];
       this.node.filters = [...this.node.filters, new TransitionFilter()];
       installPlugin(this.node);
-      console.log('not installed')
+      logger.debug('not installed');
     }
 
     core.use('script-trigger', async (ctx, next) => {

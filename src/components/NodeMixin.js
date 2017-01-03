@@ -1,9 +1,11 @@
 import ReactUpdates from 'react-dom/lib/ReactUpdates';
 import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
-import { attachToSprite } from 'classes/EventManager';
-import Err from 'classes/ErrorHandler';
-
 import deepEqual from 'deep-equal';
+import { attachToSprite } from 'classes/EventManager';
+import Logger from 'utils/logger';
+
+const logger = Logger.create('NodeMixin');
+
 
 const NodeMixin = {
   _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
@@ -12,7 +14,7 @@ const NodeMixin = {
 
     this.createNode(element);
     if (!this.node) {
-      Err.error('`this.node` is null, you should init it at `this.createNode`');
+      logger.error('`this.node` is null, you should init it at `this.createNode`');
     }
 
     // bind event handlers

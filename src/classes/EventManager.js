@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-import Err from './ErrorHandler';
+import Logger from 'utils/logger';
+
+const logger = Logger.create('EventManager');
 
 export function attachToSprite(sprite) {
   sprite.interactive = true;

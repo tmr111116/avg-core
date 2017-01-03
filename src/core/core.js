@@ -25,10 +25,13 @@ import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
 import sayHello from 'utils/sayHello';
 import fitWindow from 'utils/fitWindow';
+import Logger from 'utils/logger';
 
 import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
 
 const PIXI = require('pixi.js');
+
+const logger = Logger.create('Core');
 
 /**
  * Core of AVG.js, you can start your game development from here.
@@ -93,10 +96,10 @@ class Core {
       if (pos !== -1) {
         middlewares.splice(pos, 1);
       } else {
-        console.warn(`Do not find the given middleware in ${name}.`);
+        logger.warn(`Do not find the given middleware in ${name}.`);
       }
     } else {
-      console.warn(`Do not find the given middleware in ${name}.`);
+      logger.warn(`Do not find the given middleware in ${name}.`);
     }
   }
 
@@ -169,14 +172,14 @@ class Core {
     if (this._init) {
       return this.renderer;
     }
-    console.error('[Hasn\'t initialed.]');
+    logger.error('Renderer hasn\'t been initialed.');
     return null;
   }
   getStage() {
     if (this._init) {
       return this.stage;
     }
-    console.error('[Hasn\'t initialed.]');
+    logger.error('Stage hasn\'t been initialed.');
     return null;
   }
   getAssetsPath() {

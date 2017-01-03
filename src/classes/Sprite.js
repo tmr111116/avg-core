@@ -18,11 +18,14 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
 // import { TransitionPlugin } from './Transition/TransitionPlugin';
 // import { TransitionFilter } from './Transition/TransitionFilter';
 import core from 'core/core';
-import Err from 'classes/ErrorHandler';
+import Logger from 'utils/logger';
+
+const PIXI = require('pixi.js');
+
+const logger = Logger.create('Sprite');
 
 /**
  * Class representing a Sprite.
@@ -107,7 +110,7 @@ class Sprite extends PIXI.Sprite {
       if (this.m_rect)
         tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0], this.m_rect[1], this.m_rect[2], this.m_rect[3]));
     } catch (e) {
-      Err.warn('Rectangle you specified may be larger than real size of image, rectangle has been ignored');
+      logger.warn('Rectangle you specified may be larger than real size of image, rectangle has been ignored.');
     }
     this.texture = tex;
   }

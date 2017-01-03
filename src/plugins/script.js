@@ -20,8 +20,10 @@
 
 import StoryScript from 'avg-storyscript';
 import core from 'core/core';
-import Err from 'classes/ErrorHandler';
 import fetchLocal from 'utils/fetchLocal';
+import Logger from 'utils/logger';
+
+const logger = Logger.create('Script Plugin');
 
 // utils
 function getTimeoutPromise(time) {
@@ -180,7 +182,7 @@ class Script {
       }
 
     } else {
-      Err.error('You must pass a script url');
+      logger.error('You must pass a script url');
       await next();
     }
   }
@@ -212,7 +214,7 @@ class Script {
     if (ret.done) {
       this.isAuto = false;
       this.isSkip = false;
-      Err.warn(`Script executed to end`);
+      logger.info(`Script executed to end.`);
     }
   }
   async trigger(ctx, next) {

@@ -18,10 +18,9 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
-import ErrorHandler from '../ErrorHandler';
 import { TransitionFilter } from './TransitionFilter';
 
+const PIXI = require('pixi.js');
 
 function prepareTransition(renderer) {
   this.updateTransform();

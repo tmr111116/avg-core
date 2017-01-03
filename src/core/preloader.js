@@ -19,7 +19,6 @@
  */
 
 const PIXI = require('pixi.js');
-const Err = require('classes/ErrorHandler');
 
 let TEXTURES = {};
 let AUDIOS = {};

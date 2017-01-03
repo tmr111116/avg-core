@@ -18,10 +18,13 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
 // const DefaultShader = require('pixi.js/src/core/renderers/webgl/shaders/TextureShader');
-import ErrorHandler from '../ErrorHandler';
+import Logger from 'utils/logger';
 import FrozenTextureFilter from './FrozenTextureFilter';
+
+const PIXI = require('pixi.js');
+
+const logger = Logger.create('TransitionFilter');
 
 const EmptyTexureShaderFragment = require(__dirname + '/shaders/emptyTexture.frag');
 const PrepareTransitionShaderFragment = require(__dirname + '/shaders/prepareTransition.frag');
@@ -66,7 +69,7 @@ export class TransitionFilter extends PIXI.Filter {
   startTransition(texture, filter) {
     // 判断当前是否处于pretrans状态
     if (!this.frozenTexture) {
-      ErrorHandler.error('[TransitionFilter] PreviousTexture must be provided.');
+      logger.error('PreviousTexture must be provided.');
       return;
     }
 
@@ -123,7 +126,7 @@ export class TransitionFilter extends PIXI.Filter {
       // filterManager.applyFilter(this, input, output, clear);
 
     } else if (this.start) {
-      ErrorHandler.error('[TransitionFilter] Filter must be provided.');
+      logger.error('Filter must be provided.');
       this.start = false;
       this.m_resolve();
       this.m_resolve = null;
@@ -146,7 +149,7 @@ export class TransitionFilter extends PIXI.Filter {
   //   } else if (this.uniforms.texture.value) {
   //     super.applyFilter(renderer, input, output, clear);
   //   } else if (this.start) {
-  //     ErrorHandler.error('[TransitionFilter] Filter must be provided.');
+  //     logger.error('Filter must be provided.');
   //     this.start = false;
   //     this.m_resolve();
   //     this.m_resolve = null;
@@ -188,7 +191,7 @@ export class TransitionFilter extends PIXI.Filter {
 
 
   syncUniform(uniform) {
-    ErrorHandler.warn("[TransitionFilter] Method syncUniform() should not be called, it's a bug!");
+    logger.warn("Method syncUniform() should not be called, it's a bug!");
     super.syncUniform(uniform);
   }
 }

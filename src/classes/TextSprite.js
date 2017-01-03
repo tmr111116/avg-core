@@ -18,12 +18,11 @@
  * limitations under the License.
  */
 
+import { deprecated } from 'core-decorators';
+
 const PIXI = require('pixi.js');
-const Err = require('./ErrorHandler');
 // import { TransitionPlugin } from './Transition/TransitionPlugin';
 // import { TransitionFilter } from './Transition/TransitionFilter';
-
-import { deprecated } from 'core-decorators';
 
 /**
  * Class representing a TextSprite. <br>

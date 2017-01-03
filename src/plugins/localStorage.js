@@ -19,6 +19,9 @@
  */
 
 import core from 'core/core';
+import Logger from 'utils/logger';
+
+const logger = Logger.create('LocalStorage');
 
 class Localstorage {
   constructor() {
@@ -39,7 +42,7 @@ class Localstorage {
     ctx.data = {};
     // ctx.globalData = {};
     await next();
-    console.log('存档上下文：', ctx.data);
+    logger.debug('Archive Data:', ctx.data);
     // console.log('全局存档上下文：', ctx.globalData);
     const localStorage = window.localStorage;
     localStorage.setItem(ctx.name, JSON.stringify(ctx.data));
@@ -55,7 +58,7 @@ class Localstorage {
   async saveGlobal(ctx, next) {
     ctx.globalData = {};
     await next();
-    console.log('全局存档上下文：', ctx);
+    logger.debug('Global archive Data:', ctx);
     const localStorage = window.localStorage;
     localStorage.setItem('__global__', JSON.stringify(ctx.globalData));
   }

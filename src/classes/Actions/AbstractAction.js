@@ -1,7 +1,4 @@
 
-
-import { ErrorHandler as Err } from '../ErrorHandler';
-
 /*
 * 抽象动作类
 * 继承后必须重载 updateTransform(progress,target) 方法，用于更新绘制
