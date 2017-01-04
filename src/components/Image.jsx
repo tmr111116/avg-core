@@ -25,6 +25,7 @@ import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
 import pixiPropTypes from './pixi/propTypes';
+import { mountNode, updateNode } from './pixi/properties';
 
 const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
@@ -36,8 +37,9 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     props.file && layer.setFile(props.file);
     props.dataUri && layer.setDataUri(props.dataUri);
     layer.setRect(props.rect).setAnchor(props.anchor).execSync();
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
+    // layer.x = props.x || 0;
+    // layer.y = props.y || 0;
+    mountNode(layer, props);
     return layer;
   },
   updateNode(prevProps, props) {
@@ -48,8 +50,9 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     if (prevProps.dataUri !== props.dataUri || !equal(prevProps.rect, props.rect)) {
       layer.setDataUri(props.dataUri).setRect(props.rect).setAnchor(props.anchor).execSync();
     }
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
+    // layer.x = props.x || 0;
+    // layer.y = props.y || 0;
+    updateNode(layer, prevProps, props);
   },
 
 });

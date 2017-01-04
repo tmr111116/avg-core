@@ -1,5 +1,5 @@
 /**
- * @file        PropTypes defination of PIXI.DisplayObjectContainer
+ * @file        PropTypes defination of PIXI.DisplayObject
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -22,6 +22,8 @@ import React from 'react';
 
 export default {
   alpha: React.PropTypes.number,
+  visible: React.PropTypes.bool,
+  cacheAsBitmap: React.PropTypes.bool,
   x: React.PropTypes.number,
   y: React.PropTypes.number,
   position: React.PropTypes.arrayOf(React.PropTypes.number),
@@ -33,7 +35,5 @@ export default {
   scale: React.PropTypes.arrayOf(React.PropTypes.number),
   skew: React.PropTypes.arrayOf(React.PropTypes.number),
   tint: React.PropTypes.oneOf([React.PropTypes.number, React.PropTypes.string]),
-  cacheAsBitmap: React.PropTypes.bool,
   children: React.PropTypes.any,
-  visible: React.PropTypes.bool,
 };
