@@ -18,11 +18,11 @@
  * limitations under the License.
  */
 
-import Logger from 'utils/logger';
+import core from 'core/core';
 
 const Howler = require('howler');
 
-const logger = Logger.create('SoundManager');
+const logger = core.getLogger('SoundManager');
 
 /* By default, audio on iOS is locked until a sound is played within a user interaction,
 * and then it plays normally the rest of the page session (Apple documentation).

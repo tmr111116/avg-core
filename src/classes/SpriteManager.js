@@ -27,9 +27,9 @@ import TextWindow from './TextWindow';
 import {attachToSprite} from './EventManager';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
-import Logger from 'utils/logger';
+import core from 'core/core';
 
-const logger = Logger.create('SpriteManager');
+const logger = core.getLogger('SpriteManager');
 
 let Sprites = new Map();
 let Renderer = null;

@@ -2,9 +2,9 @@ import ReactUpdates from 'react-dom/lib/ReactUpdates';
 import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
 import deepEqual from 'deep-equal';
 import { attachToSprite } from 'classes/EventManager';
-import Logger from 'utils/logger';
+import core from 'core/core';
 
-const logger = Logger.create('NodeMixin');
+const logger = core.getLogger('NodeMixin');
 
 
 const NodeMixin = {

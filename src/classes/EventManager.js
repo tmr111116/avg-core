@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-import Logger from 'utils/logger';
+import core from 'core/core';
 
-const logger = Logger.create('EventManager');
+const logger = core.getLogger('EventManager');
 
 export function attachToSprite(sprite) {
   sprite.interactive = true;

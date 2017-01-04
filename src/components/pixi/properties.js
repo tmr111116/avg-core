@@ -20,11 +20,10 @@
 
 import deepEqual from 'deep-equal';
 import core from 'core/core';
-import Logger from 'utils/logger';
 
 const PIXI = require('pixi.js');
 
-const logger = Logger.create('MountNode');
+const logger = core.getLogger('MountNode');
 
 /**
  * Convert pure array to proper Pixi Object, non-array will be returned as-is.

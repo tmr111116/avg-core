@@ -22,11 +22,8 @@ import core from 'core/core';
 import { CrossFadeFilter } from 'classes/Transition/Filters';
 import { TransitionFilter } from 'classes/Transition/TransitionFilter';
 import { TransitionPlugin as installPlugin } from 'classes/Transition/TransitionPlugin';
-import Logger from 'utils/logger';
 
-const PIXI = require('pixi.js');
-
-const logger = Logger.create('Transition Plugin');
+const logger = core.getLogger('Transition Plugin');
 
 export default class TransitionPlugin {
   constructor(node, method) {

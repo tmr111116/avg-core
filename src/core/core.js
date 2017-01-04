@@ -25,7 +25,7 @@ import Container from 'classes/Container';
 import { attachToSprite } from 'classes/EventManager';
 import sayHello from 'utils/sayHello';
 import fitWindow from 'utils/fitWindow';
-import Logger from 'utils/logger';
+import Logger from './logger';
 
 import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
 
@@ -187,6 +187,10 @@ class Core {
   }
   getTexture(url) {
     return getTexture(url);
+  }
+
+  getLogger(name) {
+    return core.getLogger(name);
   }
 
   // TODO: need more elegent code

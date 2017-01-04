@@ -18,10 +18,10 @@
  * limitations under the License.
  */
 
-import Logger from 'utils/logger';
+import core from 'core/core';
 import Action from './Action';
 
-const logger = Logger.create('ActionManager');
+const logger = core.getLogger('ActionManager');
 
 const topNode = {
   type: 'parallel',

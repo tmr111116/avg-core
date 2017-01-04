@@ -19,12 +19,12 @@
  */
 
 // const DefaultShader = require('pixi.js/src/core/renderers/webgl/shaders/TextureShader');
-import Logger from 'utils/logger';
+import core from 'core/core';
 import FrozenTextureFilter from './FrozenTextureFilter';
 
 const PIXI = require('pixi.js');
 
-const logger = Logger.create('TransitionFilter');
+const logger = core.getLogger('TransitionFilter');
 
 const EmptyTexureShaderFragment = require(__dirname + '/shaders/emptyTexture.frag');
 const PrepareTransitionShaderFragment = require(__dirname + '/shaders/prepareTransition.frag');

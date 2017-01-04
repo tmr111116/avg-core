@@ -19,9 +19,8 @@
  */
 
 import core from 'core/core';
-import Logger from 'utils/logger';
 
-const logger = Logger.create('LocalStorage');
+const logger = core.getLogger('LocalStorage');
 
 class Localstorage {
   constructor() {

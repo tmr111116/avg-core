@@ -21,9 +21,8 @@
 import StoryScript from 'avg-storyscript';
 import core from 'core/core';
 import fetchLocal from 'utils/fetchLocal';
-import Logger from 'utils/logger';
 
-const logger = Logger.create('Script Plugin');
+const logger = core.getLogger('Script Plugin');
 
 // utils
 function getTimeoutPromise(time) {

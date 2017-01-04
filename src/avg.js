@@ -27,7 +27,6 @@ import * as plugins from 'plugins';
 
 import React, { Component } from 'react';
 import core from 'core/core';
-import logger from 'utils/logger';
 
 export {
   React,
@@ -36,5 +35,4 @@ export {
   components,
   ui,
   plugins,
-  logger,
 };

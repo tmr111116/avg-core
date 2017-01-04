@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-import Logger from 'utils/logger';
+import core from 'core/core';
 
-const logger = Logger.create('ColorUtil');
+const logger = core.getLogger('ColorUtil');
 
 export default class Color {
   constructor(value) {

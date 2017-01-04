@@ -18,10 +18,10 @@
  * limitations under the License.
  */
 
-import Logger from 'utils/logger';
+import core from 'core/core';
 import TextWindow from './TextWindow';
 
-const logger = Logger.create('TextwindowManager');
+const logger = core.getLogger('TextwindowManager');
 
 const SpriteManager = null;
 let CurrentTextWindow = null;

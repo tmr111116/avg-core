@@ -19,13 +19,12 @@
  */
 
 import core from 'core/core';
-import Logger from 'utils/logger';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
 
 const PIXI = require('pixi.js');
 
-const logger = Logger.create('Animation');
+const logger = core.getLogger('Animation');
 
 @TransitionPlugin
 class Animation extends PIXI.Sprite {
