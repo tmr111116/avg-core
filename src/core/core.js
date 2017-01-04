@@ -190,7 +190,7 @@ class Core {
   }
 
   getLogger(name) {
-    return core.getLogger(name);
+    return Logger.create(name);
   }
 
   // TODO: need more elegent code
