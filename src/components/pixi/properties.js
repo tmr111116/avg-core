@@ -19,6 +19,7 @@
  */
 
 import deepEqual from 'deep-equal';
+import core from 'core/core';
 import Logger from 'utils/logger';
 
 const PIXI = require('pixi.js');
@@ -47,24 +48,6 @@ function convertToPixiValue(value) {
   return value;
 }
 
-// function pixiEqual(a, b) {
-//   if (a instanceof Object) {
-//     if (a.constructor.name !== b.constructor.name) {
-//       return false;
-//     }
-//     if (a instanceof PIXI.Point) {
-//       return a.equals(b);
-//     } else if (a instanceof PIXI.Rectangle) {
-//       return (a.x === b.x) && (a.y === b.y) && (a.width === b.width) && (a.height === b.height);
-//     } else if (a instanceof PIXI.Matrix) {
-//       return deepEqual(a.toArray(false), b.toArray(false));
-//     }
-//     logger.warn(`Unrecognized array: ${a} and ${b}`);
-//     return deepEqual(a, b);
-//   }
-//   return a === b;
-// }
-
 /**
  * Set value for PIXI.DisplayObject
  * 
@@ -81,7 +64,11 @@ export function setValue(key, value, defaultValue) {
       node[key] = defaultValue;
     }
   } else {
-    node[key] = convertToPixiValue(value);
+    if (key === 'src') {
+      node.src = core.getTexture(value);
+    } else {
+      node[key] = convertToPixiValue(value);
+    }
   }
 }
 
@@ -99,6 +86,8 @@ export function updateValue(key, prevValue, value) {
  */
 export function mountNode(node, props) {
   const setNodeValue = setValue.bind(node);
+
+  setNodeValue('src', props.src);
 
   setNodeValue('alpha', props.alpha);
   setNodeValue('visible', props.visible);
@@ -122,6 +111,8 @@ export function mountNode(node, props) {
 
 export function updateNode(node, prevProps, props) {
   const updateNodeValue = updateValue.bind(node);
+
+  updateNodeValue('src', prevProps.src, props.src);
 
   updateNodeValue('alpha', prevProps.alpha, props.alpha);
   updateNodeValue('visible', prevProps.visible, props.visible);

@@ -24,6 +24,7 @@ import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import TextSprite from 'classes/TextSprite';
 import pixiPropTypes from './pixi/propTypes';
+import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
 
 const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 
@@ -31,7 +32,6 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
     this.node = new TextSprite();
   },
   mountNode(props) {
-    const layer = this.node;
     const style = {
       fill: 0xffffff,
       breakWords: true,
@@ -49,21 +49,14 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
       strokeThickness: 0,
       ...props.style,
     };
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
-    layer.text = props.text || props.children || '';
-    if (props.anchor) {
-      const anchor = props.anchor;
-      this.node.anchor.x = anchor[0];
-      this.node.anchor.y = anchor[1];
-    }
-    layer.style = style;
-    return layer;
+
+    const node = this.node;
+    mountNode(node, props);
+    setValue.call(node, 'style', style);
+    setValue.call(node, 'text', props.text);
+    return node;
   },
   updateNode(prevProps, props) {
-    this.node.text = props.text || props.children || '';
-    this.node.x = props.x || 0;
-    this.node.y = props.y || 0;
     const style = {
       fill: '#ffffff',
       breakWords: true,
@@ -81,12 +74,11 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
       strokeThickness: 0,
       ...props.style,
     };
-    if (props.anchor) {
-      const anchor = props.anchor;
-      this.node.anchor.x = anchor[0];
-      this.node.anchor.y = anchor[1];
-    }
-    this.node.style = style;
+
+    const node = this.node;
+    updateNode(node, prevProps, props);
+    updateValue.call(node, 'style', prevProps.style, style);
+    updateValue.call(node, 'text', prevProps.text, props.text);
   },
 
 });

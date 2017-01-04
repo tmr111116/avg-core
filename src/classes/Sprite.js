@@ -18,14 +18,7 @@
  * limitations under the License.
  */
 
-// import { TransitionPlugin } from './Transition/TransitionPlugin';
-// import { TransitionFilter } from './Transition/TransitionFilter';
-import core from 'core/core';
-import Logger from 'utils/logger';
-
 const PIXI = require('pixi.js');
-
-const logger = Logger.create('Sprite');
 
 /**
  * Class representing a Sprite.
@@ -40,84 +33,30 @@ class Sprite extends PIXI.Sprite {
     super();
     this.zorder = 0;
 
-    // this.filters = [new TransitionFilter()];
+    this._rectangle = null;
   }
 
-  /**
-     * Specify sprite image.
-     * This method do not take effect until {@link Sprite#execSync} is called.
-     * @param {string} filename
-     * @returns {Sprite} - this
-     */
-  setFile(filename) {
-    this.filename = filename;
-    return this;
-  }
-
-  /**
-     * Specify sprite image.
-     * This method do not take effect until {@link Sprite#execSync} is called.
-     * @param {string} filename
-     * @returns {Sprite} - this
-     */
-  setDataUri(datauri) {
-    this.dataUri = datauri;
-    return this;
-  }
-
-    /**
-     * Specify sprite index.
-     * This method do not take effect until {@link Sprite#execSync} is called.
-     * @param {number} index - the id of sprite
-     * @returns {Sprite} - this
-     */
-  setIndex(index) {
-    this.index = index;
-    return this;
-  }
-
-    /**
-     * Specify sprite area you wish to use in the sprite.
-     * Usually you should not specify it, unless you wish to capture a part of the picture. <br>
-     * This method do not take effect until {@link Sprite#execSync} is called.
-     * @param {Array[]} index - the id of sprite
-     * @returns {Sprite} - this
-     */
-  setRect(rect) {
-    this.m_rect = rect;
-    return this;
-  }
-
-  setAnchor(anchor) {
-    if (anchor) {
-      this.anchor.x = anchor[0];
-      this.anchor.y = anchor[1];
+  set rectangle(value) {
+    this._rectangle = value;
+    if (this.texture) {
+      const baseTexture = this.texture.baseTexture;
+      this.texture.destroy();
+      this.texture = new PIXI.Texture(baseTexture, this._rectangle);
     }
-    return this;
+  }
+  get rectangle() {
+    return this._rectangle;
   }
 
-    /**
-     * Load the sprite.
-     */
-  execSync() {
-    let tex;
-    if (this.dataUri) {
-      tex = PIXI.Texture.fromImage(this.dataUri);
+  set src(value) {
+    if (this.texture) {
+      this.texture.destroy();
+      this.texture = new PIXI.Texture(value, this._rectangle);
     } else {
-      tex = core.getTexture(this.filename);
+      this.texture = new PIXI.Texture(value, this._rectangle);
+      value.destroy();
     }
-    try {
-      if (this.m_rect)
-        tex = new PIXI.Texture(tex, new PIXI.Rectangle(this.m_rect[0], this.m_rect[1], this.m_rect[2], this.m_rect[3]));
-    } catch (e) {
-      logger.warn('Rectangle you specified may be larger than real size of image, rectangle has been ignored.');
-    }
-    this.texture = tex;
   }
-
 }
-
-// TransitionPlugin(Sprite);
-
 
 export default Sprite;

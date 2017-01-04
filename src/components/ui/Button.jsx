@@ -22,30 +22,40 @@ import React from 'react';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
+import Sprite from 'classes/Sprite';
 import core from 'core/core';
+import pixiPropTypes from '../pixi/propTypes';
+import { mountNode, updateNode, setValue, updateValue } from '../pixi/properties';
+
 
 const PIXI = require('pixi.js');
 
 const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
 
   createNode(element) {
-    this.node = new PIXI.Sprite();
+    this.node = new Sprite();
   },
   mountNode(props) {
-    this.setProperties(props);
-    const layer = this.node;
+    // this.setProperties(props);
+    const node = this.node;
 
-    layer.buttonMode = true;
-    layer.on('mouseover', e => this.setFrame(1));
-    layer.on('mouseout', e => this.setFrame(0));
-    layer.on('mousedown', e => this.setFrame(2));
-    layer.on('mouseup', e => this.setFrame(1));
-    layer.on('mouseupoutside', e => this.setFrame(0));
+    node.buttonMode = true;
+    node.on('mouseover', e => this.setFrame(1));
+    node.on('mouseout', e => this.setFrame(0));
+    node.on('mousedown', e => this.setFrame(2));
+    node.on('mouseup', e => this.setFrame(1));
+    node.on('mouseupoutside', e => this.setFrame(0));
 
-    return layer;
+    mountNode(node, props);
+    node.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    this.setFrame(0);
+    return node;
   },
   updateNode(prevProps, props) {
-    this.setProperties(props);
+    // this.setProperties(props);
+    updateNode(this.node, prevProps, props);
+    this.node.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    this.setFrame(0);
   },
   setProperties(props) {
     const layer = this.node;
@@ -87,12 +97,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
 
 const Button = React.createClass({
   displayName: 'Button',
-  propTypes: {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    visible: React.PropTypes.bool,
-    children: React.PropTypes.any,
-  },
+  propTypes: pixiPropTypes,
   render() {
     return React.createElement(RawButton, this.props, this.props.children);
   },

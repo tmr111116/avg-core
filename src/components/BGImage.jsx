@@ -76,6 +76,6 @@ export class BGImage extends React.Component {
   }
   render() {
     // TODO: It's weired that if you wrap Image with Layer.
-    return <Image file={this.state.file || ''} x={0} y={0} />;
+    return <Image src={this.state.file || ''} x={0} y={0} />;
   }
 }

@@ -74,10 +74,14 @@ export function load(resources, onProgress) {
   return promise;
 }
 
-export function getTexture(url) {
+export function getTexture(url = '') {
   let obj = TEXTURES[url];
   if (!obj) {
-    obj = PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+    if (url.startsWith('data:')) {
+      obj = PIXI.Texture.fromImage(url);
+    } else {
+      obj = PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+    }
     TEXTURES[url] = obj;
   }
   return new PIXI.Texture(obj.baseTexture);

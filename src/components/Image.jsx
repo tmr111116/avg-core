@@ -25,7 +25,7 @@ import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
 import pixiPropTypes from './pixi/propTypes';
-import { mountNode, updateNode } from './pixi/properties';
+import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
 
 const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
@@ -33,26 +33,15 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     this.node = new Sprite();
   },
   mountNode(props) {
-    const layer = this.node;
-    props.file && layer.setFile(props.file);
-    props.dataUri && layer.setDataUri(props.dataUri);
-    layer.setRect(props.rect).setAnchor(props.anchor).execSync();
-    // layer.x = props.x || 0;
-    // layer.y = props.y || 0;
-    mountNode(layer, props);
-    return layer;
+    const node = this.node;
+    setValue.call(node, 'rectangle', props.rectangle);
+    mountNode(node, props);
+    return node;
   },
   updateNode(prevProps, props) {
-    const layer = this.node;
-    if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
-      layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
-    }
-    if (prevProps.dataUri !== props.dataUri || !equal(prevProps.rect, props.rect)) {
-      layer.setDataUri(props.dataUri).setRect(props.rect).setAnchor(props.anchor).execSync();
-    }
-    // layer.x = props.x || 0;
-    // layer.y = props.y || 0;
-    updateNode(layer, prevProps, props);
+    const node = this.node;
+    updateValue.call(node, 'rectangle', prevProps.rectangle, props.rectangle);
+    updateNode(node, prevProps, props);
   },
 
 });
