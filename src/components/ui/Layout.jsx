@@ -93,7 +93,7 @@ export default class Layout extends React.Component {
         maxHeight = Math.max(maxHeight, bound.height);
         count--;
         if (count <= 0) {
-          this.applyLayout(maxWidth, maxHeight);
+          this.applyLayout(this.props.maxWidth || maxWidth, this.props.maxHeight || maxHeight);
         }
       } else {
         node.texture.on('update', i => {
@@ -102,7 +102,7 @@ export default class Layout extends React.Component {
           maxHeight = Math.max(maxHeight, bound.height);
           count--;
           if (count <= 0) {
-            this.applyLayout(maxWidth, maxHeight);
+            this.applyLayout(this.props.maxWidth || maxWidth, this.props.maxHeight || maxHeight);
           }
         });
       }
@@ -132,14 +132,14 @@ export default class Layout extends React.Component {
       const bound = node.getBounds();
 
       if (direction === 'vertical') {
-        childPositions.push(lastRight + (maxWidth - bound.width) * baseline);
-        childPositions.push(lastBottom);
+        childPositions.push(lastRight + (maxWidth - bound.width) * baseline + bound.width * node.anchor.x);
+        childPositions.push(lastBottom + bound.height * node.anchor.y);
         // node.x = lastRight + (maxWidth - node.width) * baseline;
         // node.y = lastBottom;
         lastBottom += interval + bound.height;
       } else {
-        childPositions.push(lastRight);
-        childPositions.push(lastBottom + (maxHeight - bound.height) * baseline);
+        childPositions.push(lastRight + bound.width * node.anchor.x);
+        childPositions.push(lastBottom + (maxHeight - bound.height) * baseline + bound.height * node.anchor.y);
         // node.x = lastRight;
         // node.y = lastBottom + (maxHeight - node.height) * baseline;
         lastRight += interval + bound.width;
