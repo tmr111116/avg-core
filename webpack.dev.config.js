@@ -36,6 +36,9 @@ module.exports = {
       { test: path.resolve(__dirname, 'node_modules', 'pixi.js'), loader: 'ify' },
     ],
   },
+  externals: {  // 指定采用外部 CDN 依赖的资源，不被webpack打包
+    'pixi.js': 'PIXI',
+  },
   plugins: [
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(require("./package.json").version),
