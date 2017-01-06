@@ -125,6 +125,7 @@ class Core {
    * @param {number} height height of screen
    * @param {object} [options]
    * @param {HTMLCanvasElement} [options.view] custom canvas element
+   * @param {PIXI.WebGLRenderer} [options.renderer] custom renderer
    * @param {string|array<string>} [options.fontFamily] load custom web-font
    * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
    * @param {string} [options.assetsPath='assets'] assets path
@@ -137,16 +138,20 @@ class Core {
     };
 
     if (options.fontFamily) {
-      const font = new FontFaceObserver('Demo_font');
+      const font = new FontFaceObserver(options.fontFamily);
       await font.load();
     }
 
-    /* create PIXI renderer */
-    this.renderer = new PIXI.WebGLRenderer(width, height, {
-      view: options.view,
-      autoResize: true,
-      roundPixels: true,
-    });
+    if (options.renderer) {
+      this.renderer = options.renderer;
+    } else {
+      /* create PIXI renderer */
+      this.renderer = new PIXI.WebGLRenderer(width, height, {
+        view: options.view,
+        autoResize: true,
+        roundPixels: true,
+      });
+    }
 
     if (options.fitWindow) {
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
@@ -205,14 +210,14 @@ class Core {
    * @param {HTMLDOMElement} target
    * @return {Promise}
    */
-  async render(component, target) {
+  async render(component, target, append = true) {
     if (!this._init) {
       throw 'not initialed';
     }
     return new Promise((resolve) => {
       renderReact(component, target, resolve);
     }).then(() => {
-      target.appendChild(this.renderer.view);
+      append && target.appendChild(this.renderer.view);
     });
   }
 
