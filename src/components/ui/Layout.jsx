@@ -82,10 +82,10 @@ export default class Layout extends React.Component {
   componentDidMount() {
     let maxWidth = 0;
     let maxHeight = 0;
-    const refs = Object.keys(this.refs);
+    const refs = Object.keys(this.children);
     let count = refs.length;
     for (let ref of refs) {
-      const child = this.refs[ref];
+      const child = this.children[ref];
       const node = child._reactInternalInstance._mountImage;
       if (!node.texture || node.texture === PIXI.Texture.EMPTY || node.texture.valid) {
         const bound = node.getBounds();
@@ -123,11 +123,11 @@ export default class Layout extends React.Component {
     let lastBottom = paddingTop;
     let lastRight  = paddingLeft;
 
-    const refs = Object.keys(this.refs);
+    const refs = Object.keys(this.children);
     let count = refs.length;
     const childPositions = [];
     for (let ref of refs) {
-      const child = this.refs[ref];
+      const child = this.children[ref];
       const node = child._reactInternalInstance._mountImage;
       const bound = node.getBounds();
 
@@ -314,6 +314,7 @@ export default class Layout extends React.Component {
       });
     }
   }
+  children = [];
   render() {
     const {
       backgroundColor,
@@ -321,7 +322,7 @@ export default class Layout extends React.Component {
       backgroundWidth,
       buttonColor,
       buttonAlpha,
-      buttonWidth
+      buttonWidth,
     } = {
       backgroundColor: 0xffffff,
       backgroundAlpha: 0.6,
@@ -329,8 +330,9 @@ export default class Layout extends React.Component {
       buttonColor: 0xffffff,
       buttonAlpha: 1,
       buttonWidth: 6,
-      ...this.props.scrollStyle
-    }
+      ...this.props.scrollStyle,
+    };
+    this.children = [];
     return (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         ref={node => this.node = node}
@@ -340,12 +342,14 @@ export default class Layout extends React.Component {
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
       >
-        <Layer x={this.state.innerX} y={this.state.innerY}
-          width={this.state.width} height={this.state.height}>
+        <Layer
+          x={this.state.innerX} y={this.state.innerY}
+          width={this.state.width} height={this.state.height}
+        >
           {React.Children.map(this.props.children, (element, index) => {
             return React.cloneElement(element,
               {
-                ref: index,
+                ref: (arg) => { element.ref && element.ref(arg); this.children[index] = arg; },
                 key: index,
                 x: this.state.childPositions[index * 2],
                 y: this.state.childPositions[index * 2 + 1],
