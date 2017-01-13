@@ -18,9 +18,11 @@
  * limitations under the License.
  */
 
-import Tween from 'components/tween/Tween';
-import builder from 'components/tween/util';
+import Tween from './Tween';
+import builder from './util';
+import Easing from './easing';
 
 Tween.builder = builder;
+Tween.Easing = Easing;
 
 export { Tween };

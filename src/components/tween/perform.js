@@ -126,7 +126,7 @@ class AbstractAction extends Ticker {
       }
     }
 
-    this.updateTransform(this.progress, this.lastProgress, this.target, this.params);
+    this.updateTransform(this.easing(this.progress), this.easing(this.lastProgress), this.target, this.params);
 
     return this.finished;
   }
