@@ -109,44 +109,54 @@ class Layer extends PIXI.Container {
     (height != null) && (this.rectHeight = height);
     (fillColor != null) && (this.fillColor = fillColor);
     (fillAlpha != null) && (this.fillAlpha = fillAlpha);
-    (anchor != null) && (this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1])));
-    this.background.clear();
-    this.background.beginFill(this.fillColor, this.fillAlpha);
-    this.background.drawRect(0, 0, this.rectWidth, this.rectHeight);
-    this.background.endFill();
+    // (anchor != null) && (this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1])));
+    
+    this.repaintBackground();
 
     this.localFilterArea = new PIXI.Rectangle(0 - this.pivot.x,
       0 - this.pivot.y,
       this.rectWidth + this.pivot.x,
       this.rectHeight + this.pivot.y);
 
-    // 以下是一个糟糕的 hack，因为 mountNode 是自底向上的，而 filterArea 需要全局坐标
-    // 即当节点挂载在父节点之上后，得到的才是正确的全局坐标，也就是自顶向下的
-    // 所以设置一个延时轮训，每隔 50ms 一次，若超过 1s 则放弃（例如，野精灵是永远不会有父节点的）
-    // {
-    //   let time = 0;
-    //   const tick = () => {
-    //     if (this.parent) {
-    //       const point = this.toGlobal(new PIXI.Point(0, 0));
-    //       // setTimeout(() => console.log(this.toGlobal(new PIXI.Point(0, 0)), this.parent), 500)
-    //       // console.log(point, this.pivot, this.parent)
-    //       // console.log(this.position.x, point.x)
-    //       // const point = this.position;
-    //       console.log(this.fillColor === 0x123456)
-    //       this.filterArea = new PIXI.Rectangle(point.x - this.pivot.x,
-    //         point.y - this.pivot.y,
-    //         this.rectWidth + this.pivot.x,
-    //         this.rectHeight + this.pivot.y);
-    //     } else if (!this.parent && time < 1000) {
-    //       time += 50;
-    //       setTimeout(tick, 50);
-    //     }
-    //   }
-    //   tick();
-    // }
-
     return this;
   }
+
+  set fillColor(value) {
+    this._fillColor = value;
+  }
+  get fillColor() {
+    return this._fillColor;
+  }
+
+  set fillAlpha(value) {
+    this._fillAlpha = value;
+  }
+  get fillAlpha() {
+    return this._fillAlpha;
+  }
+
+  set rectWidth(value) {
+    this._rectWidth = value;
+  }
+  get rectWidth() {
+    return this._rectWidth;
+  }
+
+  set rectHeight(value) {
+    this._rectHeight = value;
+  }
+  get rectHeight() {
+    return this._rectHeight;
+  }
+
+  repaintBackground() {
+    this.background.clear();
+    this.background.beginFill(this._fillColor, this._fillAlpha);
+    this.background.drawRect(0, 0, this._rectWidth, this._rectHeight);
+    this.background.endFill();
+  }
+
+
 
   containsPoint(...args) {
     // TODO: Problem same as .removeChildren()
