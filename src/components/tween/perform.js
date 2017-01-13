@@ -28,7 +28,21 @@ export default function tweenGenerator(scheme, targetMap) {
     } else {
       target = scheme.target;
     }
-    return new MoveToAction(target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo);
+
+    const args = [target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo];
+    switch (scheme.name) {
+      case 'moveTo': return new MoveToAction(...args);
+      case 'moveBy': return new MoveByAction(...args);
+      case 'delay': return new DelayAction(...args);
+      case 'fadeTo': return new FadeToAction(...args);
+      case 'fadeBy': return new FadeByAction(...args);
+      case 'rotateTo': return new RotateToAction(...args);
+      case 'rotateBy': return new RotateByAction(...args);
+      case 'scaleTo': return new ScaleToAction(...args);
+      case 'scaleBy': return new ScaleByAction(...args);
+      case 'setProperty': return new SetPropertyAction(...args);
+      case 'callback': return new CallbackAction(...args);
+    }
   }
 
   const actions = [];
@@ -46,6 +60,7 @@ export default function tweenGenerator(scheme, targetMap) {
 
 class Ticker {
   constructor() {
+    const performance = window.performance || window.Date;
     this._update = () => {
       this.update(performance.now());
     };
@@ -302,10 +317,99 @@ class MoveToAction extends AbstractAction {
       this.y = target.y;
       this.initialled = true;
     }
-    const deltaProgress = progress - lastProgress;
     const { x, y } = params;
     // console.log(target.y, progress, lastProgress, deltaProgress)
-    target.x = this.x + (x - this.x) * progress;
-    target.y = this.y + (y - this.y) * progress;
+    (x != null) && (target.x = this.x + (x - this.x) * progress);
+    (y != null) && (target.y = this.y + (y - this.y) * progress);
+  }
+}
+class MoveByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    const { x, y } = params;
+    (x != null) && (target.x += x * deltaProgress);
+    (y != null) && (target.y += y * deltaProgress);
+  }
+}
+class FadeToAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    if (!this.initialled) {
+      this.alpha = target.alpha;
+      this.initialled = true;
+    }
+    target.alpha = this.alpha + (params - this.alpha) * progress;
+  }
+}
+class FadeByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    target.alpha += params * deltaProgress;
+  }
+}
+class DelayAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    // do nothing :)
+  }
+}
+class RotateToAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {if (!this.initialled) {
+      this.rotation = target.rotation;
+      this.initialled = true;
+    }
+    target.rotation = this.rotation + (params - this.rotation) * progress;
+  }
+}
+class RotateByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    target.rotation += params * deltaProgress;
+  }
+}
+class ScaleToAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    if (!this.initialled) {
+      this.scaleX = target.scale.x;
+      this.scaleY = target.scale.y;
+      this.initialled = true;
+    }
+    const { x, y } = params;
+    // console.log(target.y, progress, lastProgress, deltaProgress)
+    (x != null) && (target.scale.x = this.scaleX + (x - this.scaleX) * progress);
+    (y != null) && (target.scale.y = this.scaleY + (y - this.scaleY) * progress);
+  }
+}
+class ScaleByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    const { x, y } = params;
+    (x != null) && (target.scale.x += x * deltaProgress);
+    (y != null) && (target.scale.y += y * deltaProgress);
+  }
+}
+class SetPropertyAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const keys = Object.keys(params);
+    if (!this.initialled) {
+      this.params = {};
+      for (const key of keys) {
+        this.params[key] = target[key];
+      }
+      this.initialled = true;
+    }
+    const deltaProgress = progress - lastProgress;
+    if (deltaProgress > 0) {
+      for (const key of keys) {
+        target[key] = params[key];
+      }
+    } else {
+      for (const key of keys) {
+        target[key] = this.params[key];
+      }
+    }
+  }
+}
+class CallbackAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    params.call(target, progress, lastProgress);
   }
 }

@@ -103,7 +103,7 @@ class TweenBuilderChain {
 ((...actionNames) => {
   for (const actionName of actionNames) {
     Object.defineProperty(TweenBuilderChain.prototype, actionName, {
-      value(target, params, duration = 600, easing = x => x, repeat = 0, yoyo = false) {
+      value(target, params, duration = 4, easing = x => x, repeat = 0, yoyo = false) {
         this._checkInScheme();
         const action = {
           type: 'action',
@@ -123,7 +123,13 @@ class TweenBuilderChain {
       writable: true,
     });
   }
-})('moveTo', 'moveBy', 'fadeTo', 'fadeBy');
+})('moveTo', 'moveBy',
+   'fadeTo', 'fadeBy',
+   'delay',
+   'rotateTo', 'rotateBy',
+   'scaleTo', 'scaleBy',
+   'tintTo', 'tintBy',
+   'setProperty', 'callback');
 
 export default function tweenBuilder() {
   return new TweenBuilderChain();

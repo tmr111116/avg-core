@@ -58,7 +58,9 @@ class Tween extends React.Component {
       this.tweens[schemeName] = tweenGenerator(scheme, this.nodes);
     }
 
-    this.runTween('default');
+    if (schemeNames.includes('default')) {
+      this.runTween('default');
+    }
   }
   runTween(name) {
     const tween = this.tweens[name];
