@@ -89,48 +89,48 @@ class Tween extends React.Component {
   }
 }
 
-class Lite extends React.Component {
-  constructor(props) {
-    super(props);
+// class Lite extends React.Component {
+//   constructor(props) {
+//     super(props);
 
-    this.state = props.children.props;
-  }
-  tween = null;
-  componentDidMount() {
-    const keys = Object.keys(this.props.to);
+//     this.state = props.children.props;
+//   }
+//   tween = null;
+//   componentDidMount() {
+//     const keys = Object.keys(this.props.to);
 
-    const ctx = {};
-    const target = {};
-    for (const key of keys) {
-      ctx[key] = this.state[key];
-      target[key] = this.props.to[key];
-    }
+//     const ctx = {};
+//     const target = {};
+//     for (const key of keys) {
+//       ctx[key] = this.state[key];
+//       target[key] = this.props.to[key];
+//     }
 
-    this.tween = new TWEEN.Tween(ctx)
-    // .delay(2000)
-    .to(target, this.props.duration)
-    .repeat(this.props.repeat)
-    .yoyo(this.props.yoyo)
-    .easing(TWEEN.Easing.Sinusoidal.In)
-    .onUpdate(() => {
-      this.setState(ctx);
-    })
-    .start();
-  }
-  componentWillUnmount() {
-    this.tween.stop();
-  }
-  render() {
-    if (this.props.children instanceof Array) {
-      throw 'Don\'t support more than one child in Tween.';
-    }
-    const element = React.cloneElement(this.props.children, {
-      ...this.state,
-    });
-    return element;
-  }
-}
+//     this.tween = new TWEEN.Tween(ctx)
+//     // .delay(2000)
+//     .to(target, this.props.duration)
+//     .repeat(this.props.repeat)
+//     .yoyo(this.props.yoyo)
+//     .easing(TWEEN.Easing.Sinusoidal.In)
+//     .onUpdate(() => {
+//       this.setState(ctx);
+//     })
+//     .start();
+//   }
+//   componentWillUnmount() {
+//     this.tween.stop();
+//   }
+//   render() {
+//     if (this.props.children instanceof Array) {
+//       throw 'Don\'t support more than one child in Tween.';
+//     }
+//     const element = React.cloneElement(this.props.children, {
+//       ...this.state,
+//     });
+//     return element;
+//   }
+// }
 
-Tween.Lite = Lite;
+// Tween.Lite = Lite;
 
 export default Tween;
