@@ -39,8 +39,13 @@ class TweenBuilderChain {
     if (this.isInScheme) {
       logger.error('You should call .end() to close current scheme before creating a new one.');
     } else {
-      this.chain[name] = [];
-      this.currentNode = this.chain[name];
+      this.chain[name] = {
+        type: 'sequence',
+        actions: [],
+        repeat: 0,
+        yoyo: false,
+      };
+      this.currentNode = this.chain[name].actions;
       this.nodeStack.push(this.chain);
       this.isInScheme = true;
     }
@@ -75,7 +80,7 @@ class TweenBuilderChain {
   end() {
     const node = this.nodeStack.pop();
     if (this.nodeStack.length) {
-      this.currentNode = node.actions || node;
+      this.currentNode = node;
     } else {
       // end scheme
       this.isInScheme = false;
@@ -123,19 +128,3 @@ class TweenBuilderChain {
 export default function tweenBuilder() {
   return new TweenBuilderChain();
 }
-
-
-// const schemes = tweenBuilder()
-  // .scheme('进入动画')
-  //   .moveTo('key1', { x: 100, y: 100 })
-  //   .parallel()
-  //     .moveTo('key3', { x: 0, y: 0 })
-  //     .fadeTo('key3', 0.8)
-  //   .end()
-  // .end()
-  // .scheme('离开动画')
-  // // .customAction(actionHandler, 'key', targetValue)
-  // .end()
-  // .getSchemes();
-
-// console.log(JSON.stringify(schemes, null, '  '));

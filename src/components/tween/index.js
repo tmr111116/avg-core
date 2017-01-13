@@ -1,7 +1,8 @@
 /**
- * @file        Main export of the AVG core components
+ * @file        Tween module
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
+ * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +18,9 @@
  * limitations under the License.
  */
 
-export * from 'components/Surface';
-export * from 'components/Image';
-export * from 'components/Text';
-export * from 'components/Container';
-export * from 'components/Layer';
-export * from 'components/Textwindow';
-export * from 'components/BGImage';
-export * from 'components/FGImage';
-export * from 'components/Transition';
-export * from 'components/tween';
+import Tween from 'components/tween/Tween';
+import builder from 'components/tween/util';
+
+Tween.builder = builder;
+
+export { Tween };

@@ -1,12 +1,31 @@
+/**
+ * @file        Tween component
+ * @author      Icemic Jia <bingfeng.web@gmail.com>
+ * @copyright   2015-2016 Icemic Jia
+ * @link        https://www.avgjs.org
+ * @license     Apache License 2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from 'react';
 import core from 'core/core';
 import { Layer } from '../Layer';
-import TweenGenerator from './perform';
-import tweenBuilder from './util';
+import tweenGenerator from './perform';
 
 const logger = core.getLogger('Tween');
 
-export default class Tween extends React.Component {
+class Tween extends React.Component {
   constructor(props) {
     super(props);
 
@@ -26,17 +45,17 @@ export default class Tween extends React.Component {
     this.registerTweens();
   }
   componentWillUnmount() {
-    // for (const key of Object.keys(this.tweens)) {
-    //   this.tweens[key].stop();
-    // }
-    // this.tweens[Symbol.for('tween-setState')].stop();
+    for (const key of Object.keys(this.tweens)) {
+      console.log(key)
+      this.tweens[key].stop();
+    }
   }
   registerTweens() {
     const schemeNames = Object.keys(this.props.schemes);
 
     for (const schemeName of schemeNames) {
       const scheme = this.props.schemes[schemeName];
-      this.tweens[schemeName] = TweenGenerator(scheme, this.nodes)[0];
+      this.tweens[schemeName] = tweenGenerator(scheme, this.nodes);
     }
 
     this.runTween('default');
@@ -46,11 +65,7 @@ export default class Tween extends React.Component {
     if (tween) {
       this.runningTween && this.runningTween.stop();
       this.runningTween = tween;
-      // tween.start();
-      let finished = false;
-      PIXI.ticker.shared.add(() => {
-        !finished && (finished = tween.update(performance.now()));
-      });
+      tween.start();
     } else {
       logger.warn(`Scheme ${name} is not defined.`);
     }
@@ -74,7 +89,7 @@ export default class Tween extends React.Component {
   }
 }
 
-export class Lite extends React.Component {
+class Lite extends React.Component {
   constructor(props) {
     super(props);
 
@@ -115,3 +130,7 @@ export class Lite extends React.Component {
     return element;
   }
 }
+
+Tween.Lite = Lite;
+
+export default Tween;

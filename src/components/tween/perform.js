@@ -18,23 +18,53 @@
  * limitations under the License.
  */
 
-export default function TweenGenerator(scheme, targets) {
-  const actions = [];
-  for (const action of scheme) {
-    if (action.type === 'action') {
-      const target = targets[action.target];
-      actions.push(new MoveToAction(target, action.params, action.duration, action.easing, action.repeat, action.yoyo));
-    } else if (action.type === 'sequence') {
-      actions.push(new Sequence(TweenGenerator(action.actions, targets), action.repeat, action.yoyo));
-    } else if (action.type === 'parallel') {
-      actions.push(new Parallel(TweenGenerator(action.actions, targets), action.repeat, action.yoyo));
+const PIXI = require('pixi.js');
+
+export default function tweenGenerator(scheme, targetMap) {
+  if (scheme.type === 'action') {
+    let target;
+    if (typeof scheme.target === 'string') {
+      target = targetMap[scheme.target];
+    } else {
+      target = scheme.target;
     }
+    return new MoveToAction(target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo);
   }
-  return actions;
+
+  const actions = [];
+  for (const action of scheme.actions) {
+    actions.push(tweenGenerator(action, targetMap));
+  }
+  if (scheme.type === 'sequence') {
+    return new Sequence(actions, scheme.repeat, scheme.yoyo);
+  } else if (scheme.type === 'parallel') {
+    return new Parallel(actions, scheme.repeat, scheme.yoyo);
+  }
+
+  return new Sequence([], scheme.repeat, scheme.yoyo);
 }
 
-class AbstractAction {
+class Ticker {
+  constructor() {
+    this._update = () => {
+      this.update(performance.now());
+    };
+  }
+  start() {
+    PIXI.ticker.shared.add(this._update);
+  }
+  stop() {
+    PIXI.ticker.shared.remove(this._update);
+  }
+  update() {
+
+  }
+}
+
+class AbstractAction extends Ticker {
   constructor(target, params, duration, easing, repeat, yoyo) {
+    super();
+
     this.target = target;
     this.params = params;
     this.duration = duration;
@@ -64,6 +94,10 @@ class AbstractAction {
   }
 
   update(time) {
+    if (this.finished) {
+      return true;
+    }
+
     if (!this.lastTime) {
       this.lastTime = time;
       return false;
@@ -103,8 +137,10 @@ class AbstractAction {
 
 }
 
-class Sequence {
+class Sequence extends Ticker {
   constructor(actions, repeat, yoyo) {
+    super();
+
     this.actions = actions;
     this.repeat = repeat;
     this.yoyo = yoyo;
@@ -133,6 +169,11 @@ class Sequence {
     }
   }
   update(time) {
+    // console.log(time)
+    if (this.finished) {
+      return true;
+    }
+
     const action = this.actions[this.position];
     const finished = action.update(time);
 
@@ -169,8 +210,10 @@ class Sequence {
     return false;
   }
 }
-class Parallel {
+class Parallel extends Ticker {
   constructor(actions, repeat, yoyo) {
+    super();
+
     this.actions = actions;
     this.repeat = repeat;
     this.yoyo = yoyo;
@@ -201,6 +244,10 @@ class Parallel {
     }
   }
   update(time) {
+    if (this.finished) {
+      return true;
+    }
+
     if (!this.startTime) {
       this.startTime = time;
       return false;
