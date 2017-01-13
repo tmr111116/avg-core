@@ -169,6 +169,9 @@ class Core {
     this.stage._ontap = e => this.post('tap', e);
     this.stage._onclick = e => this.post('click', e);
 
+    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker.add(this.tick.bind(this));
+
     sayHello();
     this._init = true;
   }
@@ -194,6 +197,12 @@ class Core {
     return getTexture(url);
   }
 
+  /**
+   * create a logger for specific name
+   * 
+   * @param {string} name
+   * @return {Logger} logger instance
+   */
   getLogger(name) {
     return Logger.create(name);
   }
@@ -221,16 +230,34 @@ class Core {
     });
   }
 
+  /**
+   * Get ticker of AVG.js render loop
+   */
+  getTicker() {
+    return PIXI.ticker.shared;
+  }
+
+  /**
+   * @private
+   */
   tick() {
     if (this._init) {
       this.renderer.render(this.stage);
     }
-    this.animationRequestId = requestAnimationFrame(this.tick.bind(this));
   }
 
+  /**
+   * start rendering, this must be called if you want to start your game.
+   */
+  start() {
+    this.ticker.start();
+  }
+
+  /**
+   * stop rendering
+   */
   stop() {
-    cancelAnimationFrame(this.animationRequestId);
-    this.animationRequestId = null;
+    this.ticker.stop();
   }
 }
 
