@@ -23,6 +23,7 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiContainer from 'classes/Sprite';
+import pixiPropTypes from './pixi/propTypes';
 
 const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, {
 
@@ -48,11 +49,7 @@ const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, 
 
 export const Container = React.createClass({
   displayName: 'Container',
-  propTypes: {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    children: React.PropTypes.any,
-  },
+  propTypes: pixiPropTypes,
   render() {
     return React.createElement(RawContainer, this.props, this.props.children);
   },

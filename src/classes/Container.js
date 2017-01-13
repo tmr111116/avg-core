@@ -19,8 +19,8 @@
  */
 
 const PIXI = require('pixi.js');
-import { TransitionPlugin } from './Transition/TransitionPlugin';
-import { TransitionFilter } from './Transition/TransitionFilter';
+// import { TransitionPlugin } from './Transition/TransitionPlugin';
+// import { TransitionFilter } from './Transition/TransitionFilter';
 
 /**
  * Class representing a Container.
@@ -35,7 +35,7 @@ class Container extends PIXI.Container {
     super();
     this.zorder = 0;
 
-    this.filters = [new TransitionFilter()];
+    // this.filters = [new TransitionFilter()];
   }
 
     /**
@@ -52,7 +52,7 @@ class Container extends PIXI.Container {
 
 }
 
-TransitionPlugin(Container);
+// TransitionPlugin(Container);
 
 
 export default Container;

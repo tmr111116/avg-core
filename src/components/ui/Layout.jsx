@@ -19,12 +19,12 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-const PIXI = require('pixi.js');
+import core from 'core/core';
 import { Layer } from '../Layer';
-import { Image } from '../Image';
 import { Scroller } from './Scroller';
 import combineProps from 'utils/combineProps';
+
+const PIXI = require('pixi.js');
 
 function getValidValueInRange(min, max, value) {
   return Math.min(Math.max(min, value), max);
@@ -41,6 +41,11 @@ export default class Layout extends React.Component {
     maxHeight: React.PropTypes.number,
     overflowX: React.PropTypes.string,
     overflowY: React.PropTypes.string,
+    scrollerOffsetX: React.PropTypes.number,
+    scrollerOffsetY: React.PropTypes.number,
+    onScroll: React.PropTypes.func,
+    vertical: React.PropTypes.number,
+    horizental: React.PropTypes.number,
     children: React.PropTypes.any,
   }
   static defaultProps = {
@@ -52,29 +57,43 @@ export default class Layout extends React.Component {
     overflowX: 'scroll',
     overflowY: 'scroll',
     scrollStyle: {},
+    scrollerOffsetX: 10,
+    scrollerOffsetY: 10,
+    onScroll: null
   }
-  state = {
-    width: null,
-    height: null,
-    innerX: 0,
-    innerY: 0,
-    childPositions: [],
+  constructor(props) {
+    super(props);
+
+    this.handleWheel = this.handleWheel.bind(this);
+    this.handleTouchStart = this.handleTouchStart.bind(this);
+    this.handleTouchMove = this.handleTouchMove.bind(this);
+    this.handleTouchEnd = this.handleTouchEnd.bind(this);
+    this.scrollDragV = this.scrollDragV.bind(this);
+    this.scrollDragH = this.scrollDragH.bind(this);
+
+    this.state = {
+      width: null,
+      height: null,
+      innerX: 0,
+      innerY: 0,
+      childPositions: [],
+    };
   }
   componentDidMount() {
     let maxWidth = 0;
     let maxHeight = 0;
-    const refs = Object.keys(this.refs);
+    const refs = Object.keys(this.children);
     let count = refs.length;
     for (let ref of refs) {
-      const child = this.refs[ref];
+      const child = this.children[ref];
       const node = child._reactInternalInstance._mountImage;
-      if (!node.texture || node.texture === PIXI.Texture.EMPTY) {
+      if (!node.texture || node.texture === PIXI.Texture.EMPTY || node.texture.valid) {
         const bound = node.getBounds();
         maxWidth = Math.max(maxWidth, bound.width);
         maxHeight = Math.max(maxHeight, bound.height);
         count--;
         if (count <= 0) {
-          this.applyLayout(maxWidth, maxHeight);
+          this.applyLayout(this.props.maxWidth || maxWidth, this.props.maxHeight || maxHeight);
         }
       } else {
         node.texture.on('update', i => {
@@ -83,15 +102,15 @@ export default class Layout extends React.Component {
           maxHeight = Math.max(maxHeight, bound.height);
           count--;
           if (count <= 0) {
-            this.applyLayout(maxWidth, maxHeight);
+            this.applyLayout(this.props.maxWidth || maxWidth, this.props.maxHeight || maxHeight);
           }
         });
       }
     }
   }
-  // componentDidUpdate() {
-  //   console.log(111)
-  // }
+  componentWillUnmount() {
+    core.getRenderer().view.removeEventListener('wheel', this.handleWheel, true);
+  }
   applyLayout(maxWidth, maxHeight) {
     const paddingLeft   = this.props.padding[0],
           paddingTop    = this.props.padding[1],
@@ -104,23 +123,23 @@ export default class Layout extends React.Component {
     let lastBottom = paddingTop;
     let lastRight  = paddingLeft;
 
-    const refs = Object.keys(this.refs);
+    const refs = Object.keys(this.children);
     let count = refs.length;
     const childPositions = [];
     for (let ref of refs) {
-      const child = this.refs[ref];
+      const child = this.children[ref];
       const node = child._reactInternalInstance._mountImage;
       const bound = node.getBounds();
 
       if (direction === 'vertical') {
-        childPositions.push(lastRight + (maxWidth - bound.width) * baseline);
-        childPositions.push(lastBottom);
+        childPositions.push(lastRight + (maxWidth - bound.width) * baseline + bound.width * node.anchor.x);
+        childPositions.push(lastBottom + bound.height * node.anchor.y);
         // node.x = lastRight + (maxWidth - node.width) * baseline;
         // node.y = lastBottom;
         lastBottom += interval + bound.height;
       } else {
-        childPositions.push(lastRight);
-        childPositions.push(lastBottom + (maxHeight - bound.height) * baseline);
+        childPositions.push(lastRight + bound.width * node.anchor.x);
+        childPositions.push(lastBottom + (maxHeight - bound.height) * baseline + bound.height * node.anchor.y);
         // node.x = lastRight;
         // node.y = lastBottom + (maxHeight - node.height) * baseline;
         lastRight += interval + bound.width;
@@ -131,31 +150,30 @@ export default class Layout extends React.Component {
       this.setState({
         width: paddingLeft + maxWidth + paddingRight,
         height: lastBottom - interval + paddingBottom,
-        childPositions: childPositions
-      });
+        childPositions,
+      }, () => this.drawScrollBar());
 
     } else {
       this.setState({
         width: lastRight - interval + paddingRight,
         height: paddingTop + maxHeight + paddingBottom,
-        childPositions: childPositions
-      });
+        childPositions,
+      }, () => this.drawScrollBar());
     }
 
-    PIXI.currentRenderer.view.addEventListener('wheel', evt => {
-      const point = new PIXI.Point(evt.offsetX, evt.offsetY);
-      if (this._reactInternalInstance._mountImage.containsPoint(point)) {
-        this.tempScrollHandler({
-          deltaX: evt.deltaX,
-          deltaY: evt.deltaY,
-          deltaZ: evt.deltaZ,
-        });
-        evt.preventDefault();
-        evt.stopPropagation();
-      }
-    }, true);
-
-    this.drawScrollBar();
+    core.getRenderer().view.addEventListener('wheel', this.handleWheel, true);
+  }
+  handleWheel(evt) {
+    const point = new PIXI.Point(evt.offsetX, evt.offsetY);
+    if (this._reactInternalInstance._mountImage.containsPoint(point)) {
+      this.tempScrollHandler({
+        deltaX: evt.deltaX,
+        deltaY: evt.deltaY,
+        deltaZ: evt.deltaZ,
+      });
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
   }
   tempScrollHandler(e) {
     // const deltaX = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0;
@@ -177,18 +195,30 @@ export default class Layout extends React.Component {
     const maxWidth = this.props.maxWidth || this.state.width;
     const maxHeight = this.props.maxHeight || this.state.height;
 
-    const innerX = getValidValueInRange(maxWidth - this.state.width, 0, x);
-    const innerY = getValidValueInRange(maxHeight - this.state.height, 0, y);
+    let innerX = getValidValueInRange(maxWidth - this.state.width, 0, x);
+    let innerY = getValidValueInRange(maxHeight - this.state.height, 0, y);
 
     let posV, posH;
     posV = Math.min(1, Math.abs(innerY) / (this.state.height - this.props.maxHeight));
     posH = Math.min(1, Math.abs(innerX) / (this.state.width - this.props.maxWidth));
 
+    this.props.onScroll && this.props.onScroll({
+      vertical: posV,
+      horizental: posH
+    });
+
+    if (this.props.vertical) {
+      innerY = - (this.state.height - this.props.maxHeight) * this.props.vertical
+    }
+    if (this.props.horizental) {
+      innerX = - (this.state.width - this.props.maxWidth) * this.props.horizental
+    }
+
     this.setState({
       innerX: this.props.overflowX === 'scroll' ? innerX : 0,
       innerY: this.props.overflowY === 'scroll' ? innerY : 0,
-      scrollButtonPosV: posV,
-      scrollButtonPosH: posH,
+      scrollButtonPosV: this.props.vertical || posV,
+      scrollButtonPosH: this.props.horizental || posH,
     });
   }
   drawScrollBar() {
@@ -234,8 +264,13 @@ export default class Layout extends React.Component {
     this.tempScrollHandler({ deltaX: e.deltaX * this.state.width, deltaY: 0 });
   }
   handleTouchStart(e) {
+    if (this.state.scrolling) {
+      clearInterval(this.state.scrollId);
+    }
     this.setState({
       touching: true,
+      scrolling: false,
+      touchStartTime: Date.now(),
       touchX: e.local.x,
       touchY: e.local.y,
       originX: this.state.innerX,
@@ -251,6 +286,35 @@ export default class Layout extends React.Component {
       e.stopPropagation();
     }
   }
+  handleTouchEnd(e) {
+    // calculate speed, acceleration
+    const time = Date.now() - this.state.touchStartTime;
+    let speedX = (this.state.innerX - this.state.originX) / time;
+    let speedY = (this.state.innerY - this.state.originY) / time;
+
+    if (Math.abs(speedY) > 0.2) {
+      const id = setInterval(() => {
+        this.tempScrollHandler({ y: this.state.innerY + (speedY * 33) });
+        const speedY2 = speedY - (0.0013 * 33) * Math.sign(speedY);
+        if (Math.sign(speedY) !== Math.sign(speedY2) || (Math.sign(speedY2) === 0)) {
+          clearInterval(id);
+        } else {
+          speedY = speedY2;
+        }
+      }, 33);
+
+      this.setState({
+        touching: false,
+        scrolling: true,
+        scrollId: id,
+      });
+    } else {
+      this.setState({
+        touching: false,
+      });
+    }
+  }
+  children = [];
   render() {
     const {
       backgroundColor,
@@ -258,7 +322,7 @@ export default class Layout extends React.Component {
       backgroundWidth,
       buttonColor,
       buttonAlpha,
-      buttonWidth
+      buttonWidth,
     } = {
       backgroundColor: 0xffffff,
       backgroundAlpha: 0.6,
@@ -266,21 +330,26 @@ export default class Layout extends React.Component {
       buttonColor: 0xffffff,
       buttonAlpha: 1,
       buttonWidth: 6,
-      ...this.props.scrollStyle
-    }
+      ...this.props.scrollStyle,
+    };
+    this.children = [];
     return (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         ref={node => this.node = node}
         width={this.props.maxWidth || this.state.width}
         height={this.props.maxHeight || this.state.height}
-        onTouchStart={::this.handleTouchStart}
-        onTouchMove={::this.handleTouchMove}>
-        <Layer x={this.state.innerX} y={this.state.innerY}
-          width={this.state.width} height={this.state.height}>
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        onTouchEnd={this.handleTouchEnd}
+      >
+        <Layer
+          x={this.state.innerX} y={this.state.innerY}
+          width={this.state.width} height={this.state.height}
+        >
           {React.Children.map(this.props.children, (element, index) => {
             return React.cloneElement(element,
               {
-                ref: index,
+                ref: (arg) => { element.ref && element.ref(arg); this.children[index] = arg; },
                 key: index,
                 x: this.state.childPositions[index * 2],
                 y: this.state.childPositions[index * 2 + 1],
@@ -290,8 +359,8 @@ export default class Layout extends React.Component {
         <Scroller backgroundColor={backgroundColor}
                   backgroundAlpha={backgroundAlpha}
                   backgroundWidth={backgroundWidth}
-                  backgroundHeight={this.state.scrollBackHeightV}
-                  x={this.state.scrollXV} y={this.state.scrollYV}
+                  backgroundHeight={this.state.scrollBackHeightV - this.props.scrollerOffsetY}
+                  x={this.state.scrollXV - this.props.scrollerOffsetX} y={this.state.scrollYV}
                   visible={this.state.scrollVisibleV}
                   direction='vertical'
                   buttonWidth={buttonWidth}
@@ -299,7 +368,7 @@ export default class Layout extends React.Component {
                   buttonAlpha={this.state.scrollButtonAlphaV || buttonAlpha}
                   buttonLength={this.state.scrollButtonLengthV}
                   buttonPosition={this.state.scrollButtonPosV} key='scrollV'
-                  onDrag={::this.scrollDragV}
+                  onDrag={this.scrollDragV}
                   onMouseover={() => this.setState({ scrollButtonAlphaV: 1 })}
                   onMouseout={() => this.setState({ scrollButtonAlphaV: buttonAlpha})}
                   onTouchStart={() => this.setState({ scrollButtonAlphaV: 1 })}
@@ -307,9 +376,9 @@ export default class Layout extends React.Component {
                   onTouchEndOutside={() => this.setState({ scrollButtonAlphaV: buttonAlpha})} />
         <Scroller backgroundColor={backgroundColor}
                   backgroundAlpha={backgroundAlpha}
-                  backgroundWidth={this.state.scrollBackWidthH}
+                  backgroundWidth={this.state.scrollBackWidthH - this.props.scrollerOffsetX}
                   backgroundHeight={backgroundWidth}
-                  x={this.state.scrollXH} y={this.state.scrollYH}
+                  x={this.state.scrollXH} y={this.state.scrollYH - this.props.scrollerOffsetY}
                   visible={this.state.scrollVisibleH}
                   direction='horizental'
                   buttonWidth={buttonWidth}
@@ -317,7 +386,7 @@ export default class Layout extends React.Component {
                   buttonAlpha={this.state.scrollButtonAlphaH || buttonAlpha}
                   buttonLength={this.state.scrollButtonLengthH}
                   buttonPosition={this.state.scrollButtonPosH} key='scrollH'
-                  onDrag={::this.scrollDragH}
+                  onDrag={this.scrollDragH}
                   onMouseover={() => this.setState({ scrollButtonAlphaH: 1 })}
                   onMouseout={() => this.setState({ scrollButtonAlphaH: buttonAlpha})}
                   onTouchStart={() => this.setState({ scrollButtonAlphaH: 1 })}
@@ -326,7 +395,7 @@ export default class Layout extends React.Component {
         <Layer visible={this.state.scrollVisibleV && this.state.scrollVisibleH}
                width={backgroundWidth}
                height={backgroundWidth}
-               x={this.state.scrollXV} y={this.state.scrollYH}
+               x={this.state.scrollXV - this.props.scrollerOffsetX} y={this.state.scrollYH - this.props.scrollerOffsetY}
                fillColor={backgroundColor} fillAlpha={backgroundAlpha} />
       </Layer>
     );

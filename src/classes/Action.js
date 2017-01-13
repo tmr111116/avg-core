@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-import ErrorHandler from './ErrorHandler';
-
 import MoveByAction from './Actions/MoveByAction';
 import MoveToAction from './Actions/MoveToAction';
 import FadeToAction from './Actions/FadeToAction';

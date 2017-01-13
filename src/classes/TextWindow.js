@@ -19,9 +19,9 @@
  */
 
 const PIXI = require('pixi.js');
-import { TransitionPlugin } from './Transition/TransitionPlugin'
-import { TransitionFilter } from './Transition/TransitionFilter'
-import { getTexture } from 'classes/Preloader';
+// import { TransitionPlugin } from './Transition/TransitionPlugin'
+// import { TransitionFilter } from './Transition/TransitionFilter'
+import core from 'core/core';
 
 /**
  * Class representing a TextWindow. <br>
@@ -34,7 +34,7 @@ class TextWindow extends PIXI.Container {
     this.visible = false;
     this.zorder = 50;
 
-    this.filters = [new TransitionFilter()];
+    // this.filters = [new TransitionFilter()];
 
     // text layer
     this.textCanvas = document.createElement('canvas');
@@ -76,6 +76,8 @@ class TextWindow extends PIXI.Container {
     this.resolution = 1;
 
     this.textSprite = new PIXI.Sprite(this.textTexture);
+    this.textSprite.x = this.textRectangle[0];
+    this.textSprite.y = this.textRectangle[1];
 
     this.addChildAt(this.textSprite, this.children.length);
   }
@@ -101,7 +103,7 @@ class TextWindow extends PIXI.Container {
     this.removeChild(this.background);
     this.background && this.background.destroy();
     if (filename) {
-      this.background = new PIXI.Sprite(getTexture(filename));
+      this.background = new PIXI.Sprite(core.getTexture(filename));
       this.addChildAt(this.background, 0);
     } else {
       this.background = null;
@@ -158,6 +160,8 @@ class TextWindow extends PIXI.Container {
      */
   setTextRectangle(rect) {
     this.textRectangle = rect;
+    this.textSprite.x = this.textRectangle[0];
+    this.textSprite.y = this.textRectangle[1];
     this.initTextRender(true);
   }
 
@@ -340,7 +344,7 @@ class TextWindow extends PIXI.Container {
      * @method newline
      */
   newline() {
-    this.m_currentTextWidth = this.textRectangle[0];
+    this.m_currentTextWidth = 0;
     this.m_currentTextHeight += this.style.size * this.resolution + this.style.yInterval * this.resolution;
   }
 
@@ -369,6 +373,10 @@ class TextWindow extends PIXI.Container {
 
   completeText() {
     this.m_lastTime = -99999999;
+    if (this.textRendering) {
+      return this.wait();
+    }
+    return null;
   }
 
     /**
@@ -412,8 +420,8 @@ class TextWindow extends PIXI.Container {
 
     if (clear) {
       this.textIndex = 0;
-      this.m_currentTextWidth = this.textRectangle[0] * this.resolution;
-      this.m_currentTextHeight = this.textRectangle[1] * this.resolution;
+      this.m_currentTextWidth = 0;
+      this.m_currentTextHeight = 0;
     }
   }
 
@@ -441,7 +449,17 @@ class TextWindow extends PIXI.Container {
       this.textCursor.visible = false;
 
     for (let i = this.textIndex; i < this.textIndex + count; i++) {
-      const character = this.text[i];
+      let character;
+      if (this.text.codePointAt(i) > 0xFFFF) {
+        character = this.text.at(i);
+        i++;
+        // if the last character is a emoji or ext-hanzi, must avoid it be cut.
+        if (i === this.textIndex + count) {
+          count++;
+        }
+      } else {
+        character = this.text[i];
+      }
       if (character === '\n') {
         this.newline();
         continue;
@@ -451,9 +469,8 @@ class TextWindow extends PIXI.Container {
       if (this.style.stroke) this.textContext.strokeText(character, this.m_currentTextWidth, this.m_currentTextHeight);
       const width = this.textContext.measureText(character).width;   // 字号已经*this.resolution，无需再乘
       this.m_currentTextWidth += width + this.style.xInterval * this.resolution;
-      if (this.m_currentTextWidth + width >= this.textRectangle[2] * this.resolution)
-            {
-        this.m_currentTextWidth = this.textRectangle[0];
+      if (this.m_currentTextWidth + width >= this.textRectangle[2] * this.resolution) {
+        this.m_currentTextWidth = 0;
         this.m_currentTextHeight += this.style.size * this.resolution + this.style.yInterval * this.resolution;
       }
     }
@@ -500,16 +517,31 @@ class TextWindow extends PIXI.Container {
   }
 
   wait() {
-    return new Promise((resolve, reject) => {
-      this.m_resolve = resolve;
-    });
+    if (!this.m_promise) {
+      this.m_promise = new Promise((resolve, reject) => {
+        this.m_resolve = resolve;
+      })
+      .then(() => this.m_promise = null);
+    }
+    return this.m_promise;
   }
 
   removeChildren() {
     super.removeChildren();
-    this.addChild(this.background);
-    this.addChild(this.textSprite);
-    this.addChild(this.textCursor);
+
+    /**
+     * It is a bit confusing.
+     * When .destroy() was called, it will call .removeChildren()
+     * because of the implement of Container.destory(),
+     * but that time `this.background` had been destroyed, so .addChild() will throw an error.
+     * 
+     * TODO: find reason
+     */
+    try {
+      this.addChild(this.background);
+      this.addChild(this.textSprite);
+      this.addChild(this.textCursor);
+    } catch (e) {}
   }
 
     // addChild(...args) {
@@ -525,7 +557,7 @@ class TextWindow extends PIXI.Container {
 
 }
 
-TransitionPlugin(TextWindow);
+// TransitionPlugin(TextWindow);
 
 function clone(origin) {
   const originProto = Object.getPrototypeOf(origin);

@@ -29,61 +29,84 @@ export class FGImage extends React.Component {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
   };
-  state = {
-    left: null,
-    center: null,
-    right: null,
-  };
-  componentDidMount() {
-    core.use('script-exec', async (ctx, next) => {
-      if (ctx.command === 'fg') {
-        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
-          const { command, flags, params } = ctx;
-          this.setState(params);
-          let positions = [];
-          if (flags.includes('left')) {
-            positions.push('left');
-          }
-          if (flags.includes('right')) {
-            positions.push('right');
-          }
-          if (flags.includes('center') || !positions.length) {
-            positions.push('center');
-          }
+  constructor(props) {
+    super(props);
 
-          const state = {};
-          if (flags.includes('clear')) {
-            positions.map(pos => state[pos] = null);
-          } else {
-            state[positions[0]] = params.file;
-          }
-          this.setState(state);
-          await next();
-        })(ctx, next);
-      } else {
-        await next();
-      }
-    });
-    core.use('save-achieve', async (ctx, next) => {
-      ctx.data.fgimage = Object.assign({}, this.state);
+    this.execute = this.execute.bind(this);
+    this.handleScriptExec = this.handleScriptExec.bind(this);
+    this.handleArchiveSave = this.handleArchiveSave.bind(this);
+    this.handleArchiveLoad = this.handleArchiveLoad.bind(this);
+
+    this.transitionHandler = null;
+
+    this.state = {
+      left: null,
+      center: null,
+      right: null,
+    };
+  }
+  componentDidMount() {
+    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, this.execute);
+    core.use('script-exec', this.handleScriptExec);
+    core.use('save-archive', this.handleArchiveSave);
+    core.use('load-archive', this.handleArchiveLoad);
+  }
+  componentWillUnmount() {
+    core.unuse('script-exec', this.handleScriptExec);
+    core.unuse('save-archive', this.handleArchiveSave);
+    core.unuse('load-archive', this.handleArchiveLoad);
+  }
+  async execute(ctx, next) {
+    const { command, flags, params } = ctx;
+    this.setState(params);
+    const positions = [];
+    if (flags.includes('left')) {
+      positions.push('left');
+    }
+    if (flags.includes('right')) {
+      positions.push('right');
+    }
+    if (flags.includes('center') || !positions.length) {
+      positions.push('center');
+    }
+
+    const state = {};
+    if (flags.includes('clear')) {
+      positions.map(pos => state[pos] = null);
+    } else {
+      state[positions[0]] = params.file;
+    }
+    this.setState(state);
+    await next();
+  }
+  async handleScriptExec(ctx, next) {
+    if (ctx.command === 'fg') {
+      await this.transitionHandler(ctx, next);
+    } else {
       await next();
+    }
+  }
+  async handleArchiveSave(ctx, next) {
+    ctx.data.fgimage = Object.assign({}, this.state);
+    await next();
+  }
+  async handleArchiveLoad(ctx, next) {
+    this.setState({
+      left: null,
+      center: null,
+      right: null,
+      ...ctx.data.fgimage
     });
-    core.use('load-achieve', async (ctx, next) => {
-      this.setState({
-        left: null,
-        center: null,
-        right: null,
-        ...ctx.data.fgimage
-      });
-      await next();
-    });
+    await next();
   }
   render() {
+    const width = this.props.width;
+    const height = this.props.height;
     return (
-      <Layer ref={node => this.node = node}>
-        {this.state.center ? <Image file={this.state.center} x={this.props.width * 0.5} y={this.props.height} anchor={[0.5, 1]} key="center" /> : null}
-        {this.state.left ? <Image file={this.state.left} x={this.props.width * 0.25} y={this.props.height} anchor={[0.5, 1]} key="left" /> : null}
-        {this.state.right ? <Image file={this.state.right} x={this.props.width * 0.75} y={this.props.height} anchor={[0.5, 1]} key="right" /> : null}
+      <Layer>
+        {this.state.center ? <Image src={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key="center" /> : null}
+        {this.state.left ? <Image src={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key="left" /> : null}
+        {this.state.right ? <Image src={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key="right" /> : null}
       </Layer>
     );
   }

@@ -18,26 +18,43 @@
  * limitations under the License.
  */
 
-export default class Flow {
-  constructor(text) {
-    this.text = text;
+import core from 'core/core';
+
+class Flow {
+  constructor() {
+    this.initialed = false;
+
+    core.use('flow-init', this.init.bind(this));
   }
-  execute(params, flags, name) {
-    if (flags.includes('wait')) {
-      return {
-        waitClick: false,
-        promise: new Promise((resolve, reject) => {
-          setTimeout(resolve, params.time || 0);
-        }),
-      };
-    } else {
-      return {
-        waitClick: false,
-        promise: Promise.resolve(),
-      };
+  async init(ctx, next) {
+    if (!this.initialed) {
+      core.use('script-exec', this.exec.bind(this));
+      this.initialed = true;
     }
   }
-  reset() {}
-  getData() {}
-  setData() {}
+  /**
+  * Supply flow-control commands:
+  * `wait`: Prevents script execution for some time. ex.`[flow wait time=1000]`
+  *
+  * @method exec
+  * @param  {object}   ctx  middleware context
+  * @param  {Function} next execute next middleware
+  * @return {Promise}
+  */
+  async exec(ctx, next) {
+    const { command, flags, params } = ctx;
+    if (command === 'flow') {
+      if (flags.includes('wait') && !flags.includes('_skip_')) {
+        await new Promise((resolve, reject) => {
+          setTimeout(resolve, params.time || 0);
+        });
+      }
+    } else {
+      await next();
+    }
+  }
 }
+
+const flow = new Flow();
+
+export default flow;

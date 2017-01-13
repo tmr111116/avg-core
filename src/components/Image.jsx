@@ -19,12 +19,13 @@
  */
 
 import React from 'react';
+import equal from 'deep-equal';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
-
-import equal from 'deep-equal';
+import pixiPropTypes from './pixi/propTypes';
+import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
 
 const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
@@ -32,19 +33,15 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
     this.node = new Sprite();
   },
   mountNode(props) {
-    const layer = this.node;
-    layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
-    return layer;
+    const node = this.node;
+    setValue.call(node, 'rectangle', props.rectangle);
+    mountNode(node, props);
+    return node;
   },
   updateNode(prevProps, props) {
-    const layer = this.node;
-    if (prevProps.file !== props.file || !equal(prevProps.rect, props.rect)) {
-      layer.setFile(props.file).setRect(props.rect).setAnchor(props.anchor).execSync();
-    }
-    layer.x = props.x || 0;
-    layer.y = props.y || 0;
+    const node = this.node;
+    updateValue.call(node, 'rectangle', prevProps.rectangle, props.rectangle);
+    updateNode(node, prevProps, props);
   },
 
 });
@@ -52,11 +49,10 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 export const Image = React.createClass({
   displayName: 'Image',
   propTypes: {
-    file: React.PropTypes.string.isRequired,
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
+    file: React.PropTypes.string,
+    dataUri: React.PropTypes.string,
     rect: React.PropTypes.arrayOf(React.PropTypes.number),
-    children: React.PropTypes.any,
+    ...pixiPropTypes,
   },
   render() {
     return React.createElement(RawImage, this.props, this.props.children);

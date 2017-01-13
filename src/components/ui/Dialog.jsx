@@ -19,10 +19,11 @@
  */
 
 import React from 'react';
-const PIXI = require('pixi.js');
+import core from 'core/core';
 import { Layer } from '../Layer';
-import { Image } from '../Image';
 import combineProps from 'utils/combineProps';
+
+const PIXI = require('pixi.js');
 
 function getValidValueInRange(min, max, value) {
   return Math.min(Math.max(min, value), max);
@@ -42,10 +43,18 @@ export default class Dialog extends React.Component {
     dragable: false,
     dragArea: [0, 0, Infinity, Infinity],
   }
-  state = {
-    clicked: false,
-    x: this.props.x || 0,
-    y: this.props.y || 0,
+  constructor(props) {
+    super(props);
+
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+
+    this.state = {
+      clicked: false,
+      x: this.props.x || 0,
+      y: this.props.y || 0,
+    };
   }
   handleMouseDown(e) {
     const [left, top, right, bottom] = this.props.dragArea;
@@ -71,12 +80,13 @@ export default class Dialog extends React.Component {
   }
   handleMouseMove(e) {
     if (this.state.clicked) {
+      const renderer = core.getRenderer();
       const state = this.state;
       const xMin = this.props.width * (0 + this.props.anchor[0] || 0);
-      const xMax = PIXI.currentRenderer.width - this.props.width * (1 - this.props.anchor[0] || 0);
+      const xMax = renderer.width - this.props.width * (1 - this.props.anchor[0] || 0);
       const x = state.startX + (e.global.x - state.startGlobalX);
       const yMin = this.props.height * (0 + this.props.anchor[1] || 0);
-      const yMax = PIXI.currentRenderer.height - this.props.height * (1 - this.props.anchor[1] || 0);
+      const yMax = renderer.height - this.props.height * (1 - this.props.anchor[1] || 0);
       const y = state.startY + (e.global.y - state.startGlobalY);
       this.setState({
         x: getValidValueInRange(xMin, xMax, x),
@@ -89,10 +99,11 @@ export default class Dialog extends React.Component {
     const core =  (
       <Layer {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
-        onMouseDown={::this.handleMouseDown} onMouseUp={::this.handleMouseUp}
-        onMouseMove={::this.handleMouseMove}
-        onTouchStart={::this.handleMouseDown} onTouchEnd={::this.handleMouseUp}
-        onTouchMove={::this.handleMouseMove}>
+        onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp} onMouseUpOutside={this.handleMouseUp}
+        onMouseMove={this.handleMouseMove} onClick={(e) => e.stopPropagation()}
+        onTouchStart={this.handleMouseDown} onTouchEnd={this.handleMouseUp} onTouchEndOutside={this.handleMouseUp}
+        onTouchMove={this.handleMouseMove} onTap={(e) => e.stopPropagation()}
+      >
         {this.props.children}
       </Layer>
     );

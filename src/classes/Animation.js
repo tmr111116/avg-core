@@ -18,11 +18,13 @@
  * limitations under the License.
  */
 
-var PIXI = require('pixi.js');
-var Err = require('./ErrorHandler');
+import core from 'core/core';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
-import { getTexture } from 'classes/Preloader';
+
+const PIXI = require('pixi.js');
+
+const logger = core.getLogger('Animation');
 
 @TransitionPlugin
 class Animation extends PIXI.Sprite {
@@ -98,7 +100,7 @@ class Animation extends PIXI.Sprite {
 
   exec(){
     if(!this.index || !this.filename){
-      Err.error('参数不足');
+      logger.error('Lack of parameters.');
       return;
     }
 
@@ -221,7 +223,7 @@ class Animation extends PIXI.Sprite {
 
 
   static loadHorizontal(file,frame,row=1){
-    let tex = getTexture(file);
+    let tex = core.getTexture(file);
     let textures = [];
     tex.update();
     let deltaX = tex.width/frame;
@@ -232,7 +234,7 @@ class Animation extends PIXI.Sprite {
     return textures;
   }
   static loadVertical(file,frame,column=1){
-    let tex = getTexture(file);
+    let tex = core.getTexture(file);
     let textures = [];
     let deltaX = tex.width/column;
     let deltaY = tex.height/frame;
@@ -244,7 +246,7 @@ class Animation extends PIXI.Sprite {
   static loadMultifiles(files){
     let textures = [];
     for (var i = 0; i < files.length; i++) {
-      let tex = getTexture(files[i]);
+      let tex = core.getTexture(files[i]);
       textures.push(tex);
     };
     return textures;

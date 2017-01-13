@@ -19,8 +19,19 @@
  */
 
 import compose from 'koa-compose';
+import FontFaceObserver from 'fontfaceobserver';
 import { render as renderReact } from 'react-dom';
+import Container from 'classes/Container';
+import { attachToSprite } from 'classes/EventManager';
 import sayHello from 'utils/sayHello';
+import fitWindow from 'utils/fitWindow';
+import Logger from './logger';
+
+import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
+
+const PIXI = require('pixi.js');
+
+const logger = Logger.create('Core');
 
 /**
  * Core of AVG.js, you can start your game development from here.
@@ -38,6 +49,10 @@ class Core {
      */
     this._init = false;
 
+    this.renderer = null;
+    this.stage = null;
+    this.canvas = null;
+
     /**
      * Currently used middleware
      * @member {object<string, function[]>}
@@ -46,6 +61,7 @@ class Core {
      */
     this.middlewares = {};
 
+    this.assetsPath = null;
   }
 
   /**
@@ -67,23 +83,133 @@ class Core {
   }
 
   /**
+   * uninstall a middleware.
+   *
+   * @param {string} name signal name
+   * @param {function} middleware instance of middleware
+   * @see AVG.core.Middleware
+   */
+  unuse(name, middleware) {
+    const middlewares = this.middlewares[name];
+    if (middlewares) {
+      const pos = middlewares.indexOf(middleware);
+      if (pos !== -1) {
+        middlewares.splice(pos, 1);
+      } else {
+        logger.warn(`Do not find the given middleware in ${name}.`);
+      }
+    } else {
+      logger.warn(`Do not find the given middleware in ${name}.`);
+    }
+  }
+
+  /**
    * send a signal to core
    *
    * @param {string} name signal name
    * @param {object} [context={}] context to process
    * @return {promise}
    */
-  post(name, context) {
+  post(name, context, next) {
     const middlewares = this.middlewares[name];
     if (middlewares) {
-      return compose(middlewares)(context);
+      return compose(middlewares)(context || {}, next);
     }
     return Promise.resolve();
   }
 
-  init() {
+  /**
+   * Initial AVG.js core functions
+   * 
+   * @param {number} width width of screen
+   * @param {number} height height of screen
+   * @param {object} [options]
+   * @param {HTMLCanvasElement} [options.view] custom canvas element
+   * @param {PIXI.WebGLRenderer} [options.renderer] custom renderer
+   * @param {string|array<string>} [options.fontFamily] load custom web-font
+   * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
+   * @param {string} [options.assetsPath='assets'] assets path
+   */
+  async init(width, height, _options = {}) {
+    const options = {
+      fitWindow: false,
+      assetsPath: '/',
+      ..._options,
+    };
+
+    if (options.fontFamily) {
+      const font = new FontFaceObserver(options.fontFamily);
+      await font.load();
+    }
+
+    if (options.renderer) {
+      this.renderer = options.renderer;
+    } else {
+      /* create PIXI renderer */
+      this.renderer = new PIXI.WebGLRenderer(width, height, {
+        view: options.view,
+        autoResize: true,
+        roundPixels: true,
+      });
+    }
+
+    if (options.fitWindow) {
+      fitWindow(this.renderer, window.innerWidth, window.innerHeight);
+    }
+
+    let assetsPath = options.assetsPath;
+    if (!assetsPath.endsWith('/')) {
+      assetsPath += '/';
+    }
+    this.assetsPath = assetsPath;
+    preloaderInit(assetsPath);
+
+    this.stage = new Container();
+    attachToSprite(this.stage);
+    this.stage._ontap = e => this.post('tap', e);
+    this.stage._onclick = e => this.post('click', e);
+
+    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker.add(this.tick.bind(this));
+
     sayHello();
     this._init = true;
+  }
+
+  getRenderer() {
+    if (this._init) {
+      return this.renderer;
+    }
+    logger.error('Renderer hasn\'t been initialed.');
+    return null;
+  }
+  getStage() {
+    if (this._init) {
+      return this.stage;
+    }
+    logger.error('Stage hasn\'t been initialed.');
+    return null;
+  }
+  getAssetsPath() {
+    return this.assetsPath;
+  }
+  getTexture(url) {
+    return getTexture(url);
+  }
+
+  /**
+   * create a logger for specific name
+   * 
+   * @param {string} name
+   * @return {Logger} logger instance
+   */
+  getLogger(name) {
+    return Logger.create(name);
+  }
+
+  // TODO: need more elegent code
+  loadAssets(list) {
+    return loadResources(list);
   }
 
   /**
@@ -93,13 +219,45 @@ class Core {
    * @param {HTMLDOMElement} target
    * @return {Promise}
    */
-  render(component, target) {
+  async render(component, target, append = true) {
     if (!this._init) {
-      this.init();
+      throw 'not initialed';
     }
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve) => {
       renderReact(component, target, resolve);
+    }).then(() => {
+      append && target.appendChild(this.renderer.view);
     });
+  }
+
+  /**
+   * Get ticker of AVG.js render loop
+   */
+  getTicker() {
+    return PIXI.ticker.shared;
+  }
+
+  /**
+   * @private
+   */
+  tick() {
+    if (this._init) {
+      this.renderer.render(this.stage);
+    }
+  }
+
+  /**
+   * start rendering, this must be called if you want to start your game.
+   */
+  start() {
+    this.ticker.start();
+  }
+
+  /**
+   * stop rendering
+   */
+  stop() {
+    this.ticker.stop();
   }
 }
 

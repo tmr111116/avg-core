@@ -1,5 +1,5 @@
 /**
- * @file        Text sprite class
+ * @file        logger
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,27 +18,34 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
-
-/**
- * Class representing a TextSprite. <br>
- * default font style is `normal 24px sans-serif`
- * @extends PIXI.Text
- * @param {string} text The string that you would like the text to display
- * @param {object} style The style parameters, see http://pixijs.download/v4.2.3/docs/PIXI.TextStyle.html
- */
-class TextSprite extends PIXI.Text {
-  constructor(text = '', style = {}) {
-    super(text, {
-      fontFamily: 'sans-serif',
-      fontSize: 24,
-      fill: 0xffffff,
-      ...style,
-    });
-
-    this.m_style = {};
-    this.zorder = 0;
+export default class Logger {
+  constructor(name) {
+    this.name = name;
+    this.isProduction = process && process.env && process.env.NODE_ENV === 'production';
+  }
+  static create(name) {
+    return new Logger(name);
+  }
+  fatal(...args) {
+    console.error(`[${this.name}]`, ...args);
+  }
+  error(...args) {
+    console.error(`[${this.name}]`, ...args);
+  }
+  warn(...args) {
+    console.warn(`[${this.name}]`, ...args);
+  }
+  info(...args) {
+    console.log(`[${this.name}]`, ...args);
+  }
+  debug(...args) {
+    if (!this.isProduction) {
+      console.debug(`[${this.name}]`, ...args);
+    }
+  }
+  trace(...args) {
+    if (!this.isProduction) {
+      console.trace(`[${this.name}]`, ...args);
+    }
   }
 }
-
-module.exports = TextSprite;

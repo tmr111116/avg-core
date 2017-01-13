@@ -2,8 +2,7 @@
 // https://github.com/reactjs/react-art
 
 const React = require('react');
-const ReactMultiChild = require('react/lib/ReactMultiChild');
-const emptyObject = require('fbjs/lib/emptyObject');
+const ReactMultiChild = require('react-dom/lib/ReactMultiChild');
 
 const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
 
@@ -18,6 +17,7 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
     // console.log('move:', child._mountImage.filename, 'to', toIndex);
     const childNode = child._mountImage;
     const layer = this.node;
+    // TODO: wrong implementation
     layer.addChild(childNode);
   },
 

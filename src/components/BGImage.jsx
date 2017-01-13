@@ -27,6 +27,12 @@ export class BGImage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleScriptExec = this.handleScriptExec.bind(this);
+    this.handleArchiveSave = this.handleArchiveSave.bind(this);
+    this.handleArchiveLoad = this.handleArchiveLoad.bind(this);
+
+    this.transitionHandler = null;
+
     this.state = {
       file: null,
       x: 0,
@@ -34,32 +40,42 @@ export class BGImage extends React.Component {
     };
   }
   componentDidMount() {
-    core.use('script-exec', async (ctx, next) => {
-      if (ctx.command === 'bg') {
-        await TransitionPlugin.wrap(this.node, async (ctx, next) => {
-          const { command, flags, params } = ctx;
-          this.setState(params);
-          await next();
-        })(ctx, next);
-      } else {
-        await next();
-      }
-    });
-    core.use('save-achieve', async (ctx, next) => {
-      ctx.data.bgimage = Object.assign({}, this.state);
+    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, async (ctx, next) => {
+      const { command, flags, params } = ctx;
+      this.setState(params);
       await next();
     });
-    core.use('load-achieve', async (ctx, next) => {
-      this.setState({
-        file: null,
-        x: 0,
-        y: 0,
-        ...ctx.data.bgimage
-      });
+    core.use('script-exec', this.handleScriptExec);
+    core.use('save-archive', this.handleArchiveSave);
+    core.use('load-archive', this.handleArchiveLoad);
+  }
+  componentWillUnmount() {
+    core.unuse('script-exec', this.handleScriptExec);
+    core.unuse('save-archive', this.handleArchiveSave);
+    core.unuse('load-archive', this.handleArchiveLoad);
+  }
+  async handleScriptExec(ctx, next) {
+    if (ctx.command === 'bg') {
+      await this.transitionHandler(ctx, next);
+    } else {
       await next();
+    }
+  }
+  async handleArchiveSave(ctx, next) {
+    ctx.data.bgimage = Object.assign({}, this.state);
+    await next();
+  }
+  async handleArchiveLoad(ctx, next) {
+    this.setState({
+      file: null,
+      x: 0,
+      y: 0,
+      ...ctx.data.bgimage
     });
+    await next();
   }
   render() {
-    return <Image file={this.state.file || ''} x={0} y={0} ref={node => this.node = node} />;
+    // TODO: It's weired that if you wrap Image with Layer.
+    return <Image src={this.state.file || ''} x={0} y={0} />;
   }
 }

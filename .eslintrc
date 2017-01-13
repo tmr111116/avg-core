@@ -55,7 +55,7 @@
       }
     }],
     "import/prefer-default-export": "warn",
-    "no-underscore-dangle": ["error", { "allow": ["_reactInternalInstance", "_renderedComponent"] }],
+    "no-underscore-dangle": "off",
     "no-return-assign": "off",
     "no-unused-vars": "warn",
     "no-unused-expressions": ["error", {

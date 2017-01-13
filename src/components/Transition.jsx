@@ -18,10 +18,12 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
 import React from 'react';
+import core from 'core/core';
 import { Container } from 'components/Container';
 import { CrossFadeFilter } from 'classes/Transition/Filters';
+
+const PIXI = require('pixi.js');
 
 export class Transition extends React.Component {
   static propTypes = {
@@ -29,12 +31,12 @@ export class Transition extends React.Component {
   }
   componentWillUpdate() {
     const node = this.node._reactInternalInstance._renderedComponent.node;
-    const renderer = PIXI.currentRenderer;
+    const renderer = core.getRenderer();
     node.prepareTransition(renderer);
   }
   componentDidUpdate() {
     const node = this.node._reactInternalInstance._renderedComponent.node;
-    const renderer = PIXI.currentRenderer;
+    const renderer = core.getRenderer();
     node.startTransition(renderer, new CrossFadeFilter());
   }
   render() {

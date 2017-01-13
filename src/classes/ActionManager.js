@@ -18,9 +18,10 @@
  * limitations under the License.
  */
 
-import ErrorHandler from './ErrorHandler';
-
+import core from 'core/core';
 import Action from './Action';
+
+const logger = core.getLogger('ActionManager');
 
 const topNode = {
   type: 'parallel',
@@ -63,7 +64,7 @@ export function parallel() {
 
 export function end({ target, times = 1 }) {
   if (nodeStack.length === 1) {
-    ErrorHandler.warn('[ActionManager] there\'s no queue to end, ignored.');
+    logger.warn('There\'s no queue to end, ignored.');
     return false;
   }
 

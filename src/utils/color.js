@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-import { ErrorHandler as Err } from 'classes/ErrorHandler';
+import core from 'core/core';
+
+const logger = core.getLogger('ColorUtil');
 
 export default class Color {
   constructor(value) {
@@ -34,7 +36,7 @@ export default class Color {
         this._b = parseInt(value[3] + value[3], 16);
       }
       else {
-        Err.error('该字符串[' + value + ']不能表示一个正确的颜色值');
+        logger.error(`${value} is not a valid color.`);
       }
     }
     else if (typeof value === 'number') {

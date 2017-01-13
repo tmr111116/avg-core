@@ -26,3 +26,4 @@ export * from 'components/Textwindow';
 export * from 'components/BGImage';
 export * from 'components/FGImage';
 export * from 'components/Transition';
+export * from 'components/tween';

@@ -27,7 +27,9 @@ import TextWindow from './TextWindow';
 import {attachToSprite} from './EventManager';
 import { TransitionPlugin } from './Transition/TransitionPlugin';
 import { TransitionFilter } from './Transition/TransitionFilter';
-import Err from './ErrorHandler';
+import core from 'core/core';
+
+const logger = core.getLogger('SpriteManager');
 
 let Sprites = new Map();
 let Renderer = null;
@@ -154,7 +156,7 @@ export function addto(sourceIndex, targetIndex, zorder=0, pos=[0,0], alpha=1) {
     let source = fromIndex(sourceIndex);
     let target = fromIndex(targetIndex);
     if (!source || !target)
-        return Err.warn('[SpriteManager] source or target does not exist, ignored.');
+        return logger.warn('source or target does not exist, ignored.');
     source.x = pos[0];
     source.y = pos[1];
     source.alpha = alpha;
@@ -200,7 +202,7 @@ export function insert(index,sprite){
 export function remove(index, isDelete = true){
     let sp = fromIndex(index);
     if (!sp || !sp.parent)
-        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, or it hasn't been added to screen, ignored.`);
+        return logger.warn(`Sprite<${index}> does not exist, or it hasn't been added to screen, ignored.`);
     sp.parent.removeChild(sp);
     if (isDelete)
         Sprites.remove(index);
@@ -216,7 +218,7 @@ export function remove(index, isDelete = true){
 export function removeAll(index, isDelete = true, isRecursive = true) {
     let parent = fromIndex(index);
     if (!parent)
-        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        return logger.warn(`Sprite<${index}> does not exist, ignored.`);
     removeRecursive(parent, isDelete);
 }
 
@@ -237,7 +239,7 @@ function removeRecursive(children, isDelete, isRecursive){
 export function prepareTransition(index) {
     let sprite = fromIndex(index);
     if (!sprite)
-        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        return logger.warn(`Sprite<${index}> does not exist, ignored.`);
     sprite.prepareTransition(Renderer);
 }
 
@@ -251,7 +253,7 @@ export function prepareTransition(index) {
 export function applyTransition(index, filter) {
     let sprite = fromIndex(index);
     if (!sprite)
-        return Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        return logger.warn(`Sprite<${index}> does not exist, ignored.`);
     return sprite.startTransition(Renderer, filter);
 }
 
@@ -264,7 +266,7 @@ export function applyTransition(index, filter) {
 export function setZorder(index, zorder){
     let sprite = Sprites.get(index);
     if(!sprite)
-        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        logger.warn(`Sprite<${index}> does not exist, ignored.`);
     else{
         if(sprite.zorder!=0 && sprite.zorder===zorder)
             return;
@@ -304,7 +306,7 @@ export function setAnchor(index, anchor) {
 export function animationStart(index) {
     let sprite = fromIndex(index);
     if(!sprite)
-        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        logger.warn(`Sprite<${index}> does not exist, ignored.`);
     else {
         sp.start();
     }
@@ -318,7 +320,7 @@ export function animationStart(index) {
 export function animationStop(index) {
     let sprite = fromIndex(index);
     if(!sprite)
-        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        logger.warn(`Sprite<${index}> does not exist, ignored.`);
     else {
         sp.stop();
     }
@@ -333,7 +335,7 @@ export function animationStop(index) {
 export function animationCell(index, frame) {
     let sprite = fromIndex(index);
     if(!sprite)
-        Err.warn(`[SpriteManager] Sprite<${index}> does not exist, ignored.`);
+        logger.warn(`Sprite<${index}> does not exist, ignored.`);
     else {
         sp.cell(frame);
     }

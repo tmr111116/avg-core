@@ -18,8 +18,11 @@
  * limitations under the License.
  */
 
+import core from 'core/core';
+
 const Howler = require('howler');
-const Err = require('./ErrorHandler');
+
+const logger = core.getLogger('SoundManager');
 
 /* By default, audio on iOS is locked until a sound is played within a user interaction,
 * and then it plays normally the rest of the page session (Apple documentation).
@@ -38,7 +41,7 @@ export function getChannel(index) {
     if (ch)
       resolve(ch);
     else {
-      Err.warn('通道' + channel + '未初始化，请先调用.load()方法');
+      logger.error(`Channel ${ch} hasn't been initialed. Call .load() first.`);
       reject();
     }
   });
@@ -47,7 +50,7 @@ export function getChannel(index) {
 export function setChannel(index, options) {
   return new Promise((resolve, reject) => {
     if (!options.file) {
-      Err.error('[setChannel] file needed in options');
+      logger.error('File needed in option');
     }
 
     options = Object.assign({

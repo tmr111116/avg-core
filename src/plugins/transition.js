@@ -18,9 +18,12 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
 import core from 'core/core';
 import { CrossFadeFilter } from 'classes/Transition/Filters';
+import { TransitionFilter } from 'classes/Transition/TransitionFilter';
+import { TransitionPlugin as installPlugin } from 'classes/Transition/TransitionPlugin';
+
+const logger = core.getLogger('Transition Plugin');
 
 export default class TransitionPlugin {
   constructor(node, method) {
@@ -31,11 +34,27 @@ export default class TransitionPlugin {
     }
     this.method = method;
     this.clickCallback = false;
+    this.unskippable = false;
+
+    let hasTransFilter = false;
+    for (let filter of (this.node.filters || [])) {
+      if (filter instanceof TransitionFilter) {
+        hasTransFilter = true;
+        break;
+      }
+    }
+    if (!hasTransFilter) {
+      this.node.filters = this.node.filters || [];
+      this.node.filters = [...this.node.filters, new TransitionFilter()];
+      installPlugin(this.node);
+      logger.debug('not installed');
+    }
 
     core.use('script-trigger', async (ctx, next) => {
-      if (this.clickCallback) {
+      if (this.clickCallback && !this.unskippable) {
         this.node.completeTransition();
         this.clickCallback = false;
+        this.unskippable = false;
       } else {
         await next();
       }
@@ -46,35 +65,45 @@ export default class TransitionPlugin {
     return wrapped.process.bind(wrapped);
   }
   async process(ctx, next) {
-    let layer = this.node;
-    let method = this.method;
+    const layer = this.node;
+    const method = this.method;
 
     const { flags, params, command } = ctx;
 
+    const isSkip = flags.includes('_skip_');
+
     if (flags.includes('pretrans')) {
-      let renderer = PIXI.currentRenderer;
-      if (layer._transitionStatus !== 'prepare') {
-        layer._transitionStatus = 'prepare';
+      const renderer = core.getRenderer();
+      if (layer.transitionStatus !== 'prepare') {
+        layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
       }
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
       params.trans = params.trans || 'crossfade';
-      let renderer = PIXI.currentRenderer;
-      if (layer._transitionStatus !== 'prepare') {
-        layer._transitionStatus = 'prepare';
+      const renderer = core.getRenderer();
+      if (layer.transitionStatus !== 'prepare') {
+        layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
       }
       await method(ctx, next);
-      layer._transitionStatus = 'start';
+      layer.transitionStatus = 'start';
       const promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration))
-        .then(() => layer._transitionStatus = null);
+        .then(() => layer.transitionStatus = null);
 
       this.clickCallback = true;
 
+      if (flags.includes('unskippable')) {
+        this.unskippable = true;
+      }
+
       // FIXME
-      if (layer.visible) {
+      if (layer.visible && !flags.includes('nowait') && !isSkip) {
         await promise;
+      }
+
+      if (isSkip) {
+        layer.completeTransition();
       }
 
       this.clickCallback = false;

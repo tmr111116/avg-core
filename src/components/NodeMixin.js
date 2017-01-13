@@ -1,7 +1,11 @@
-import ReactUpdates from 'react/lib/ReactUpdates';
-import emptyObject from 'fbjs/lib/emptyObject';
+import ReactUpdates from 'react-dom/lib/ReactUpdates';
+import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
+import deepEqual from 'deep-equal';
 import { attachToSprite } from 'classes/EventManager';
-import Err from 'classes/ErrorHandler';
+import core from 'core/core';
+
+const logger = core.getLogger('NodeMixin');
+
 
 const NodeMixin = {
   _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
@@ -10,7 +14,7 @@ const NodeMixin = {
 
     this.createNode(element);
     if (!this.node) {
-      Err.error('`this.node` is null, you should init it at `this.createNode`');
+      logger.error('`this.node` is null, you should init it at `this.createNode`');
     }
 
     // bind event handlers
@@ -38,11 +42,6 @@ const NodeMixin = {
     );
   },
 
-  unmountComponent() {
-    // this.destroyEventListeners();
-    this.node.removeChildren();
-  },
-
   getHostNode(...props) {
     // React@15.0 之后新添加的东西
     // 不知道干啥用的，先放着吧……
@@ -59,7 +58,8 @@ const NodeMixin = {
       this.mountAndInjectChildren,
       this,
       props.children,
-      transaction
+      transaction,
+      context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
 
@@ -70,35 +70,43 @@ const NodeMixin = {
     const prevProps = this._currentElement.props;
     const props = nextComponent.props;
 
-    this.updateNode(prevProps, props);
+    if (!deepEqual(prevProps, props)) {
+      this.updateNode(prevProps, props);
 
-    const prevKeys = Object.keys(prevProps);
-    for (const key of prevKeys) {
-      if (/^on[A-Z]/.test(key)) {
-        delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
-      }
-    }
-    this.node.buttonMode = false;
-    const keys = Object.keys(props);
-    for (const key of keys) {
-      if (/^on[A-Z]/.test(key)) {
-        if (key === 'onClick') {
-          this.node.buttonMode = true;
+      const prevKeys = Object.keys(prevProps);
+      for (const key of prevKeys) {
+        if (/^on[A-Z]/.test(key)) {
+          delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
         }
-        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
       }
+      this.node.buttonMode = false;
+      const keys = Object.keys(props);
+      for (const key of keys) {
+        if (/^on[A-Z]/.test(key)) {
+          if (key === 'onClick') {
+            this.node.buttonMode = true;
+          }
+          this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
+        }
+      }
+      var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+      transaction.perform(
+        this.updateChildren,
+        this,
+        props.children,
+        transaction,
+        context
+      );
+      ReactUpdates.ReactReconcileTransaction.release(transaction);
+
+      this._currentElement = nextComponent;
     }
+  },
 
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-    transaction.perform(
-      this.updateChildren,
-      this,
-      props.children,
-      transaction
-    );
-    ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    this._currentElement = nextComponent;
+  unmountComponent() {
+    // this.destroyEventListeners();
+    this.unmountChildren();
+    this.node.removeChildren();
   },
 };
 

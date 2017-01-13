@@ -20,7 +20,7 @@
 
 import AbstractFilter from './AbstractFilter';
 const PIXI = require('pixi.js');
-import { getTexture } from 'classes/Preloader';
+import core from 'core/core';
 
 const commonVertex = require(__dirname + '/shaders/common.vert');
 
@@ -34,7 +34,7 @@ export class CrossFadeFilter extends AbstractFilter {
 }
 export class UniversalFilter extends AbstractFilter {
   constructor(ruleFile, vague = 64, duration = 1000) {
-    const ruleTexture = getTexture(ruleFile);
+    const ruleTexture = core.getTexture(ruleFile);
 
     super(commonVertex,
         require(__dirname + '/shaders/universal.frag'),

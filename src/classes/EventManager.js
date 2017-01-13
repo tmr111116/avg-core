@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-import Err from './ErrorHandler';
-
 export function attachToSprite(sprite) {
   sprite.interactive = true;
   sprite.on('click', handleEvent);

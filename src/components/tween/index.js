@@ -1,5 +1,5 @@
 /**
- * @file        General error/warn logger
+ * @file        Tween module
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,17 +18,11 @@
  * limitations under the License.
  */
 
-export function error(text, isThrow = true) {
-  console.error('Error: ' + text + '.');
-  if (isThrow) throw 'Error: ' + text + '.';
-}
+import Tween from './Tween';
+import builder from './util';
+import Easing from './easing';
 
-export function warn(text, isThrow = false) {
-  console.warn('Warning: ' + text + '.');
-  if (isThrow) throw 'Warning: ' + text + '.';
-}
+Tween.builder = builder;
+Tween.Easing = Easing;
 
-module.exports = {
-  error,
-  warn,
-};
+export { Tween };

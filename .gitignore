@@ -3,4 +3,6 @@ node_modules
 /dist
 /build
 /docs
-/.DS_Store
+.DS_Store
+/example
+webpack.config.example.js

@@ -1,8 +1,11 @@
 {
     "sourceMaps": true,
     "comments": false,
-    "presets": ["stage-0","es2015"],
+    "presets": ["latest"],
     "plugins": ["transform-react-jsx",
                 "transform-decorators-legacy",
-                "transform-class-properties"]
+                "transform-class-properties",
+                "transform-export-extensions",
+                ["transform-object-rest-spread", { "useBuiltIns": true }]
+    ]
 }
