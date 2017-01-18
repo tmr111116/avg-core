@@ -59,8 +59,8 @@ export default class TransitionContainer extends PIXI.Sprite {
           break;
         }
         case 'ripple': {
-          const { ratio, origin, phase, drift, duration } = params;
-          filter = new RippleFilter(ratio, origin, phase, drift, duration);
+          const { origin, speed, length, maxDrift, duration } = params;
+          filter = new RippleFilter(origin, speed, length, maxDrift, duration);
           break;
         }
         default:

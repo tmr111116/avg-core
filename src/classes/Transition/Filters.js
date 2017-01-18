@@ -18,9 +18,10 @@
  * limitations under the License.
  */
 
-import AbstractFilter from './AbstractFilter';
-const PIXI = require('pixi.js');
 import core from 'core/core';
+import AbstractFilter from './AbstractFilter';
+
+const PIXI = require('pixi.js');
 
 const commonVertex = require(__dirname + '/shaders/common.vert');
 
@@ -32,8 +33,9 @@ export class CrossFadeFilter extends AbstractFilter {
     this.duration = duration;
   }
 }
+
 export class UniversalFilter extends AbstractFilter {
-  constructor(ruleFile, vague = 64, duration = 1000) {
+  constructor(ruleFile, vague = 0.25, duration = 1000) {
     const ruleTexture = core.getTexture(ruleFile);
 
     super(commonVertex,
@@ -46,33 +48,32 @@ export class UniversalFilter extends AbstractFilter {
     this.duration = duration;
   }
 }
+
 export class ShutterFilter extends AbstractFilter {
-  constructor(direction = 0, num = 16, duration = 1000) {
+  constructor(direction = 'left', num = 16, duration = 1000) {
+    // 0 for left(from left), 0.25 for right, 0.5 for top, 0.75 for bottom
+    const directionValue = Math.max(0, ['left', 'right', 'top', 'bottom'].indexOf(direction)) * 0.25;
+
     super(commonVertex,
         require(__dirname + '/shaders/shutter.frag'),
       {
-        direction: { type: '1f', value: direction },
+        direction: { type: '1f', value: directionValue },
         num: { type: '1f', value: num },
       });
 
     this.duration = duration;
   }
 }
+
 export class RippleFilter extends AbstractFilter {
-  constructor(ratio, origin, phase, drift, duration = 1000) {
+  constructor(origin = [0.5, 0.5], speed = 1, count = [10, 10], maxDrift = 24, duration = 1000) {
     super(commonVertex,
-        require(__dirname + '/shaders/shutter.frag'),
+        require(__dirname + '/shaders/ripple.frag'),
       {
-        ratio: { type: '2f', value: {
-          x: ratio.x,
-          y: ratio.y,
-        } },
-        origin: { type: '2f', value: {
-          x: origin.x,
-          y: origin.y,
-        } },
-        phase: { type: '1f', value: phase },
-        drift: { type: '1f', value: drift },
+        count: { type: '2f', value: count },
+        origin: { type: '2f', value: origin },
+        speed: { type: '1f', value: speed },
+        maxDrift: { type: '1f', value: maxDrift },
       });
 
     this.duration = duration;
