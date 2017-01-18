@@ -25,6 +25,7 @@ export default class AbstractFilter extends PIXI.Filter {
     const _uniforms = {
       previousTexture: { type: 'sampler2D', value: PIXI.Texture.EMPTY },
       progress: { type: '1f', value: 0 },
+      currentTime: { type: '1f', value: 0 },
     };
 
     super(vertex, frag, Object.assign(_uniforms, uniforms));
@@ -73,12 +74,16 @@ export default class AbstractFilter extends PIXI.Filter {
     if (time - this.startTime >= this.duration) {
       this.uniformData.progress.value = 1;
       this.uniforms.progress = 1;
+      this.uniformData.currentTime.value = this.duration;
+      this.uniforms.currentTime = this.duration;
       this.finished = true;
       return true;
     }
 
     this.uniformData.progress.value = (time - this.startTime) / this.duration;
     this.uniforms.progress = (time - this.startTime) / this.duration;
+    this.uniformData.currentTime.value = time - this.startTime;
+    this.uniforms.currentTime = time - this.startTime;
     return false;
   }
 
