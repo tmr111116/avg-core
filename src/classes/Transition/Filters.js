@@ -25,7 +25,21 @@ const PIXI = require('pixi.js');
 
 const commonVertex = require(__dirname + '/shaders/common.vert');
 
+/**
+ * Supply crossfade transition
+ * 
+ * @export
+ * @class CrossFadeFilter
+ * @extends {AbstractFilter}
+ */
 export class CrossFadeFilter extends AbstractFilter {
+  /**
+   * Creates an instance of CrossFadeFilter.
+   * 
+   * @param {number} [duration=1000]
+   * 
+   * @memberOf CrossFadeFilter
+   */
   constructor(duration = 1000) {
     super(commonVertex,
         require(__dirname + '/shaders/crossfade.frag'));
@@ -34,7 +48,23 @@ export class CrossFadeFilter extends AbstractFilter {
   }
 }
 
+/**
+ * Supply universal transition
+ * 
+ * @export
+ * @class UniversalFilter
+ * @extends {AbstractFilter}
+ */
 export class UniversalFilter extends AbstractFilter {
+  /**
+   * Creates an instance of UniversalFilter.
+   * 
+   * @param {any} ruleFile
+   * @param {number} [vague=0.25]
+   * @param {number} [duration=1000]
+   * 
+   * @memberOf UniversalFilter
+   */
   constructor(ruleFile, vague = 0.25, duration = 1000) {
     const ruleTexture = core.getTexture(ruleFile);
 
@@ -49,7 +79,23 @@ export class UniversalFilter extends AbstractFilter {
   }
 }
 
+/**
+ * Supply shutter transition
+ * 
+ * @export
+ * @class ShutterFilter
+ * @extends {AbstractFilter}
+ */
 export class ShutterFilter extends AbstractFilter {
+  /**
+   * Creates an instance of ShutterFilter.
+   * 
+   * @param {string} [direction='left']
+   * @param {number} [num=16]
+   * @param {number} [duration=1000]
+   * 
+   * @memberOf ShutterFilter
+   */
   constructor(direction = 'left', num = 16, duration = 1000) {
     // 0 for left(from left), 0.25 for right, 0.5 for top, 0.75 for bottom
     const directionValue = Math.max(0, ['left', 'right', 'top', 'bottom'].indexOf(direction)) * 0.25;
@@ -65,7 +111,25 @@ export class ShutterFilter extends AbstractFilter {
   }
 }
 
+/**
+ * Supply ripple transition
+ * 
+ * @export
+ * @class RippleFilter
+ * @extends {AbstractFilter}
+ */
 export class RippleFilter extends AbstractFilter {
+  /**
+   * Creates an instance of RippleFilter.
+   * 
+   * @param {any} [origin=[0.5, 0.5]]
+   * @param {number} [speed=1] cycles per second
+   * @param {any} [count=[10, 10]]
+   * @param {number} [maxDrift=24]
+   * @param {number} [duration=1000]
+   * 
+   * @memberOf RippleFilter
+   */
   constructor(origin = [0.5, 0.5], speed = 1, count = [10, 10], maxDrift = 24, duration = 1000) {
     super(commonVertex,
         require(__dirname + '/shaders/ripple.frag'),
