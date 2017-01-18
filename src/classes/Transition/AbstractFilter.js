@@ -24,15 +24,21 @@ export default class AbstractFilter extends PIXI.Filter {
   constructor(vertex, frag, uniforms) {
     const _uniforms = {
       previousTexture: { type: 'sampler2D', value: PIXI.Texture.EMPTY },
-      nextTexture: { type: 'sampler2D', value: PIXI.Texture.EMPTY },
       progress: { type: '1f', value: 0 },
     };
 
     super(vertex, frag, Object.assign(_uniforms, uniforms));
 
+    this.padding = 0;
+
     this.startTime = 0;
     this.duration = 5000;
 
+    this.finished = false;
+  }
+
+  reset() {
+    this.startTime = 0;
     this.finished = false;
   }
 
@@ -45,6 +51,14 @@ export default class AbstractFilter extends PIXI.Filter {
   setNextTexture(texture) {
     this.uniformData.nextTexture.value = texture;
     this.uniforms.nextTexture = texture;
+  }
+
+  apply(filterManager, input, output, clear) {
+    const matrix = new PIXI.Matrix();
+    filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
+    this.uniforms.filterMatrix = matrix;
+    this.uniformData.filterMatrix = { type: 'mat3', value: matrix };
+    return super.apply(filterManager, input, output, clear);
   }
 
     // 返回false说明转场未完成，返回true说明完成
