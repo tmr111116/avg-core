@@ -113,7 +113,7 @@ export default class TransitionContainer extends PIXI.Sprite {
     renderer.flush();
     renderer.filterManager.pushFilter(this, [this.filter]);
     super.renderWebGL(renderer);
-    renderer.filterManager.popFilter();
     renderer.flush();
+    renderer.filterManager.popFilter();
   }
 }
