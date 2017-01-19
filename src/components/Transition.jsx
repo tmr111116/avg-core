@@ -19,31 +19,34 @@
  */
 
 import React from 'react';
-import core from 'core/core';
-import { Container } from 'components/Container';
-import { CrossFadeFilter } from 'classes/Transition/Filters';
+import createComponent from 'components/createComponent';
+import ContainerMixin from 'components/ContainerMixin';
+import NodeMixin from 'components/NodeMixin';
+import TransitionContainer from 'classes/TransitionContainer';
+import pixiPropTypes from './pixi/propTypes';
+import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
 
-const PIXI = require('pixi.js');
+export const Transition = createComponent('Transition', ContainerMixin, NodeMixin, {
 
-export class Transition extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.any,
-  }
-  componentWillUpdate() {
-    const node = this.node._reactInternalInstance._renderedComponent.node;
-    const renderer = core.getRenderer();
-    node.prepareTransition(renderer);
-  }
-  componentDidUpdate() {
-    const node = this.node._reactInternalInstance._renderedComponent.node;
-    const renderer = core.getRenderer();
-    node.startTransition(renderer, new CrossFadeFilter());
-  }
-  render() {
-    return (
-      <Container ref={node => this.node = node}>
-        {this.props.children}
-      </Container>
-    );
-  }
-}
+  createNode(element) {
+    this.node = new TransitionContainer();
+  },
+  mountNode(props) {
+    const node = this.node;
+    mountNode(node, props);
+    return node;
+  },
+  updateNode(prevProps, props) {
+    const node = this.node;
+    updateNode(node, prevProps, props);
+  },
+
+});
+
+// export const Transition = React.createClass({
+//   displayName: 'Transition',
+//   propTypes: pixiPropTypes,
+//   render() {
+//     return React.createElement(RawTransitionContainer, this.props, this.props.children);
+//   },
+// });
