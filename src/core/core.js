@@ -146,9 +146,11 @@ class Core {
       this.renderer = options.renderer;
     } else {
       /* create PIXI renderer */
+      PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
       this.renderer = new PIXI.WebGLRenderer(width, height, {
         view: options.view,
         autoResize: true,
+        // resolution: 2,
         roundPixels: true,
       });
     }
