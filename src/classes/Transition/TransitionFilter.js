@@ -106,8 +106,8 @@ export class TransitionFilter extends PIXI.Filter {
       filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
       filter.uniforms.filterMatrix = matrix;
       filter.uniformData.filterMatrix = { type: 'mat3', value: matrix };
-      this.uniforms.resolution = PIXI.settings.RESOLUTION;
-      this.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
+      filter.uniforms.resolution = PIXI.settings.RESOLUTION;
+      filter.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
 
       const finished = filter.update(Date.now());
       filterManager.applyFilter(filter, input, output, clear);
@@ -124,8 +124,8 @@ export class TransitionFilter extends PIXI.Filter {
       filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
       filter.uniforms.filterMatrix = matrix;
       filter.uniformData.filterMatrix = { type: 'mat3', value: matrix };
-      this.uniforms.resolution = PIXI.settings.RESOLUTION;
-      this.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
+      filter.uniforms.resolution = PIXI.settings.RESOLUTION;
+      filter.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
       filterManager.applyFilter(filter, input, output, clear);
       // filterManager.applyFilter(this, input, output, clear);
 
