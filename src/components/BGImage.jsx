@@ -21,7 +21,7 @@
 import React from 'react';
 import core from 'core/core';
 import { Image } from './Image';
-import { Transition } from 'components/Transition';
+import { Transition } from 'components/transition';
 import transition from 'plugins/transition';
 
 export class BGImage extends React.Component {

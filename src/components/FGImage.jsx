@@ -22,7 +22,7 @@ import React from 'react';
 import core from 'core/core';
 import { Layer } from './Layer';
 import { Image } from './Image';
-import { Transition } from 'components/Transition';
+import { Transition } from 'components/transition';
 import transition from 'plugins/transition';
 
 export class FGImage extends React.Component {

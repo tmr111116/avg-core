@@ -25,5 +25,5 @@ export * from 'components/Layer';
 export * from 'components/Textwindow';
 export * from 'components/BGImage';
 export * from 'components/FGImage';
-export * from 'components/Transition';
+export * from 'components/transition';
 export * from 'components/tween';

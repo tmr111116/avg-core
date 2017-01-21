@@ -24,7 +24,7 @@ import { PrepareFilter,
          UniversalFilter,
          ShutterFilter,
          RippleFilter,
-       } from 'classes/Transition/Filters';
+       } from './Filters';
 
 const PIXI = require('pixi.js');
 

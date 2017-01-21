@@ -21,8 +21,8 @@
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
-import TransitionContainer from 'classes/TransitionContainer';
-import { mountNode, updateNode } from './pixi/properties';
+import TransitionContainer from './TransitionContainer';
+import { mountNode, updateNode } from '../pixi/properties';
 
 export const Transition = createComponent('Transition', ContainerMixin, NodeMixin, {
 

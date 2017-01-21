@@ -25,7 +25,7 @@ import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiTextwindow from 'classes/TextWindow';
 import pixiPropTypes from './pixi/propTypes';
-import { Transition } from 'components/Transition';
+import { Transition } from 'components/transition';
 import transition from 'plugins/transition';
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
