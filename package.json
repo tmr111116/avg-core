@@ -6,7 +6,7 @@
   "author": "Icemic Jia <bingfeng.web@gmail.com>",
   "homepage": "https://avgjs.org/",
   "scripts": {
-    "dev": "webpack --env.development --progress --colors",
+    "dev": "webpack --env.development --watch --progress --colors",
     "dist": "webpack --env.release && webpack --env.release --env.minimize",
     "prepublish": "npm run dist",
     "docs": "esdoc -c esdoc.json",
@@ -38,7 +38,6 @@
     "koa-compose": "^3.2.1",
     "pixi.js": "^4.3.0",
     "raw-loader": "^0.5.1",
-    "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^1.16.2",

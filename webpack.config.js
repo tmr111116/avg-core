@@ -39,7 +39,7 @@ module.exports = function (env) {
       ],
     },
     externals: {
-      'pixi.js': 'PIXI',
+      'pixi.js': 'PIXI'
     },
     devtool: 'source-map',
     plugins: [
