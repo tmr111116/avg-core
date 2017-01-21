@@ -17,7 +17,6 @@
  * limitations under the License.
  */
 
-export defaultToText from 'plugins/defaultToText';
 export Sound from 'plugins/sound';
 export Flow from 'plugins/flow';
 export script from 'plugins/script';

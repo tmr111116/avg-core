@@ -27,7 +27,7 @@ class Sound {
 
     core.use('sound-init', this.init.bind(this));
   }
-  async init(ctx, next) {
+  async init() {
     if (!this.initialed) {
       core.use('script-exec', this.exec.bind(this));
       core.use('save-archive', this.save.bind(this));
@@ -35,17 +35,20 @@ class Sound {
       this.initialed = true;
     }
   }
+
   /**
   * @method exec
+  * @async
   * @private
-  * @param  {object}   ctx
+  * @param  {object} ctx
   * @param  {Function} next
-  * @return {Promise}
   */
   async exec(ctx, next) {
     const { command, flags, params } = ctx;
+
     if (command === 'sound') {
       let channel = params.channel;
+
       if (flags.includes('bgm')) {
         channel = -1;
       } else if (flags.includes('se')) {
@@ -55,6 +58,7 @@ class Sound {
       }
       const wait = flags.includes('wait');
       let promise = Promise.resolve();
+
       if (flags.includes('play')) {
         promise = SoundManager.play(channel);
       } else if (flags.includes('pause')) {
@@ -67,7 +71,7 @@ class Sound {
         promise = SoundManager.fade(channel, params.from, params.to, params.duration);
       } else if (flags.includes('set')) {
         promise = SoundManager.getChannel(channel)
-        .then((ch) => {
+        .then(ch => {
           params.volume != null && ch.volume(params.volume);
           params.position != null && ch.pos(params.position);
         });
@@ -86,9 +90,11 @@ class Sound {
       await next();
     }
   }
+  // eslint-disable-next-line
   async save(ctx, next) {
-
+    // do something
   }
+  // eslint-disable-next-line
   async load(ctx, next) {
     SoundManager.stopAll();
   }

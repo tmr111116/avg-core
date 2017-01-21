@@ -37,7 +37,8 @@ export default class TransitionPlugin {
     this.unskippable = false;
 
     let hasTransFilter = false;
-    for (let filter of (this.node.filters || [])) {
+
+    for (const filter of (this.node.filters || [])) {
       if (filter instanceof TransitionFilter) {
         hasTransFilter = true;
         break;
@@ -62,26 +63,30 @@ export default class TransitionPlugin {
   }
   static wrap(node, method) {
     const wrapped = new TransitionPlugin(node, method);
+
     return wrapped.process.bind(wrapped);
   }
   async process(ctx, next) {
     const layer = this.node;
     const method = this.method;
 
-    const { flags, params, command } = ctx;
+    const { flags, params } = ctx;
 
     const isSkip = flags.includes('_skip_');
 
     if (flags.includes('pretrans')) {
       const renderer = core.getRenderer();
+
       if (layer.transitionStatus !== 'prepare') {
         layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
       }
+
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
       params.trans = params.trans || 'crossfade';
       const renderer = core.getRenderer();
+
       if (layer.transitionStatus !== 'prepare') {
         layer.transitionStatus = 'prepare';
         layer.prepareTransition(renderer);
@@ -89,7 +94,7 @@ export default class TransitionPlugin {
       await method(ctx, next);
       layer.transitionStatus = 'start';
       const promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration))
-        .then(() => layer.transitionStatus = null);
+        .then(() => (layer.transitionStatus = null));
 
       this.clickCallback = true;
 
@@ -111,5 +116,7 @@ export default class TransitionPlugin {
     } else {
       return method(ctx, next);
     }
+
+    return Promise.resolve();
   }
 }

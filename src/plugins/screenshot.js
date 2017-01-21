@@ -20,15 +20,14 @@
 
 import core from 'core/core';
 
-const PIXI = require('pixi.js');
-
 function resizeImage(dataurl, width, height) {
   const sourceImage = new Image();
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     sourceImage.onload = function () {
       // Create a canvas with the desired dimensions
       const canvas = document.createElement('canvas');
+
       canvas.width = width;
       canvas.height = height;
 
@@ -42,7 +41,6 @@ function resizeImage(dataurl, width, height) {
   });
 }
 
-
 class Screenshot {
   constructor() {
     this.initialed = false;
@@ -51,24 +49,25 @@ class Screenshot {
 
     core.use('screenshot-init', this.init.bind(this));
   }
-  async init(ctx, next) {
+  async init() {
     if (!this.initialed) {
       core.use('screenshot-shot', this.shot.bind(this));
       core.use('screenshot-get', this.get.bind(this));
       this.initialed = true;
     }
   }
+
   /**
   * Supply screenshot signals
   * Shot current screen to a texture and pass it through `ctx`.
   *
   * @event shot
+  * @async
   * @param  {object}   ctx  middleware context
   * @param  {string}   [ctx.type='base64']  type of returned data, 'base64', 'canvas', 'image', 'pixels'
   * @param  {number}   [ctx.width]  width of screen shot, default to current screen width
   * @param  {number}   [ctx.height]  height of screen shot, default to current screen height
   * @param  {Function} next execute next middleware
-  * @return {Promise}
   */
   async shot(ctx, next) {
     const renderer = core.getRenderer();
@@ -84,6 +83,7 @@ class Screenshot {
 
     // TODO: renderer.extract seems to have bugs, now using a custom implementation;
     let base64;
+
     if (ctx.type === 'canvas') {
       base64 = renderer.extract.canvas();
     } else if (ctx.type === 'image') {
@@ -97,6 +97,7 @@ class Screenshot {
     ctx.data = await resizeImage(base64, width, height);
 
     const name = ctx.name || 'default';
+
     this.store[name] = ctx.data;
 
     await next();
@@ -104,8 +105,9 @@ class Screenshot {
 
   async get(ctx, next) {
     const name = ctx.name || 'default';
+
     ctx.data = this.store[name];
-    
+
     await next();
   }
 }
