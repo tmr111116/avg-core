@@ -21,9 +21,9 @@
 const PIXI = require('pixi.js');
 
 let TEXTURES = {};
-let AUDIOS = {};
-let VIDEOS = {};
-let SCRIPTS = {};
+const AUDIOS = {};
+const VIDEOS = {};
+// const SCRIPTS = {};
 let HOST = '/';
 
 const Resource = PIXI.loaders.Loader.Resource;
@@ -41,14 +41,14 @@ Resource.setExtensionXhrType('bks', Resource.XHR_RESPONSE_TYPE.TEXT);
 Resource.setExtensionXhrType('ttf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 Resource.setExtensionXhrType('otf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 
-
 export function init(host) {
   TEXTURES = {};
   HOST = host || HOST;
 }
 
 export function load(resources, onProgress) {
-  const loader = new PIXI.loaders.Loader(HOST); // http://7xi9kn.com1.z0.glb.clouddn.com
+  const loader = new PIXI.loaders.Loader(HOST);
+
   for (const res of [...new Set(resources)]) {
     loader.add(res, res);
   }
@@ -57,25 +57,30 @@ export function load(resources, onProgress) {
     loader.once('error', reject);
     loader.on('progress', onProgress);
   });
+
   loader.load((loader, resources) => {
     // `resources` is a Object
-    for (let name in resources){
-      let res = resources[name];
+    for (const name in resources) {
+      const res = resources[name];
+
       if (res.isImage) {
         TEXTURES[name] = res.texture;
       } else if (res.isAudio) {
-        AUDIOS[name] = res.data;  // audio object
+        // audio object
+        AUDIOS[name] = res.data;
       } else if (res.isVideo) {
-        VIDEO[name] = res.data;
+        VIDEOS[name] = res.data;
       }
     }
     // Object.assign(TEXTURES, resources);
   });
+
   return promise;
 }
 
 export function getTexture(url = '') {
   let obj = TEXTURES[url];
+
   if (!obj) {
     if (url.startsWith('data:')) {
       obj = PIXI.Texture.fromImage(url);
@@ -84,18 +89,22 @@ export function getTexture(url = '') {
     }
     TEXTURES[url] = obj;
   }
+
   return new PIXI.Texture(obj.baseTexture);
 }
 
 export function getAudio(url) {
   const obj = AUDIOS[url];
+
   if (obj) {
     return obj;
-  } else {
-    const audio = new Audio();
-    audio.src = `${HOST}${url}`;
-    audio.preload = 'auto';
-    audio.load();
-    return audio;
   }
+  const audio = new Audio();
+
+  audio.src = `${HOST}${url}`;
+  audio.preload = 'auto';
+  audio.load();
+
+  return audio;
+
 }

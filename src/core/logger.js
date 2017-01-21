@@ -26,6 +26,8 @@ export default class Logger {
   static create(name) {
     return new Logger(name);
   }
+
+  /* eslint-disable */
   fatal(...args) {
     console.error(`[${this.name}]`, ...args);
   }
@@ -48,4 +50,5 @@ export default class Logger {
       console.trace(`[${this.name}]`, ...args);
     }
   }
+  /* eslint-enable */
 }

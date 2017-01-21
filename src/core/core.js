@@ -73,6 +73,7 @@ class Core {
    */
   use(name, middleware) {
     let middlewares;
+
     if (!this.middlewares[name]) {
       middlewares = [];
       this.middlewares[name] = middlewares;
@@ -91,8 +92,10 @@ class Core {
    */
   unuse(name, middleware) {
     const middlewares = this.middlewares[name];
+
     if (middlewares) {
       const pos = middlewares.indexOf(middleware);
+
       if (pos !== -1) {
         middlewares.splice(pos, 1);
       } else {
@@ -108,19 +111,22 @@ class Core {
    *
    * @param {string} name signal name
    * @param {object} [context={}] context to process
+   * @param {function} next
    * @return {promise}
    */
   post(name, context, next) {
     const middlewares = this.middlewares[name];
+
     if (middlewares) {
       return compose(middlewares)(context || {}, next);
     }
+
     return Promise.resolve();
   }
 
   /**
    * Initial AVG.js core functions
-   * 
+   *
    * @param {number} width width of screen
    * @param {number} height height of screen
    * @param {object} [options]
@@ -130,36 +136,39 @@ class Core {
    * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
    * @param {string} [options.assetsPath='assets'] assets path
    */
-  async init(width, height, _options = {}) {
-    const options = {
+  async init(width, height, options = {}) {
+    const _options = {
       fitWindow: false,
       assetsPath: '/',
-      ..._options,
+      ...options,
     };
 
-    if (options.fontFamily) {
-      const font = new FontFaceObserver(options.fontFamily);
+    if (_options.fontFamily) {
+      const font = new FontFaceObserver(_options.fontFamily);
+
       await font.load();
     }
 
-    if (options.renderer) {
-      this.renderer = options.renderer;
+    if (_options.renderer) {
+      this.renderer = _options.renderer;
     } else {
+
       /* create PIXI renderer */
       PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
       this.renderer = new PIXI.WebGLRenderer(width, height, {
-        view: options.view,
+        view: _options.view,
         autoResize: true,
         // resolution: 2,
         roundPixels: true,
       });
     }
 
-    if (options.fitWindow) {
+    if (_options.fitWindow) {
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
 
-    let assetsPath = options.assetsPath;
+    let assetsPath = _options.assetsPath;
+
     if (!assetsPath.endsWith('/')) {
       assetsPath += '/';
     }
@@ -183,6 +192,7 @@ class Core {
       return this.renderer;
     }
     logger.error('Renderer hasn\'t been initialed.');
+
     return null;
   }
   getStage() {
@@ -190,6 +200,7 @@ class Core {
       return this.stage;
     }
     logger.error('Stage hasn\'t been initialed.');
+
     return null;
   }
   getAssetsPath() {
@@ -201,7 +212,7 @@ class Core {
 
   /**
    * create a logger for specific name
-   * 
+   *
    * @param {string} name
    * @return {Logger} logger instance
    */
@@ -219,13 +230,15 @@ class Core {
    *
    * @param {React.Component} component
    * @param {HTMLDOMElement} target
+   * @param {boolean} append whether append canvas element to target
    * @return {Promise}
    */
   async render(component, target, append = true) {
     if (!this._init) {
-      throw 'not initialed';
+      throw Error('not initialed');
     }
-    return new Promise((resolve) => {
+
+    return new Promise(resolve => {
       renderReact(component, target, resolve);
     }).then(() => {
       append && target.appendChild(this.renderer.view);
@@ -234,6 +247,8 @@ class Core {
 
   /**
    * Get ticker of AVG.js render loop
+   *
+   * @return {PIXI.ticker.Ticker} shared ticker
    */
   getTicker() {
     return PIXI.ticker.shared;
