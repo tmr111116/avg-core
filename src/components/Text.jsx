@@ -28,7 +28,7 @@ import { mountNode, updateNode, setValue, updateValue } from './pixi/properties'
 
 const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new TextSprite();
   },
   mountNode(props) {
@@ -51,9 +51,11 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
     };
 
     const node = this.node;
+
     mountNode(node, props);
     setValue.call(node, 'style', style);
     setValue.call(node, 'text', props.text);
+
     return node;
   },
   updateNode(prevProps, props) {
@@ -76,6 +78,7 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
     };
 
     const node = this.node;
+
     updateNode(node, prevProps, props);
     updateValue.call(node, 'style', prevProps.style, style);
     updateValue.call(node, 'text', prevProps.text, props.text);

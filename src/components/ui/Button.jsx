@@ -25,14 +25,13 @@ import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
 import core from 'core/core';
 import pixiPropTypes from '../pixi/propTypes';
-import { mountNode, updateNode, setValue, updateValue } from '../pixi/properties';
-
+import { mountNode, updateNode } from '../pixi/properties';
 
 const PIXI = require('pixi.js');
 
 const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new Sprite();
   },
   mountNode(props) {
@@ -40,25 +39,27 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     const node = this.node;
 
     node.buttonMode = true;
-    node.on('mouseover', e => this.setFrame(1));
-    node.on('mouseout', e => this.setFrame(0));
-    node.on('mousedown', e => this.setFrame(2));
-    node.on('mouseup', e => this.setFrame(1));
-    node.on('mouseupoutside', e => this.setFrame(0));
+    node.on('mouseover', () => this.setFrame(1));
+    node.on('mouseout', () => this.setFrame(0));
+    node.on('mousedown', () => this.setFrame(2));
+    node.on('mouseup', () => this.setFrame(1));
+    node.on('mouseupoutside', () => this.setFrame(0));
 
     mountNode(node, props);
-    node.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    node.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
+
     return node;
   },
   updateNode(prevProps, props) {
     // this.setProperties(props);
     updateNode(this.node, prevProps, props);
-    this.node.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    this.node.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
   },
   setProperties(props) {
     const layer = this.node;
+
     layer.x = props.x;
     layer.y = props.y;
 
@@ -69,7 +70,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     // frame: idle, hover, active
     layer.texture = core.getTexture(props.file);
 
-    layer.texture.baseTexture.on('loaded', e => this.setFrame(0));
+    layer.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
 
   },
@@ -84,6 +85,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     const height = layer.texture.baseTexture.height;
 
     const frame = new PIXI.Rectangle();
+
     frame.x = width * num / 3;
     frame.y = 0;
     frame.width = width / 3;
@@ -93,7 +95,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     // e.stopped = true;
     return false;
   }
- });
+});
 
 const Button = React.createClass({
   displayName: 'Button',

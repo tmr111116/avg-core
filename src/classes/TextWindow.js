@@ -27,7 +27,7 @@ import core from 'core/core';
  * Class representing a TextWindow. <br>
  * @extends PIXI.Container
  */
-class TextWindow extends PIXI.Container {
+export default class TextWindow extends PIXI.Container {
   constructor() {
     super();
 
@@ -564,4 +564,4 @@ function clone(origin) {
   return Object.assign(Object.create(originProto), origin);
 }
 
-module.exports = TextWindow;
+// module.exports = TextWindow;

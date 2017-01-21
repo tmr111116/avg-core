@@ -18,26 +18,27 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import TransitionContainer from 'classes/TransitionContainer';
-import pixiPropTypes from './pixi/propTypes';
-import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
+import { mountNode, updateNode } from './pixi/properties';
 
 export const Transition = createComponent('Transition', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new TransitionContainer();
   },
   mountNode(props) {
     const node = this.node;
+
     mountNode(node, props);
+
     return node;
   },
   updateNode(prevProps, props) {
     const node = this.node;
+
     updateNode(node, prevProps, props);
   },
 

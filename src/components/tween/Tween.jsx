@@ -26,11 +26,16 @@ import tweenGenerator from './perform';
 const logger = core.getLogger('Tween');
 
 class Tween extends React.Component {
+  static propTypes = {
+    schemes: React.PropTypes.object,
+    children: React.PropTypes.any
+  }
   constructor(props) {
     super(props);
 
     const properties = {};
-    React.Children.map(this.props.children, (element) => {
+
+    React.Children.map(this.props.children, element => {
       properties[element.key] = { ...element.props, children: null };
     });
     this.state = properties;
@@ -46,7 +51,6 @@ class Tween extends React.Component {
   }
   componentWillUnmount() {
     for (const key of Object.keys(this.tweens)) {
-      console.log(key)
       this.tweens[key].stop();
     }
   }
@@ -55,6 +59,7 @@ class Tween extends React.Component {
 
     for (const schemeName of schemeNames) {
       const scheme = this.props.schemes[schemeName];
+
       this.tweens[schemeName] = tweenGenerator(scheme, this.nodes);
     }
 
@@ -64,6 +69,7 @@ class Tween extends React.Component {
   }
   runTween(name) {
     const tween = this.tweens[name];
+
     if (tween) {
       this.runningTween && this.runningTween.stop();
       this.runningTween = tween;
@@ -79,14 +85,14 @@ class Tween extends React.Component {
   }
   render() {
     this.nodes = {};
-    const element = React.Children.map(this.props.children, (element) => {
+    const element = React.Children.map(this.props.children, element =>
       // const originState = this.state[element.key];
       // const updatedState = this.shadowState[element.key];
-      return React.cloneElement(element, {
+       React.cloneElement(element, {
         // ...originState, ...updatedState,
-        ref: (node) => { element.ref && element.ref(node); this.getNodes(element.key, node); },
-      });
-    });
+         ref: node => { element.ref && element.ref(node); this.getNodes(element.key, node); },
+       }));
+
     return <Layer>{ element }</Layer>;
   }
 }

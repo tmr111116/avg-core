@@ -19,7 +19,6 @@
  */
 
 import React from 'react';
-import equal from 'deep-equal';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
@@ -29,17 +28,20 @@ import { mountNode, updateNode, setValue, updateValue } from './pixi/properties'
 
 const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new Sprite();
   },
   mountNode(props) {
     const node = this.node;
+
     setValue.call(node, 'rectangle', props.rectangle);
     mountNode(node, props);
+
     return node;
   },
   updateNode(prevProps, props) {
     const node = this.node;
+
     updateValue.call(node, 'rectangle', prevProps.rectangle, props.rectangle);
     updateNode(node, prevProps, props);
   },

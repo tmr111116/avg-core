@@ -57,9 +57,11 @@ export class FGImage extends React.Component {
     core.unuse('load-archive', this.handleArchiveLoad);
   }
   async execute(ctx, next) {
-    const { command, flags, params } = ctx;
+    const { flags, params } = ctx;
+
     this.setState(params);
     const positions = [];
+
     if (flags.includes('left')) {
       positions.push('left');
     }
@@ -71,8 +73,9 @@ export class FGImage extends React.Component {
     }
 
     const state = {};
+
     if (flags.includes('clear')) {
-      positions.map(pos => state[pos] = null);
+      positions.map(pos => (state[pos] = null));
     } else {
       state[positions[0]] = params.file;
     }
@@ -102,11 +105,15 @@ export class FGImage extends React.Component {
   render() {
     const width = this.props.width;
     const height = this.props.height;
+
     return (
       <Layer>
-        {this.state.center ? <Image src={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key="center" /> : null}
-        {this.state.left ? <Image src={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key="left" /> : null}
-        {this.state.right ? <Image src={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key="right" /> : null}
+        {this.state.center
+          ? <Image src={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key='center' /> : null}
+        {this.state.left
+          ? <Image src={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key='left' /> : null}
+        {this.state.right
+          ? <Image src={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key='right' /> : null}
       </Layer>
     );
   }

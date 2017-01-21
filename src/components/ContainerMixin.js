@@ -1,7 +1,6 @@
 // Adapted from ReactART:
 // https://github.com/reactjs/react-art
 
-const React = require('react');
 const ReactMultiChild = require('react-dom/lib/ReactMultiChild');
 
 const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
@@ -10,14 +9,17 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
    * Moves a child component to the supplied index.
    *
    * @param {ReactComponent} child Component to move.
-   * @param {number} toIndex Destination index of the element.
+   * @param {ReactComponent} afterNode
+   * @param {number} toIndex
+   * @param {number} lastIndex
    * @protected
    */
-  moveChild(child, afterNode, toIndex, lastIndex) {
+  moveChild(child /* , afterNode, toIndex, lastIndex */) {
     // console.log('move:', child._mountImage.filename, 'to', toIndex);
     const childNode = child._mountImage;
     const layer = this.node;
     // TODO: wrong implementation
+
     layer.addChild(childNode);
   },
 
@@ -25,13 +27,15 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
    * Creates a child component.
    *
    * @param {ReactComponent} child Component to create.
-   * @param {object} childNode ART node to insert.
+   * @param {ReactComponent} afterNode
+   * @param {ReactComponent} childNode ART node to insert.
    * @protected
    */
   createChild(child, afterNode, childNode) {
     // console.log('create:', childNode.filename)
     child._mountImage = childNode;
     const layer = this.node;
+
     layer.addChild(childNode);
   },
 
@@ -57,9 +61,11 @@ const ContainerMixin = Object.assign({}, ReactMultiChild.Mixin, {
 
     // Each mount image corresponds to one of the flattened children
     let i = 0;
+
     for (const key in this._renderedChildren) {
       if (this._renderedChildren.hasOwnProperty(key)) {
         const child = this._renderedChildren[key];
+
         child._mountImage = mountedImages[i];
         this.node.addChild(mountedImages[i]);
         // mountedImages[i].inject(this.node);

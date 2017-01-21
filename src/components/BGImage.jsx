@@ -41,7 +41,8 @@ export class BGImage extends React.Component {
   }
   componentDidMount() {
     this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, async (ctx, next) => {
-      const { command, flags, params } = ctx;
+      const { params } = ctx;
+
       this.setState(params);
       await next();
     });

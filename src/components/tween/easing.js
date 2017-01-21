@@ -27,6 +27,8 @@
  * THE SOFTWARE.
  */
 
+/* eslint-disable */
+
 const Easing = {
 
   Linear: {
@@ -59,7 +61,7 @@ const Easing = {
         return 0.5 * k * k;
       }
 
-      return - 0.5 * (--k * (k - 2) - 1);
+      return -0.5 * (--k * (k - 2) - 1);
 
     }
 
@@ -111,7 +113,7 @@ const Easing = {
         return 0.5 * k * k * k * k;
       }
 
-      return - 0.5 * ((k -= 2) * k * k * k - 2);
+      return -0.5 * ((k -= 2) * k * k * k - 2);
 
     }
 
@@ -175,7 +177,7 @@ const Easing = {
 
     Out(k) {
 
-      return k === 1 ? 1 : 1 - Math.pow(2, - 10 * k);
+      return k === 1 ? 1 : 1 - Math.pow(2, -10 * k);
 
     },
 
@@ -193,7 +195,7 @@ const Easing = {
         return 0.5 * Math.pow(1024, k - 1);
       }
 
-      return 0.5 * (- Math.pow(2, - 10 * (k - 1)) + 2);
+      return 0.5 * (-Math.pow(2, -10 * (k - 1)) + 2);
 
     }
 
@@ -216,7 +218,7 @@ const Easing = {
     InOut(k) {
 
       if ((k *= 2) < 1) {
-        return - 0.5 * (Math.sqrt(1 - k * k) - 1);
+        return -0.5 * (Math.sqrt(1 - k * k) - 1);
       }
 
       return 0.5 * (Math.sqrt(1 - (k -= 2) * k) + 1);
@@ -281,7 +283,7 @@ const Easing = {
 
     In(k) {
 
-      var s = 1.70158;
+      const s = 1.70158;
 
       return k * k * ((s + 1) * k - s);
 
@@ -289,7 +291,7 @@ const Easing = {
 
     Out(k) {
 
-      var s = 1.70158;
+      const s = 1.70158;
 
       return --k * k * ((s + 1) * k + s) + 1;
 
@@ -297,7 +299,7 @@ const Easing = {
 
     InOut(k) {
 
-      var s = 1.70158 * 1.525;
+      const s = 1.70158 * 1.525;
 
       if ((k *= 2) < 1) {
         return 0.5 * (k * k * ((s + 1) * k - s));
@@ -325,9 +327,9 @@ const Easing = {
         return 7.5625 * (k -= (1.5 / 2.75)) * k + 0.75;
       } else if (k < (2.5 / 2.75)) {
         return 7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375;
-      } else {
-        return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
       }
+
+      return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
 
     },
 

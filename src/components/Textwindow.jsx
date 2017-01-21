@@ -23,13 +23,13 @@ import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
-import PixiTextwindow from 'classes/Textwindow';
+import PixiTextwindow from 'classes/TextWindow';
 import TransitionPlugin from 'plugins/transition';
 import pixiPropTypes from './pixi/propTypes';
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new PixiTextwindow();
   },
   mountNode(props) {
@@ -51,6 +51,7 @@ const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin
     props.text && layer.drawText(props.text, true);
     layer.x = props.x || 0;
     layer.y = props.y || 0;
+
     return layer;
   },
   updateNode(prevProps, props) {
@@ -119,6 +120,7 @@ export class Textwindow extends React.Component {
     let waitClick = false;
     let clickCallback = false;
     let switchPageAfterClick = false;
+
     if (command === 'r') {
       // waitClick = true;
       promise = layer.drawText('\n', false);
@@ -132,7 +134,8 @@ export class Textwindow extends React.Component {
       switchPageAfterClick = true;
     } else if (flags.includes('clear')) {
       // layer.clearText();
-      layer.drawText('', true); // it is a hack
+      // it is a hack
+      layer.drawText('', true);
     } else if (flags.includes('set')) {
       params.bgfile && (params.bgFile = params.bgfile);
       params.textrect && (params.textRect = params.textrect);
@@ -192,6 +195,7 @@ export class Textwindow extends React.Component {
   }
   async handleArchiveSave(ctx, next) {
     const layer = this.layer;
+
     ctx.data.textwindow = { ...this.state.props, text: layer.text, children: null };
     await next();
   }
@@ -203,6 +207,7 @@ export class Textwindow extends React.Component {
       }
     });
     const layer = this.layer;
+
     layer.setVisible(true);
     layer.drawText(ctx.data.textwindow.text, true);
     // layer.completeText();
@@ -210,7 +215,7 @@ export class Textwindow extends React.Component {
   }
   render() {
     return (
-      <RawTextwindow {...this.state.props} ref={layer => this.layer = layer}>
+      <RawTextwindow {...this.state.props} ref={layer => (this.layer = layer)}>
         {this.props.children}
       </RawTextwindow>
     );

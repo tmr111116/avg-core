@@ -25,7 +25,7 @@ const logger = Logger.create('TweenBuilder');
 
 class TweenBuilderChain {
   constructor() {
-    
+
     this.chain = {};
     this.isInScheme = false;
 
@@ -49,6 +49,7 @@ class TweenBuilderChain {
       this.nodeStack.push(this.chain);
       this.isInScheme = true;
     }
+
     return this;
   }
   sequence(repeat = 0, yoyo = false) {
@@ -59,9 +60,11 @@ class TweenBuilderChain {
       repeat,
       yoyo,
     };
+
     this.currentNode.push(sequenceNode);
     this.nodeStack.push(this.currentNode);
     this.currentNode = sequenceNode.actions;
+
     return this;
   }
   parallel(repeat = 0, yoyo = false) {
@@ -72,13 +75,16 @@ class TweenBuilderChain {
       repeat,
       yoyo,
     };
+
     this.currentNode.push(parallelNode);
     this.nodeStack.push(this.currentNode);
     this.currentNode = parallelNode.actions;
+
     return this;
   }
   end() {
     const node = this.nodeStack.pop();
+
     if (this.nodeStack.length) {
       this.currentNode = node;
     } else {
@@ -86,6 +92,7 @@ class TweenBuilderChain {
       this.isInScheme = false;
       this.currentNode = null;
     }
+
     return this;
   }
   _checkInScheme() {
@@ -93,6 +100,7 @@ class TweenBuilderChain {
       return true;
     }
     logger.error('You must specify a scheme first.');
+
     return false;
   }
   getSchemes() {
@@ -115,7 +123,9 @@ class TweenBuilderChain {
           repeat,
           yoyo,
         };
+
         this.currentNode.push(action);
+
         return this;
       },
       enumerable: false,

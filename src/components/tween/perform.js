@@ -18,49 +18,15 @@
  * limitations under the License.
  */
 
+import Logger from 'core/logger';
+
 const PIXI = require('pixi.js');
-
-export default function tweenGenerator(scheme, targetMap) {
-  if (scheme.type === 'action') {
-    let target;
-    if (typeof scheme.target === 'string') {
-      target = targetMap[scheme.target];
-    } else {
-      target = scheme.target;
-    }
-
-    const args = [target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo];
-    switch (scheme.name) {
-      case 'moveTo': return new MoveToAction(...args);
-      case 'moveBy': return new MoveByAction(...args);
-      case 'delay': return new DelayAction(...args);
-      case 'fadeTo': return new FadeToAction(...args);
-      case 'fadeBy': return new FadeByAction(...args);
-      case 'rotateTo': return new RotateToAction(...args);
-      case 'rotateBy': return new RotateByAction(...args);
-      case 'scaleTo': return new ScaleToAction(...args);
-      case 'scaleBy': return new ScaleByAction(...args);
-      case 'setProperty': return new SetPropertyAction(...args);
-      case 'callback': return new CallbackAction(...args);
-    }
-  }
-
-  const actions = [];
-  for (const action of scheme.actions) {
-    actions.push(tweenGenerator(action, targetMap));
-  }
-  if (scheme.type === 'sequence') {
-    return new Sequence(actions, scheme.repeat, scheme.yoyo);
-  } else if (scheme.type === 'parallel') {
-    return new Parallel(actions, scheme.repeat, scheme.yoyo);
-  }
-
-  return new Sequence([], scheme.repeat, scheme.yoyo);
-}
+const logger = Logger.create('Tween');
 
 class Ticker {
   constructor() {
     const performance = window.performance || window.Date;
+
     this._update = () => {
       this.update(performance.now());
     };
@@ -115,6 +81,7 @@ class AbstractAction extends Ticker {
 
     if (!this.lastTime) {
       this.lastTime = time;
+
       return false;
     }
 
@@ -122,20 +89,25 @@ class AbstractAction extends Ticker {
 
     const delta = time - this.lastTime;
     const deltaProgress = delta / this.duration;
+
     this.lastTime = time;
     this.lastProgress = this.progress;
     this.progress += deltaProgress * this.direction * _direction;
 
-    if ((this.progress <= 0 || this.progress >= 1) && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+    if ((this.progress <= 0 || this.progress >= 1)
+      && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+
       this.finished = true;
       this.progress = this.progress << 0;
+
     } else if ((this.progress <= 0 || this.progress >= 1)) {
-      this.times += 1 * _direction;
+      this.times += Number(_direction);
 
       if (this.yoyo) {
         // change direction
         this.direction = -this.direction;
-        this.progress = (this.progress << 0) + (this.progress % 1) * this.direction;
+        this.progress = (this.progress << 0) + ((this.progress % 1) * this.direction);
+
       } else {
         this.progress = 0 + (_direction === -1 ? 1 : 0);
       }
@@ -146,10 +118,11 @@ class AbstractAction extends Ticker {
     return this.finished;
   }
 
+  /* eslint-disable */
   updateTransform(progress, lastProgress, target, params) {
 
   }
-
+  /* eslint-enable */
 }
 
 class Sequence extends Ticker {
@@ -199,20 +172,26 @@ class Sequence extends Ticker {
 
       const length = this.actions.length;
 
-      if ((this.position < 0 || this.position >= length) && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+      if ((this.position < 0 || this.position >= length)
+        && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+
         this.finished = true;
+
         return true;
+
       } else if (this.position < 0 || this.position >= length) {
-        this.times += 1 * _direction;
+        this.times += Number(_direction);
 
         if (this.yoyo) {
           // change direction
           this.direction = -this.direction;
           const maxPosition = length - 1;
-          this.position = ((this.position / maxPosition) << 0) * length + (this.position % maxPosition) * this.direction;
+
+          this.position = (((this.position / maxPosition) << 0) * length) + ((this.position % maxPosition) * this.direction);
           for (const action of this.actions) {
             action.reverse();
           }
+
         } else {
           this.position = 0 + (_direction === -1 ? length - 1 : 0);
           for (const action of this.actions) {
@@ -265,6 +244,7 @@ class Parallel extends Ticker {
 
     if (!this.startTime) {
       this.startTime = time;
+
       return false;
     }
 
@@ -273,12 +253,15 @@ class Parallel extends Ticker {
 
     // records of delays's accuracy: ± 1/fps ms
     let totalFinished = true;
+
     for (const action of this.actions) {
       let finished = false;
+
       if (direction > 0) {
         finished = action.update(time);
       } else {
         const passed = time - this.startTime;
+
         if (this.duration - passed <= action.duration * action.repeat) {
           finished = action.update(time);
         }
@@ -288,9 +271,10 @@ class Parallel extends Ticker {
 
     if (totalFinished && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
       this.finished = true;
+
       return true;
     } else if (totalFinished) {
-      this.times += 1 * _direction;
+      this.times += Number(_direction);
 
       if (this.yoyo) {
         // change direction
@@ -319,14 +303,16 @@ class MoveToAction extends AbstractAction {
     }
     const { x, y } = params;
     // console.log(target.y, progress, lastProgress, deltaProgress)
-    (x != null) && (target.x = this.x + (x - this.x) * progress);
-    (y != null) && (target.y = this.y + (y - this.y) * progress);
+
+    (x != null) && (target.x = this.x + ((x - this.x) * progress));
+    (y != null) && (target.y = this.y + ((y - this.y) * progress));
   }
 }
 class MoveByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
     const { x, y } = params;
+
     (x != null) && (target.x += x * deltaProgress);
     (y != null) && (target.y += y * deltaProgress);
   }
@@ -337,31 +323,34 @@ class FadeToAction extends AbstractAction {
       this.alpha = target.alpha;
       this.initialled = true;
     }
-    target.alpha = this.alpha + (params - this.alpha) * progress;
+    target.alpha = this.alpha + ((params - this.alpha) * progress);
   }
 }
 class FadeByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
+
     target.alpha += params * deltaProgress;
   }
 }
 class DelayAction extends AbstractAction {
-  updateTransform(progress, lastProgress, target, params) {
+  updateTransform() {
     // do nothing :)
   }
 }
 class RotateToAction extends AbstractAction {
-  updateTransform(progress, lastProgress, target, params) {if (!this.initialled) {
+  updateTransform(progress, lastProgress, target, params) {
+    if (!this.initialled) {
       this.rotation = target.rotation;
       this.initialled = true;
     }
-    target.rotation = this.rotation + (params - this.rotation) * progress;
+    target.rotation = this.rotation + ((params - this.rotation) * progress);
   }
 }
 class RotateByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
+
     target.rotation += params * deltaProgress;
   }
 }
@@ -374,14 +363,16 @@ class ScaleToAction extends AbstractAction {
     }
     const { x, y } = params;
     // console.log(target.y, progress, lastProgress, deltaProgress)
-    (x != null) && (target.scale.x = this.scaleX + (x - this.scaleX) * progress);
-    (y != null) && (target.scale.y = this.scaleY + (y - this.scaleY) * progress);
+
+    (x != null) && (target.scale.x = this.scaleX + ((x - this.scaleX) * progress));
+    (y != null) && (target.scale.y = this.scaleY + ((y - this.scaleY) * progress));
   }
 }
 class ScaleByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
     const { x, y } = params;
+
     (x != null) && (target.scale.x += x * deltaProgress);
     (y != null) && (target.scale.y += y * deltaProgress);
   }
@@ -389,6 +380,7 @@ class ScaleByAction extends AbstractAction {
 class SetPropertyAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const keys = Object.keys(params);
+
     if (!this.initialled) {
       this.params = {};
       for (const key of keys) {
@@ -397,6 +389,7 @@ class SetPropertyAction extends AbstractAction {
       this.initialled = true;
     }
     const deltaProgress = progress - lastProgress;
+
     if (deltaProgress > 0) {
       for (const key of keys) {
         target[key] = params[key];
@@ -412,4 +405,46 @@ class CallbackAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     params.call(target, progress, lastProgress);
   }
+}
+
+export default function tweenGenerator(scheme, targetMap) {
+  if (scheme.type === 'action') {
+    let target;
+
+    if (typeof scheme.target === 'string') {
+      target = targetMap[scheme.target];
+    } else {
+      target = scheme.target;
+    }
+
+    const args = [target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo];
+
+    switch (scheme.name) {
+      case 'moveTo': return new MoveToAction(...args);
+      case 'moveBy': return new MoveByAction(...args);
+      case 'delay': return new DelayAction(...args);
+      case 'fadeTo': return new FadeToAction(...args);
+      case 'fadeBy': return new FadeByAction(...args);
+      case 'rotateTo': return new RotateToAction(...args);
+      case 'rotateBy': return new RotateByAction(...args);
+      case 'scaleTo': return new ScaleToAction(...args);
+      case 'scaleBy': return new ScaleByAction(...args);
+      case 'setProperty': return new SetPropertyAction(...args);
+      case 'callback': return new CallbackAction(...args);
+      default: logger.warn(`Unknown action '${scheme.name}', ignored.`);
+    }
+  }
+
+  const actions = [];
+
+  for (const action of scheme.actions) {
+    actions.push(tweenGenerator(action, targetMap));
+  }
+  if (scheme.type === 'sequence') {
+    return new Sequence(actions, scheme.repeat, scheme.yoyo);
+  } else if (scheme.type === 'parallel') {
+    return new Parallel(actions, scheme.repeat, scheme.yoyo);
+  }
+
+  return new Sequence([], scheme.repeat, scheme.yoyo);
 }
