@@ -22,6 +22,7 @@ import core from 'core/core';
 import AbstractFilter from './AbstractFilter';
 
 const commonVertex = require(`${__dirname}/shaders/common.vert`);
+const prepareFrag = require(`${__dirname}/shaders/prepare.frag`);
 const crossfadeFrag = require(`${__dirname}/shaders/crossfade.frag`);
 const universalFrag = require(`${__dirname}/shaders/universal.frag`);
 const shutterFrag = require(`${__dirname}/shaders/shutter.frag`);
@@ -140,5 +141,11 @@ export class RippleFilter extends AbstractFilter {
     });
 
     this.duration = duration;
+  }
+}
+
+export class PrepareFilter extends AbstractFilter {
+  constructor() {
+    super(commonVertex, prepareFrag, {});
   }
 }

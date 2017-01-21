@@ -24,8 +24,9 @@ import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
 import PixiTextwindow from 'classes/TextWindow';
-import TransitionPlugin from 'plugins/transition';
 import pixiPropTypes from './pixi/propTypes';
+import { Transition } from 'components/Transition';
+import transition from 'plugins/transition';
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
 
@@ -83,7 +84,6 @@ export class Textwindow extends React.Component {
   constructor(props) {
     super(props);
 
-    this.execute = this.execute.bind(this);
     this.handleScriptExec = this.handleScriptExec.bind(this);
     this.handleScriptTrigger = this.handleScriptTrigger.bind(this);
     this.handleArchiveSave = this.handleArchiveSave.bind(this);
@@ -101,11 +101,12 @@ export class Textwindow extends React.Component {
     });
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this.layer, this.execute);
     core.use('script-trigger', this.handleScriptTrigger);
     core.use('script-exec', this.handleScriptExec);
     core.use('save-archive', this.handleArchiveSave);
     core.use('load-archive', this.handleArchiveLoad);
+
+    this.execute = transition(this.transLayer, this.execute.bind(this));
   }
   componentWillUnmount() {
     core.unuse('script-trigger', this.handleScriptTrigger);
@@ -188,7 +189,7 @@ export class Textwindow extends React.Component {
       if (ctx.params.raw) {
         ctx.params.text = ctx.params.raw;
       }
-      await this.transitionHandler(ctx, next);
+      await this.execute(ctx, next);
     } else {
       await next();
     }
@@ -215,9 +216,11 @@ export class Textwindow extends React.Component {
   }
   render() {
     return (
-      <RawTextwindow {...this.state.props} ref={layer => (this.layer = layer)}>
-        {this.props.children}
-      </RawTextwindow>
+      <Transition ref={transLayer => (this.transLayer = transLayer)}>
+        <RawTextwindow {...this.state.props} ref={layer => (this.layer = layer)}>
+          {this.props.children}
+        </RawTextwindow>
+      </Transition>
     );
   }
 }

@@ -19,7 +19,8 @@
  */
 
 import Logger from 'core/logger';
-import { CrossFadeFilter,
+import { PrepareFilter,
+         CrossFadeFilter,
          UniversalFilter,
          ShutterFilter,
          RippleFilter,
@@ -35,11 +36,29 @@ export default class TransitionContainer extends PIXI.Sprite {
 
     this.renderer = null;
 
+    this.filter = null;
+    this.prepareFilter = new PrepareFilter();
+    this.previousTexture = null;
+
     // container, prepare, transition
     this.status = 'container';
-
+    this.promiseFinished = null;
   }
-  prepare(_filter, params) {
+  prepare() {
+    const renderer = this.renderer;
+    const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
+                                              PIXI.settings.SCALE_MODE, renderer.resolution);
+
+    if (this.visible) {
+      renderer.render(this, texture);
+    }
+
+    this.status = 'prepare';
+    this.previousTexture = texture;
+
+    this.prepareFilter.setPreviousTexture(texture);
+  }
+  start(_filter, params) {
 
     let filter;
 
@@ -76,28 +95,26 @@ export default class TransitionContainer extends PIXI.Sprite {
     filter.reset();
     this.filter = filter;
 
-    const renderer = this.renderer;
-    const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-                                              PIXI.settings.SCALE_MODE, renderer.resolution);
+    filter.setPreviousTexture(this.previousTexture);
 
-    if (this.visible) {
-      renderer.render(this, texture);
-    }
+    // const renderer = this.renderer;
+    // const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
+    //                                           PIXI.settings.SCALE_MODE, renderer.resolution);
 
-    this.status = 'prepare';
-
-    filter.setPreviousTexture(texture);
-  }
-  start() {
-    const renderer = this.renderer;
-    const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-                                              PIXI.settings.SCALE_MODE, renderer.resolution);
-
-    this.filter.enabled = false;
-    renderer.render(this, texture);
-    this.filter.enabled = true;
+    // this.filter.enabled = false;
+    // renderer.render(this, texture);
+    // this.filter.enabled = true;
 
     this.status = 'transition';
+
+    return new Promise(resolve => {
+      this.promiseFinished = resolve;
+    });
+  }
+  completeImmediate() {
+    this.status = 'container';
+    this.promiseFinished();
+    this.promiseFinished = null;
   }
   renderWebGL(renderer) {
     if (this.renderer !== renderer) {
@@ -113,10 +130,21 @@ export default class TransitionContainer extends PIXI.Sprite {
 
       if (finished) {
         this.status = 'container';
+        this.promiseFinished();
+        this.promiseFinished = null;
       }
     }
+
+    let filters;
+
+    if (this.status === 'prepare') {
+      filters = [this.prepareFilter];
+    } else {
+      filters = [this.filter];
+    }
+
     renderer.flush();
-    renderer.filterManager.pushFilter(this, [this.filter]);
+    renderer.filterManager.pushFilter(this, filters);
     super.renderWebGL(renderer);
     renderer.flush();
     renderer.filterManager.popFilter();

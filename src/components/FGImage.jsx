@@ -22,7 +22,8 @@ import React from 'react';
 import core from 'core/core';
 import { Layer } from './Layer';
 import { Image } from './Image';
-import TransitionPlugin from 'plugins/transition';
+import { Transition } from 'components/Transition';
+import transition from 'plugins/transition';
 
 export class FGImage extends React.Component {
   static propTypes = {
@@ -32,12 +33,9 @@ export class FGImage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.execute = this.execute.bind(this);
     this.handleScriptExec = this.handleScriptExec.bind(this);
     this.handleArchiveSave = this.handleArchiveSave.bind(this);
     this.handleArchiveLoad = this.handleArchiveLoad.bind(this);
-
-    this.transitionHandler = null;
 
     this.state = {
       left: null,
@@ -46,10 +44,11 @@ export class FGImage extends React.Component {
     };
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, this.execute);
     core.use('script-exec', this.handleScriptExec);
     core.use('save-archive', this.handleArchiveSave);
     core.use('load-archive', this.handleArchiveLoad);
+
+    this.execute = transition(this.transLayer, this.execute.bind(this));
   }
   componentWillUnmount() {
     core.unuse('script-exec', this.handleScriptExec);
@@ -84,7 +83,7 @@ export class FGImage extends React.Component {
   }
   async handleScriptExec(ctx, next) {
     if (ctx.command === 'fg') {
-      await this.transitionHandler(ctx, next);
+      await this.execute(ctx, next);
     } else {
       await next();
     }
@@ -107,14 +106,16 @@ export class FGImage extends React.Component {
     const height = this.props.height;
 
     return (
-      <Layer>
-        {this.state.center
-          ? <Image src={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key='center' /> : null}
-        {this.state.left
-          ? <Image src={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key='left' /> : null}
-        {this.state.right
-          ? <Image src={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key='right' /> : null}
-      </Layer>
+      <Transition ref={transLayer => (this.transLayer = transLayer)}>
+        <Layer>
+          {this.state.center
+            ? <Image src={this.state.center} x={Math.round(width * 0.5)} y={height} anchor={[0.5, 1]} key='center' /> : null}
+          {this.state.left
+            ? <Image src={this.state.left} x={Math.round(width * 0.25)} y={height} anchor={[0.5, 1]} key='left' /> : null}
+          {this.state.right
+            ? <Image src={this.state.right} x={Math.round(width * 0.75)} y={height} anchor={[0.5, 1]} key='right' /> : null}
+        </Layer>
+      </Transition>
     );
   }
 }
