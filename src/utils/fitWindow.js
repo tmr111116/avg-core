@@ -20,7 +20,7 @@
 
 /**
  * @method scale
- * 
+ *
  * @param {PIXI.WebGLRenderer} renderer
  * @param {number} width width to fit
  * @param {number} height height to fit
@@ -28,17 +28,21 @@
 export default function fitWindow(renderer, width, height) {
   const ratio = renderer.width / renderer.height;
 
-  let offsetW, offsetH, contentW, contentH;
+  let offsetW,
+      offsetH,
+      contentW,
+      contentH;
+
   if (ratio > width / height) {
-      contentW = width;
-      contentH = width / ratio;
-      offsetW = 0;
-      offsetH = (height - width / ratio) / 2;
+    contentW = width;
+    contentH = width / ratio;
+    offsetW = 0;
+    offsetH = (height - (width / ratio)) / 2;
   } else {
-      contentW = height * ratio;
-      contentH = height;
-      offsetW = (width - height * ratio) / 2;
-      offsetH = 0;
+    contentW = height * ratio;
+    contentH = height;
+    offsetW = (width - (height * ratio)) / 2;
+    offsetH = 0;
   }
 
   const view = renderer.view;
@@ -50,6 +54,6 @@ export default function fitWindow(renderer, width, height) {
   view.style.transformOrigin = 'left top';
   view.style.transform = `scale(${contentW / renderer.width}, ${contentH / renderer.height}) translateZ(0)`;
 
-  view.style.left = offsetW + 'px';
-  view.style.top = offsetH + 'px';
+  view.style.left = `${offsetW}px`;
+  view.style.top = `${offsetH}px`;
 }

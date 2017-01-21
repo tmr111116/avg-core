@@ -20,11 +20,11 @@
 
 const PIXI = require('pixi.js');
 
-const commonVertex = require(__dirname + '/shaders/common.vert');
-const frozenFrag = require(__dirname + '/shaders/prepareTransition.frag');
+const commonVertex = require(`${__dirname}/shaders/common.vert`);
+const frozenFrag = require(`${__dirname}/shaders/prepareTransition.frag`);
 
 export default class FrozenTextureFilter extends PIXI.Filter {
-  constructor(texture) {
+  constructor() {
     super(commonVertex, frozenFrag,
         { texture: { type: 'sampler2D', value: PIXI.Texture.EMPTY } });
   }

@@ -1,7 +1,7 @@
 import AbstractAction from './AbstractAction';
 
 export default class MoveByAction extends AbstractAction {
-  constructor({ target, duration, deltaX, deltaY, ease }) {
+  constructor({ target, duration, deltaX, deltaY }) {
     super(duration, target);
 
     this.deltaX = deltaX;
@@ -11,10 +11,10 @@ export default class MoveByAction extends AbstractAction {
 
   updateTransform(progress, lastProgress, target) {
     const deltaProgress = progress - lastProgress;
+
     target.x += this.deltaX * deltaProgress;
     target.y += this.deltaY * deltaProgress;
   }
-
 
 }
 

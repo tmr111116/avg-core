@@ -1,7 +1,7 @@
 import AbstractAction from './AbstractAction';
 
 export default class FadeToAction extends AbstractAction {
-  constructor({ target, duration, targetOpacity, ease }) {
+  constructor({ target, duration, targetOpacity }) {
     super(duration, target);
 
     this.targetOpacity = targetOpacity;
@@ -10,8 +10,8 @@ export default class FadeToAction extends AbstractAction {
 
   updateTransform(progress, lastProgress, target) {
     const deltaProgress = progress - lastProgress;
+
     target.alpha += (this.targetOpacity - target.alpha) * deltaProgress / (1 - lastProgress);
   }
-
 
 }

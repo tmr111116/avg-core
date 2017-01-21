@@ -26,13 +26,13 @@ const PIXI = require('pixi.js');
 
 const logger = core.getLogger('TransitionFilter');
 
-const EmptyTexureShaderFragment = require(__dirname + '/shaders/emptyTexture.frag');
-const PrepareTransitionShaderFragment = require(__dirname + '/shaders/prepareTransition.frag');
-const EmptyTexureShaderVertex = require(__dirname + '/shaders/emptyTexture.vert');
-const PrepareTransitionShaderVertex = require(__dirname + '/shaders/prepareTransition.vert');
+const EmptyTexureShaderFragment = require(`${__dirname}/shaders/emptyTexture.frag`);
+const PrepareTransitionShaderFragment = require(`${__dirname}/shaders/prepareTransition.frag`);
+const EmptyTexureShaderVertex = require(`${__dirname}/shaders/emptyTexture.vert`);
+const PrepareTransitionShaderVertex = require(`${__dirname}/shaders/prepareTransition.vert`);
 
 export class TransitionFilter extends PIXI.Filter {
-  constructor(args) {
+  constructor() {
     super(EmptyTexureShaderVertex, EmptyTexureShaderFragment, {
       // texture: { type: 'sampler2D', value: PIXI.Texture.EMPTY },
     });
@@ -44,7 +44,7 @@ export class TransitionFilter extends PIXI.Filter {
     this.start = false;
     this.block = false;
 
-    this.m_resolve = null;
+    this.resolveCallback = null;
 
     this.filterType = 'Transition';
 
@@ -70,7 +70,8 @@ export class TransitionFilter extends PIXI.Filter {
     // 判断当前是否处于pretrans状态
     if (!this.frozenTexture) {
       logger.error('PreviousTexture must be provided.');
-      return;
+
+      return Promise.resolve();
     }
 
     filter.setPreviousTexture(this.frozenTexture);
@@ -81,16 +82,16 @@ export class TransitionFilter extends PIXI.Filter {
     this.filter = filter;
     this.start = true;
 
-    return new Promise((resolve, reject) => {
-      this.m_resolve = resolve;
+    return new Promise(resolve => {
+      this.resolveCallback = resolve;
     });
   }
 
   completeTransition() {
     this.start = false;
     this.filter = null;
-    this.m_resolve && this.m_resolve();
-    this.m_resolve = null;
+    this.resolveCallback && this.resolveCallback();
+    this.resolveCallback = null;
   }
 
   setBlocked(bool = true) {
@@ -103,6 +104,7 @@ export class TransitionFilter extends PIXI.Filter {
       const filter = this.filter;
 
       const matrix = new PIXI.Matrix();
+
       filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
       filter.uniforms.filterMatrix = matrix;
       filter.uniformData.filterMatrix = { type: 'mat3', value: matrix };
@@ -110,17 +112,19 @@ export class TransitionFilter extends PIXI.Filter {
       filter.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
 
       const finished = filter.update(Date.now());
+
       filterManager.applyFilter(filter, input, output, clear);
       if (finished) {
         this.start = false;
         this.filter = null;
-        this.m_resolve();
-        this.m_resolve = null;
+        this.resolveCallback();
+        this.resolveCallback = null;
       }
     } else if (this.frozenTexture) {
       const filter = this.frozenTextureFilter;
 
       const matrix = new PIXI.Matrix();
+
       filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
       filter.uniforms.filterMatrix = matrix;
       filter.uniformData.filterMatrix = { type: 'mat3', value: matrix };
@@ -132,8 +136,8 @@ export class TransitionFilter extends PIXI.Filter {
     } else if (this.start) {
       logger.error('Filter must be provided.');
       this.start = false;
-      this.m_resolve();
-      this.m_resolve = null;
+      this.resolveCallback();
+      this.resolveCallback = null;
     } else {
       filterManager.applyFilter(this, input, output, clear);
     }
@@ -147,16 +151,16 @@ export class TransitionFilter extends PIXI.Filter {
   //     if (finished) {
   //       this.start = false;
   //       this.filter = null;
-  //       this.m_resolve();
-  //       this.m_resolve = null;
+  //       this.resolveCallback();
+  //       this.resolveCallback = null;
   //     }
   //   } else if (this.uniforms.texture.value) {
   //     super.applyFilter(renderer, input, output, clear);
   //   } else if (this.start) {
   //     logger.error('Filter must be provided.');
   //     this.start = false;
-  //     this.m_resolve();
-  //     this.m_resolve = null;
+  //     this.resolveCallback();
+  //     this.resolveCallback = null;
   //   } else {
   //     super.applyFilter(renderer, input, output, clear);
   //   }
@@ -193,9 +197,8 @@ export class TransitionFilter extends PIXI.Filter {
     }
   }
 
-
   syncUniform(uniform) {
-    logger.warn("Method syncUniform() should not be called, it's a bug!");
+    logger.warn('Method syncUniform() should not be called, it\'s a bug!');
     super.syncUniform(uniform);
   }
 }

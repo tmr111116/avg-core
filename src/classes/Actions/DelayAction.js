@@ -5,8 +5,4 @@ export default class DelayAction extends AbstractAction {
     super(duration, target);
   }
 
-  updateTransform(progress, lastProgress, target) {
-  }
-
-
 }

@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 import core from 'core/core';
 
 const Howler = require('howler');
@@ -33,14 +34,13 @@ const logger = core.getLogger('SoundManager');
 Howler.iOSAutoEnable = false;
 
 let Channels = [],
-  Resolve = [];
+    Resolve = [];
 
 export function getChannel(index) {
   return new Promise((resolve, reject) => {
     const ch = Channels[index];
-    if (ch)
-      resolve(ch);
-    else {
+
+    if (ch) { resolve(ch); } else {
       logger.error(`Channel ${ch} hasn't been initialed. Call .load() first.`);
       reject();
     }
@@ -64,6 +64,7 @@ export function setChannel(index, options) {
     }, options);
 
     let ch = Channels[index];
+
     if (ch) {
       ch.stop();
       ch.unload();
@@ -101,7 +102,7 @@ export function setPosition(channel, value) {  // value单位是秒
 }
 export function play(channel) {
   return getChannel(channel)
-    .then((ch) => {
+    .then(ch => {
       ch.play();
       ch.m_status = 'play';
     });
@@ -109,21 +110,21 @@ export function play(channel) {
 
 export function pause(channel) {
   return getChannel(channel)
-    .then((ch) => {
+    .then(ch => {
       ch.pause();
       ch.m_status = (ch.m_status === 'pause') ? 'play' : 'pause';
     });
 }
 export function stop(channel) {
   return getChannel(channel)
-    .then((ch) => {
+    .then(ch => {
       ch.stop();
       ch.unload();
     });
 }
 export function fade(channel, from, to, duration, cb) {
   return getChannel(channel)
-    .then((ch) => {
+    .then(ch => {
       from != null && ch.volume(from);
       if (ch.m_status !== 'play') {
         ch.play();
@@ -138,17 +139,16 @@ export function fade(channel, from, to, duration, cb) {
     });
 }
 export function stopAll() {
-  if (Channels.length)
+  if (Channels.length) {
     for (const ch of Channels) {
       ch.stop();
       ch.unload();
     }
+  }
 }
 export function state(channel) {
   return getChannel(channel)
-    .then((ch) => {
-      return ch.m_status;
-    });
+    .then(ch => ch.m_status);
 }
 export function wait(channel) {
   return new Promise((resolve, reject) => {

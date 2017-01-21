@@ -1,4 +1,3 @@
-
 /*
 * 抽象动作类
 * 继承后必须重载 updateTransform(progress,target) 方法，用于更新绘制
@@ -13,7 +12,7 @@ export default class AbstractAction {
     this.times = 0;
   }
 
-  initAction(time, target) {
+  initAction(time) {
     this.startTime = time;
     this.lastProgress = 0;
   }
@@ -29,22 +28,20 @@ export default class AbstractAction {
 
   update(time, target, times) {
     // console.log(times)
-    if (this.finished && (this.times < times))
-    {
+    if (this.finished && (this.times < times)) {
       this.reset();
       this.times++;
+
       return false;
-    }
-    else if (this.finished)
-      return true;
+    } else if (this.finished) { return true; }
 
     if (!this.startTime) {
       this.initAction(time, this.target || target);
+
       return false;
     }
 
-    if (time - this.startTime < 0)
-      return false;
+    if (time - this.startTime < 0) { return false; }
 
     let progress = (time - this.startTime) / this.duration;
 
@@ -60,9 +57,11 @@ export default class AbstractAction {
     return this.finished;
   }
 
+  /* eslint-disable */
   updateTransform(progress, lastProgress, target) {
 
   }
+  /* eslint-enable */
 
 }
 

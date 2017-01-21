@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 
 export default class VisibleAction extends AbstractAction {
@@ -10,6 +11,5 @@ export default class VisibleAction extends AbstractAction {
   updateTransform(progress, lastProgress, target) {
     target.visible = this.visible;
   }
-
 
 }

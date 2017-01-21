@@ -43,28 +43,6 @@ export function attachToSprite(sprite) {
   sprite.on('pointerleave', pointerHandler);
 }
 
-// let Handler;
-// export function registerHandler(handler) {
-//   if (typeof handler === 'function')
-//     Handler = handler;
-//   else {
-//     Err.warn('[EventManager] Event Handler must be a function, ignored.');
-//   }
-// }
-
-function handleEvent(evt) {
-  const e = new EventData(evt);
-  const handler = e.currentTarget ? e.currentTarget[`_on${e.type}`] : null;
-  handler && handler(e);
-}
-
-function pointerHandler(evt) {
-  const e = new EventData(evt);
-  // console.log(e.type)
-  const defaultHandler = e.target ? e.target[`_on${e.type}`] : null;
-  defaultHandler && defaultHandler(e);
-}
-
 class EventData {
   constructor(evt) {
     this.type = evt.type;
@@ -96,3 +74,28 @@ class EventData {
     this.originalEvent.stopped = true;
   }
 }
+
+// let Handler;
+// export function registerHandler(handler) {
+//   if (typeof handler === 'function')
+//     Handler = handler;
+//   else {
+//     Err.warn('[EventManager] Event Handler must be a function, ignored.');
+//   }
+// }
+
+function handleEvent(evt) {
+  const e = new EventData(evt);
+  const handler = e.currentTarget ? e.currentTarget[`_on${e.type}`] : null;
+
+  handler && handler(e);
+}
+
+function pointerHandler(evt) {
+  const e = new EventData(evt);
+  // console.log(e.type)
+  const defaultHandler = e.target ? e.target[`_on${e.type}`] : null;
+
+  defaultHandler && defaultHandler(e);
+}
+

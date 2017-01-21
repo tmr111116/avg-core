@@ -36,7 +36,6 @@ class TextSprite extends PIXI.Text {
       ...style,
     });
 
-    this.m_style = {};
     this.zorder = 0;
   }
 }

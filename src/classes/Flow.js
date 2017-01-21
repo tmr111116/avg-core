@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
+
 /**
  * wait for some time
  * @method wait

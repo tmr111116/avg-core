@@ -48,19 +48,20 @@ export default class AbstractFilter extends PIXI.Filter {
     this.uniforms.previousTexture = texture;
   }
 
-
-  setNextTexture(texture) {
+  setNextTexture() {
     // this.uniformData.nextTexture.value = texture;
     // this.uniforms.nextTexture = texture;
   }
 
   apply(filterManager, input, output, clear) {
     const matrix = new PIXI.Matrix();
+
     filterManager.calculateNormalizedScreenSpaceMatrix(matrix);
     this.uniforms.filterMatrix = matrix;
     this.uniformData.filterMatrix = { type: 'mat3', value: matrix };
     this.uniforms.resolution = PIXI.settings.RESOLUTION;
     this.uniformData.resolution = { type: '1f', value: PIXI.settings.RESOLUTION };
+
     return super.apply(filterManager, input, output, clear);
   }
 
@@ -69,6 +70,7 @@ export default class AbstractFilter extends PIXI.Filter {
     // 第一次执行.update()时初始化
     if (!this.startTime) {
       this.startTime = time;
+
       return false;
     }
 
@@ -79,6 +81,7 @@ export default class AbstractFilter extends PIXI.Filter {
       this.uniformData.currentTime.value = this.duration;
       this.uniforms.currentTime = this.duration;
       this.finished = true;
+
       return true;
     }
 
@@ -86,6 +89,7 @@ export default class AbstractFilter extends PIXI.Filter {
     this.uniforms.progress = (time - this.startTime) / this.duration;
     this.uniformData.currentTime.value = time - this.startTime;
     this.uniforms.currentTime = time - this.startTime;
+
     return false;
   }
 

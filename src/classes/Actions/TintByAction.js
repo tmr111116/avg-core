@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 import Color from '../../Utils/color.js';
 
@@ -31,7 +32,9 @@ export default class TintByAction extends AbstractAction {
   deltaCache(channel, delta) {
     this._deltaCache[channel] += delta;
     const value = this._deltaCache[channel] << 0;  // get integer
+
     this._deltaCache[channel] -= value;  // decline integer
+
     return value;
   }
 

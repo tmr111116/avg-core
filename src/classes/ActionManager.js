@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 import core from 'core/core';
 import Action from './Action';
 
@@ -30,9 +31,9 @@ const topNode = {
   currentTimes: 1,
 };
 let nodeStack = [topNode],
-  currentActionList = topNode.actions,
-  finished = true,
-  forcedTarget = null;
+    currentActionList = topNode.actions,
+    finished = true,
+    forcedTarget = null;
 
 let Resolve = null;
 
@@ -44,6 +45,7 @@ export function queue() {
     times: 1,
     currentTimes: 1,
   };
+
   nodeStack.push(map);
   currentActionList.push(map);
   currentActionList = map.actions;
@@ -57,6 +59,7 @@ export function parallel() {
     times: 1,
     currentTimes: 1,
   };
+
   nodeStack.push(map);
   currentActionList.push(map);
   currentActionList = map.actions;
@@ -65,13 +68,16 @@ export function parallel() {
 export function end({ target, times = 1 }) {
   if (nodeStack.length === 1) {
     logger.warn('There\'s no queue to end, ignored.');
+
     return false;
   }
 
   const map = nodeStack.pop();
+
   map.target = target;
   map.times = times;
   currentActionList = nodeStack[nodeStack.length - 1].actions;
+
   return !!(nodeStack.length - 1);
 }
 
@@ -83,9 +89,9 @@ export function moveBy({ deltaX, deltaY, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
-
 
 export function moveTo({ targetX, targetY, duration = 0, target, ease }) {
   const action = new Action.MoveToAction({
@@ -95,6 +101,7 @@ export function moveTo({ targetX, targetY, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -105,6 +112,7 @@ export function fadeTo({ targetOpacity, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -117,6 +125,7 @@ export function scaleBy({ deltaScaleX, deltaScaleY, duration = 0, target, ease }
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -129,6 +138,7 @@ export function scaleTo({ targetScaleX, targetScaleY, duration = 0, target, ease
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -140,6 +150,7 @@ export function rotateBy({ deltaRadians, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -151,6 +162,7 @@ export function rotateTo({ targetRadians, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
@@ -159,6 +171,7 @@ export function delay({ duration = 0 }) {
     duration,
     target: null,
   });
+
   currentActionList.push(action);
 }
 
@@ -167,6 +180,7 @@ export function remove({ target, _delete }) {
     target,
     _delete,
   });
+
   currentActionList.push(action);
 }
 
@@ -175,6 +189,7 @@ export function visible({ target, visible }) {
     target,
     visible,
   });
+
   currentActionList.push(action);
 }
 
@@ -185,9 +200,9 @@ export function tintTo({ targetColor, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
-
 
 export function tintBy({ deltaColor, duration = 0, target, ease }) {
   const action = new Action.TintByAction({
@@ -196,13 +211,13 @@ export function tintBy({ deltaColor, duration = 0, target, ease }) {
     ease,
     target,
   });
+
   currentActionList.push(action);
 }
 
 export function start({ target, times = 1 }) {
   for (;;) {
-    if (!end({}))
-      break;
+    if (!end({})) { break; }
   }
 
   forcedTarget = target;
@@ -212,10 +227,10 @@ export function start({ target, times = 1 }) {
 }
 
 export function update(time) {
-  if (finished)
-    return;
+  if (finished) { return; }
 
   let _finished = updateTransform(time, topNode.actions, 'parallel', forcedTarget, 1 || topNode.currentTimes);
+
   if (_finished && (topNode.currentTimes < topNode.times)) {
     resetTimes(topNode.actions);
     topNode.currentTimes++;
@@ -230,6 +245,7 @@ export function update(time) {
 
 export function updateTransform(time, actionList, type = 'queue', target, times) {
   let _finished = true;
+
   for (const action of actionList) {
     if (action.type === 'queue') {
       _finished = updateTransform(time, action.actions, 'queue', action.target || target || forcedTarget, 1 || action.currentTimes) && _finished;
@@ -238,22 +254,19 @@ export function updateTransform(time, actionList, type = 'queue', target, times)
         action.currentTimes++;
         _finished = false;
       }
-    }
-    else if (action.type === 'parallel') {
+    } else if (action.type === 'parallel') {
       _finished = updateTransform(time, action.actions, 'parallel', action.target || target || forcedTarget, 1 || action.currentTimes) && _finished;
       if (_finished && (action.currentTimes < action.times * times)) {
         resetTimes(action.actions);
         action.currentTimes++;
         _finished = false;
       }
-    }
-    else
-    {
+    } else {
       _finished = action.update(time, target || forcedTarget, times) && _finished;
     }
-    if (!_finished && type === 'queue')
-      break;
+    if (!_finished && type === 'queue') { break; }
   }
+
   return _finished;
 }
 
@@ -262,8 +275,7 @@ export function resetTimes(actionList) {
     if (action.type === 'queue' || action.type === 'parallel') {
       action.currentTimes = 1;
       resetTimes(action.actions);    // recursive
-    }
-    else {
+    } else {
       action.resetTimes();
     }
   }

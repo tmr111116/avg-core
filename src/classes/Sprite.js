@@ -25,10 +25,12 @@ const PIXI = require('pixi.js');
  * @extends PIXI.Sprite
  */
 class Sprite extends PIXI.Sprite {
-    /**
-     * Create a sprite.
-     * It is a empty sprite, you should specify is content (use {@link Sprite#setFile}, for example) and call {@link Sprite#execSync}.
-     */
+
+  /**
+   * Create a sprite.
+   * It is a empty sprite, you should specify its content (use {@link Sprite#setFile}, for example)
+   * and call {@link Sprite#execSync}.
+   */
   constructor() {
     super();
     this.zorder = 0;
@@ -40,6 +42,7 @@ class Sprite extends PIXI.Sprite {
     this._rectangle = value;
     if (this.texture) {
       const baseTexture = this.texture.baseTexture;
+
       this.texture.destroy();
       this.texture = new PIXI.Texture(baseTexture, this._rectangle);
     }

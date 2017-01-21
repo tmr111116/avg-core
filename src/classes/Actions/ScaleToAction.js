@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 
 export default class ScaleToAction extends AbstractAction {
@@ -11,9 +12,9 @@ export default class ScaleToAction extends AbstractAction {
 
   updateTransform(progress, lastProgress, target) {
     const deltaProgress = progress - lastProgress;
+
     target.scale.x += (this.targetScaleX - target.scale.x) * deltaProgress / (1 - lastProgress);
     target.scale.y += (this.targetScaleY - target.scale.y) * deltaProgress / (1 - lastProgress);
   }
-
 
 }

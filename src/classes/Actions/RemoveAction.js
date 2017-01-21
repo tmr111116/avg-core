@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 import SpriteManager from '../SpriteManager';
 
@@ -10,13 +11,12 @@ export default class RemoveAction extends AbstractAction {
 
   updateTransform(progress, lastProgress, target) {
     const parent = target.parent;
-    if (!parent)
-      return true;
+
+    if (!parent) { return true; }
     parent.removeChild(target);
     if (this._delete) {
       SpriteManager.remove(target.index);
     }
   }
-
 
 }

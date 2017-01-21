@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 import Color from '../../Utils/color.js';
 
@@ -13,11 +14,11 @@ export default class TintToAction extends AbstractAction {
     const deltaProgress = progress - lastProgress;
     const co = deltaProgress / (1 - lastProgress);
     const currentColor = new Color((typeof target.tint !== 'undefined') ? target.tint : 0xffffff);
+
     currentColor.r += (this.targetColor.r - currentColor.r) * co;
     currentColor.g += (this.targetColor.g - currentColor.g) * co;
     currentColor.b += (this.targetColor.b - currentColor.b) * co;
     target.tint = currentColor.toNumber();
   }
-
 
 }

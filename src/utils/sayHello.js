@@ -7,30 +7,27 @@
  *
  * @method sayHello
  */
-export default function sayHello()
-{
+/* eslint-disable */
+export default function sayHello() {
 
-    if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
-    {
-        const args = [
-            `\n %c %c %c AVG.js ${VERSION} - ✰ OpenSource ✰  %c  %c  https://avgjs.org/  %c %c 🍞🍞🍞 \n\n`,
-            'background: #EFCEA1; padding:5px 0;',
-            'background: #EFCEA1; padding:5px 0;',
-            'color: #EFCEA1; background: #794E3E; padding:5px 0;',
-            'background: #EFCEA1; padding:5px 0;',
-            'background: #FFF2D2; padding:5px 0;',
-            'background: #EFCEA1; padding:5px 0;',
-            'color: #ff2424; background: #fff; padding:5px 0;',
-            // 'color: #ff2424; background: #fff; padding:5px 0;',
-            // 'color: #ff2424; background: #fff; padding:5px 0;'
-        ];
+  if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
+    const args = [
+      `\n %c %c %c AVG.js ${VERSION} - ✰ OpenSource ✰  %c  %c  https://avgjs.org/  %c %c 🍞🍞🍞 \n\n`,
+      'background: #EFCEA1; padding:5px 0;',
+      'background: #EFCEA1; padding:5px 0;',
+      'color: #EFCEA1; background: #794E3E; padding:5px 0;',
+      'background: #EFCEA1; padding:5px 0;',
+      'background: #FFF2D2; padding:5px 0;',
+      'background: #EFCEA1; padding:5px 0;',
+      'color: #ff2424; background: #fff; padding:5px 0;',
+      // 'color: #ff2424; background: #fff; padding:5px 0;',
+      // 'color: #ff2424; background: #fff; padding:5px 0;'
+    ];
 
-        window.console.log.apply(console, args);
-    }
-    else if (window.console)
-    {
-        window.console.log(`AVG.js ${VERSION} - OpenSource - https://avgjs.org/`);
-    }
+    window.console.log.apply(console, args);
+  } else if (window.console) {
+    window.console.log(`AVG.js ${VERSION} - OpenSource - https://avgjs.org/`);
+  }
 
     // saidHello = true;
 }

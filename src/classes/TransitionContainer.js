@@ -50,16 +50,19 @@ export default class TransitionContainer extends PIXI.Sprite {
           break;
         case 'universal': {
           const { ruleFile, vague, duration } = params;
+
           filter = new UniversalFilter(ruleFile, vague, duration);
           break;
         }
         case 'shutter': {
           const { direction, num, duration } = params;
+
           filter = new ShutterFilter(direction, num, duration);
           break;
         }
         case 'ripple': {
           const { origin, speed, count, maxDrift, duration } = params;
+
           filter = new RippleFilter(origin, speed, count, maxDrift, duration);
           break;
         }
@@ -75,7 +78,7 @@ export default class TransitionContainer extends PIXI.Sprite {
 
     const renderer = this.renderer;
     const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-    PIXI.settings.SCALE_MODE, renderer.resolution);
+                                              PIXI.settings.SCALE_MODE, renderer.resolution);
 
     if (this.visible) {
       renderer.render(this, texture);
@@ -88,7 +91,7 @@ export default class TransitionContainer extends PIXI.Sprite {
   start() {
     const renderer = this.renderer;
     const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-      PIXI.settings.SCALE_MODE, renderer.resolution);
+                                              PIXI.settings.SCALE_MODE, renderer.resolution);
 
     this.filter.enabled = false;
     renderer.render(this, texture);
@@ -103,9 +106,11 @@ export default class TransitionContainer extends PIXI.Sprite {
 
     if (this.status === 'container') {
       PIXI.Container.prototype.renderWebGL.call(this, renderer);
+
       return;
     } else if (this.status === 'transition') {
       const finished = this.filter.update(performance.now());
+
       if (finished) {
         this.status = 'container';
       }

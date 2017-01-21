@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AbstractAction from './AbstractAction';
 
 export default class RotateToAction extends AbstractAction {
@@ -10,9 +11,9 @@ export default class RotateToAction extends AbstractAction {
 
   updateTransform(progress, lastProgress, target) {
     const deltaProgress = progress - lastProgress;
+
     target.rotation += (this.targetRadians - target.rotation) * deltaProgress / (1 - lastProgress);
   }
-
 
 }
 

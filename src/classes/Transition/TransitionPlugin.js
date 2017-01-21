@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 import { TransitionFilter } from './TransitionFilter';
 
 const PIXI = require('pixi.js');
@@ -27,8 +28,9 @@ function prepareTransition(renderer) {
   // const bounds = this.getBounds();
   // let bounds = getBoundsFromChildren(this);
   const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
-    PIXI.settings.SCALE_MODE, renderer.resolution);
+                                            PIXI.settings.SCALE_MODE, renderer.resolution);
   // const texture = new PIXI.RenderTexture(baseTexture);
+
   if (this.visible) {
     renderer.render(this, texture);
   }
@@ -36,6 +38,7 @@ function prepareTransition(renderer) {
   // document.body.appendChild(extract.image(texture));
   // document.body.appendChild(document.createTextNode('pretrans'));
   const filter = getTransitionFilter(this.filters);
+
   filter.setPreviousTexture(texture);
 }
 
@@ -47,6 +50,7 @@ function startTransition(renderer, ruleFilter) {
     PIXI.settings.SCALE_MODE, renderer.resolution);
   const texture = new PIXI.RenderTexture(baseTexture);
   const filter = getTransitionFilter(this.filters);
+
   filter.setBlocked(true);
   if (this.visible) {
     filter.enabled = false;
@@ -57,12 +61,15 @@ function startTransition(renderer, ruleFilter) {
   // document.body.appendChild(extract.image(texture));
   // document.body.appendChild(document.createTextNode('trans'));
   const promise = filter.startTransition(texture, ruleFilter);
+
   filter.setBlocked(false);
+
   return promise;
 }
 
 function completeTransition() {
   const filter = getTransitionFilter(this.filters);
+
   filter.completeTransition();
 }
 
@@ -81,11 +88,12 @@ export function TransitionPlugin(obj) {
 /* utils */
 
 function getTransitionFilter(filters) {
-  for (let filter of filters) {
+  for (const filter of filters) {
     if (filter instanceof TransitionFilter) {
       return filter;
     }
   }
+
   return null;
 }
 

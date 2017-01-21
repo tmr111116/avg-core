@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 import core from 'core/core';
 import TextWindow from './TextWindow';
 
@@ -29,13 +30,14 @@ let CurrentTextWindow = null;
 const Methods = {
   create(index) {
     let textwindow = SpriteManager.fromIndex(index);
+
     if (textwindow && !(textwindow instanceof TextWindow)) {
       logger.warn(`Index<${index}> is not empty,
         which may be an other kind of Sprite. However, it will be destroyed to create a new TextWindow.`);
       textwindow.destroy();
-    }
-    else if (textwindow) {
+    } else if (textwindow) {
       logger.warn(`Index<${index}> has been used by a TextWindow, ignored.`);
+
       return;
     }
     textwindow = CurrentTextWindow.clone();
@@ -47,16 +49,15 @@ const Methods = {
   },
   switchTo(index) {
     const textwindow = SpriteManager.fromIndex(index);
-    if (textwindow && textwindow instanceof TextWindow)
-      CurrentTextWindow = textwindow;
-    else
-      logger.warn(`Index<${index}> does not exist, or it is not a TextWindow, ignored.`);
+
+    if (textwindow && textwindow instanceof TextWindow) { CurrentTextWindow = textwindow; } else { logger.warn(`Index<${index}> does not exist, or it is not a TextWindow, ignored.`); }
   },
 };
 
 export default function Manager(SpriteManager) {
   // create default textwindow
   const textwindow = new TextWindow();
+
   textwindow.setIndex(-2);
   SpriteManager.insert(-2, textwindow);
   SpriteManager.addto(-2, -1, 50);
