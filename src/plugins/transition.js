@@ -62,7 +62,7 @@ class TransitionPlugin {
 
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
-      params.trans = params.trans || 'crossfade';
+      params.method = params.method || 'crossfade';
       // const renderer = core.getRenderer();
 
       if (layer.transitionStatus !== 'prepare') {
@@ -71,7 +71,7 @@ class TransitionPlugin {
       }
       await method(ctx, next);
       // layer.transitionStatus = 'start';
-      const promise = layer.start(params.trans, params)
+      const promise = layer.start(params.method, params)
         .then(() => (layer.transitionStatus = null));
 
       this.clickCallback = true;
