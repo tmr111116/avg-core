@@ -186,7 +186,7 @@ export class Textwindow extends React.Component {
   }
   async handleScriptExec(ctx, next) {
     if (['text', 'r', 'l', 'p', '*'].includes(ctx.command)) {
-      if (ctx.params.raw) {
+      if (typeof ctx.params.raw === 'string') {
         ctx.params.text = ctx.params.raw;
       }
       await this.execute(ctx, next);
