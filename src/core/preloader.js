@@ -49,33 +49,39 @@ export function init(host) {
 export function load(resources, onProgress) {
   const loader = new PIXI.loaders.Loader(HOST);
 
-  for (const res of [...new Set(resources)]) {
-    loader.add(res, res);
-  }
-  const promise = new Promise((resolve, reject) => {
-    loader.once('complete', resolve);
-    loader.once('error', reject);
-    loader.on('progress', onProgress);
-  });
+  if (resources && resources.length) {
 
-  loader.load((loader, resources) => {
-    // `resources` is a Object
-    for (const name in resources) {
-      const res = resources[name];
-
-      if (res.isImage) {
-        TEXTURES[name] = res.texture;
-      } else if (res.isAudio) {
-        // audio object
-        AUDIOS[name] = res.data;
-      } else if (res.isVideo) {
-        VIDEOS[name] = res.data;
-      }
+    for (const res of [...new Set(resources)]) {
+      loader.add(res, res);
     }
-    // Object.assign(TEXTURES, resources);
-  });
+    const promise = new Promise((resolve, reject) => {
+      loader.once('complete', resolve);
+      loader.once('error', reject);
+      loader.on('progress', onProgress);
+    });
 
-  return promise;
+    loader.load((loader, resources) => {
+      // `resources` is a Object
+      for (const name in resources) {
+        const res = resources[name];
+
+        if (res.isImage) {
+          TEXTURES[name] = res.texture;
+        } else if (res.isAudio) {
+          // audio object
+          AUDIOS[name] = res.data;
+        } else if (res.isVideo) {
+          VIDEOS[name] = res.data;
+        }
+      }
+      // Object.assign(TEXTURES, resources);
+    });
+
+    return promise;
+
+  } else {
+    return Promise.resolve();
+  }
 }
 
 export function getTexture(url = '') {
