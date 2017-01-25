@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+import core from 'core/core';
 import Logger from 'core/logger';
 import { PrepareFilter,
          CrossFadeFilter,
@@ -45,7 +46,7 @@ export default class TransitionContainer extends PIXI.Sprite {
     this.promiseFinished = null;
   }
   prepare() {
-    const renderer = this.renderer;
+    const renderer = this.renderer || core.getRenderer();
     const texture = PIXI.RenderTexture.create(renderer.width, renderer.height,
                                               PIXI.settings.SCALE_MODE, renderer.resolution);
 
