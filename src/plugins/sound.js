@@ -74,6 +74,7 @@ class Sound {
         .then(ch => {
           params.volume != null && ch.volume(params.volume);
           params.position != null && ch.pos(params.position);
+          params.loop != null && (ch._loop = params.loop);
         });
       } else {
         promise = SoundManager.setChannel(channel || 0, {
