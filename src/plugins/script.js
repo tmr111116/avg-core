@@ -19,6 +19,8 @@
  */
 
 import StoryScript from 'avg-storyscript';
+import parser from 'avg-storyscript/libs/parser';
+import { IfBlock } from 'avg-storyscript/libs/block';
 import core from 'core/core';
 import fetchLocal from 'utils/fetchLocal';
 
@@ -38,6 +40,8 @@ class Script {
   constructor() {
 
     this.parser = new StoryScript(this.handleGlobalChanged.bind(this));
+    this.macros = {};
+    this.macroKeys = [];
     this.scriptName = null;
     this.loading = false;
     this.waiting = false;
@@ -51,6 +55,40 @@ class Script {
   async init() {
     core.use('script-load', this.load.bind(this));
     core.use('script-trigger', this.trigger.bind(this));
+
+    // add macros
+    core.use('script-addmacro', async (ctx, next) => {
+      const macros = ctx.macros || {};
+
+      Object.assign(this.macros, macros);
+      this.macroKeys = Object.keys(this.macros);
+    });
+
+    // handle macros
+    core.use('script-exec', async (ctx, next) => {
+      await next();
+      const { command, flags, params } = ctx;
+
+      if (this.macroKeys.includes(command)) {
+        const macroData = this.macros[command](flags, params);
+
+        const ss = this.parser;
+
+        if (typeof macroData === 'string') {
+          ss.BLOCKSTACK.push(ss.CURRENTBLOCK);
+          const blockData = parser.parse(macroData);
+          const block = new IfBlock(blockData, 0);
+
+          ss.CURRENTBLOCK = block;
+        } else {
+          ss.BLOCKSTACK.push(ss.CURRENTBLOCK);
+          const blockData = macroData;
+          const block = new IfBlock(blockData, 0);
+
+          ss.CURRENTBLOCK = block;
+        }
+      }
+    });
 
     // listen script execute
     core.use('script-exec', async (ctx, next) => {
@@ -151,6 +189,7 @@ class Script {
       await next();
     });
   }
+
   handleGlobalChanged() {
     const g = {};
 
