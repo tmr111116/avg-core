@@ -65,12 +65,12 @@ export function load(resources, onProgress) {
       for (const name in resources) {
         const res = resources[name];
 
-        if (res.isImage) {
+        if (res.type === Resource.TYPE.IMAGE || res.isImage) {
           TEXTURES[name] = res.texture;
-        } else if (res.isAudio) {
+        } else if (res.type === Resource.TYPE.AUDIO || res.isAudio) {
           // audio object
           AUDIOS[name] = res.data;
-        } else if (res.isVideo) {
+        } else if (res.type === Resource.TYPE.VIDEO || res.isVideo) {
           VIDEOS[name] = res.data;
         }
       }
