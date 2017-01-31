@@ -44,7 +44,8 @@ class Tween extends React.Component {
     this.tweens = {};
     this.shadowState = {};
 
-    this.runningTween = null;
+    this.tempSymbol = Symbol('tween');
+    this.runningTween = [];
   }
   componentDidMount() {
     this.registerTweens();
@@ -55,7 +56,7 @@ class Tween extends React.Component {
     }
   }
   registerTweens() {
-    const schemeNames = Object.keys(this.props.schemes);
+    const schemeNames = Object.keys(this.props.schemes || {});
 
     for (const schemeName of schemeNames) {
       const scheme = this.props.schemes[schemeName];
@@ -71,12 +72,23 @@ class Tween extends React.Component {
     const tween = this.tweens[name];
 
     if (tween) {
-      this.runningTween && this.runningTween.stop();
-      this.runningTween = tween;
+      this.runningTween[name] && this.runningTween[name].stop();
+      this.runningTween[name] = tween;
       tween.start();
     } else {
       logger.warn(`Scheme ${name} is not defined.`);
     }
+  }
+  stopTween(name) {
+    this.runningTween[name] && this.runningTween[name].stop();
+  }
+  runScheme(scheme, name = this.tempSymbol) {
+    const tween = tweenGenerator(scheme, this.nodes);
+
+    this.runningTween[name] && this.runningTween[name].stop();
+    this.runningTween[name] = tween;
+
+    tween.start();
   }
   getNodes(key, element) {
     if (element) {
@@ -93,7 +105,7 @@ class Tween extends React.Component {
          ref: node => { element.ref && element.ref(node); this.getNodes(element.key, node); },
        }));
 
-    return <Layer>{ element }</Layer>;
+    return <Layer {...this.props}>{ element }</Layer>;
   }
 }
 
