@@ -4,9 +4,13 @@ const BitBarWebpackProgressPlugin = require('bitbar-webpack-progress-plugin');
 
 const packageInfo = require('./package.json');
 
+/* eslint-disable */
+
 module.exports = function (env) {
 
   let uglifyPlugin;
+
+  env = env || {};
 
   if (env.minimize) {
     uglifyPlugin = [new webpack.optimize.UglifyJsPlugin({
