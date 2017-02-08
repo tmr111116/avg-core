@@ -98,7 +98,7 @@ class AbstractAction extends Ticker {
       && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
 
       this.finished = true;
-      this.progress = this.progress << 0;
+      this.progress = Math.trunc(this.progress);
 
     } else if ((this.progress <= 0 || this.progress >= 1)) {
       this.times += Number(_direction);
@@ -106,7 +106,7 @@ class AbstractAction extends Ticker {
       if (this.yoyo) {
         // change direction
         this.direction = -this.direction;
-        this.progress = (this.progress << 0) + ((this.progress % 1) * this.direction);
+        this.progress = Math.trunc(this.progress) + ((this.progress % 1) * this.direction);
 
       } else {
         this.progress = 0 + (_direction === -1 ? 1 : 0);
