@@ -141,8 +141,10 @@ export function fade(channel, from, to, duration, cb) {
 export function stopAll() {
   if (Channels.length) {
     for (const ch of Channels) {
-      ch.stop();
-      ch.unload();
+      if (ch) {
+        ch.stop();
+        ch.unload();
+      }
     }
   }
 }
