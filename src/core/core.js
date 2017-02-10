@@ -154,7 +154,11 @@ class Core {
     } else {
 
       /* create PIXI renderer */
-      PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
+      if (navigator.platform === 'MacIntel') {
+        PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
+      } else {
+        PIXI.settings.RESOLUTION = 1;
+      }
       this.renderer = new PIXI.WebGLRenderer(width, height, {
         view: _options.view,
         autoResize: true,
