@@ -127,6 +127,7 @@ export default class TransitionContainer extends PIXI.Sprite {
 
       return;
     } else if (this.status === 'transition') {
+      const performance = window.performance || window.Date;
       const finished = this.filter.update(performance.now());
 
       if (finished) {
