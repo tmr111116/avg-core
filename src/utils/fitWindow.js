@@ -27,6 +27,7 @@
  */
 export default function fitWindow(renderer, width, height) {
   const ratio = renderer.width / renderer.height;
+  const resolution = renderer.resolution;
 
   let offsetW,
       offsetH,
@@ -52,7 +53,7 @@ export default function fitWindow(renderer, width, height) {
   // renderer.view.style.height = contentH + "px";
   view.style.backfaceVisibility = 'hidden';
   view.style.transformOrigin = 'left top';
-  view.style.transform = `scale(${contentW / renderer.width}, ${contentH / renderer.height}) translateZ(0)`;
+  view.style.transform = `scale(${contentW / renderer.width * resolution}, ${contentH / renderer.height * resolution}) translateZ(0)`;
 
   view.style.left = `${offsetW}px`;
   view.style.top = `${offsetH}px`;
