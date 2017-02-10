@@ -297,15 +297,48 @@ class Parallel extends Ticker {
 class MoveToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
-      this.x = target.x;
-      this.y = target.y;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
       this.initialled = true;
     }
-    const { x, y } = params;
-    // console.log(target.y, progress, lastProgress, deltaProgress)
+    const { x = target.x, y = target.y } = params;
 
-    (x != null) && (target.x = this.x + ((x - this.x) * progress));
-    (y != null) && (target.y = this.y + ((y - this.y) * progress));
+    if (progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaX = x - target.x + this.lastDeltaX;
+      this.lastDeltaY = y - target.y + this.lastDeltaY;
+      target.x = x;
+      target.y = y;
+
+      return;
+    }
+
+    if (x != null) {
+      target.x -= this.lastDeltaX;
+
+      const deltaX = (x - target.x) * progress;
+
+      target.x += deltaX;
+
+      this.lastDeltaX = deltaX;
+    }
+    if (y != null) {
+      target.y -= this.lastDeltaY;
+
+      const deltaY = (y - target.y) * progress;
+
+      target.y += deltaY;
+
+      this.lastDeltaY = deltaY;
+    }
   }
 }
 class MoveByAction extends AbstractAction {
@@ -321,9 +354,31 @@ class FadeToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
       this.alpha = target.alpha;
+      this.lastDeltaAlpha = 0;
       this.initialled = true;
     }
-    target.alpha = this.alpha + ((params - this.alpha) * progress);
+
+    const alpha = params;
+
+    if (progress === 0) {
+      target.alpha = target.alpha - this.lastDeltaAlpha;
+      this.lastDeltaAlpha = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaAlpha = alpha - target.alpha + this.lastDeltaAlpha;
+      target.alpha = alpha;
+
+      return;
+    }
+
+    target.alpha -= this.lastDeltaAlpha;
+    const deltaAlpha = (alpha - target.alpha) * progress;
+
+    target.alpha += deltaAlpha;
+    this.lastDeltaAlpha = deltaAlpha;
   }
 }
 class FadeByAction extends AbstractAction {
@@ -341,10 +396,31 @@ class DelayAction extends AbstractAction {
 class RotateToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
-      this.rotation = target.rotation;
+      this.lastDeltaRotation = 0;
       this.initialled = true;
     }
-    target.rotation = this.rotation + ((params - this.rotation) * progress);
+
+    const rotation = params;
+
+    if (progress === 0) {
+      target.rotation = target.rotation - this.lastDeltaRotation;
+      this.lastDeltaRotation = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaRotation = rotation - target.rotation + this.lastDeltaRotation;
+      target.rotation = rotation;
+
+      return;
+    }
+
+    target.rotation -= this.lastDeltaRotation;
+    const deltaAlpha = (rotation - target.rotation) * progress;
+
+    target.rotation += deltaAlpha;
+    this.lastDeltaRotation = deltaAlpha;
   }
 }
 class RotateByAction extends AbstractAction {
@@ -357,15 +433,49 @@ class RotateByAction extends AbstractAction {
 class ScaleToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
-      this.scaleX = target.scale.x;
-      this.scaleY = target.scale.y;
+      this.lastDeltaScaleX = 0;
+      this.lastDeltaScaleY = 0;
       this.initialled = true;
     }
-    const { x, y } = params;
-    // console.log(target.y, progress, lastProgress, deltaProgress)
 
-    (x != null) && (target.scale.x = this.scaleX + ((x - this.scaleX) * progress));
-    (y != null) && (target.scale.y = this.scaleY + ((y - this.scaleY) * progress));
+    const { x = target.scale.x, y = target.scale.y } = params;
+
+    if (progress === 0) {
+      target.scale.x = target.scale.x - this.lastDeltaScaleX;
+      target.scale.y = target.scale.y - this.lastDeltaScaleY;
+      this.lastDeltaScaleX = 0;
+      this.lastDeltaScaleY = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaScaleX = x - target.scale.x + this.lastDeltaScaleX;
+      this.lastDeltaScaleY = y - target.scale.y + this.lastDeltaScaleY;
+      target.scale.x = x;
+      target.scale.y = y;
+
+      return;
+    }
+
+    if (x != null) {
+      target.scale.x -= this.lastDeltaScaleX;
+
+      const deltaX = (x - target.scale.x) * progress;
+
+      target.scale.x += deltaX;
+
+      this.lastDeltaScaleX = deltaX;
+    }
+    if (y != null) {
+      target.scale.y -= this.lastDeltaScaleY;
+
+      const deltaY = (y - target.scale.y) * progress;
+
+      target.scale.y += deltaY;
+
+      this.lastDeltaScaleY = deltaY;
+    }
   }
 }
 class ScaleByAction extends AbstractAction {
