@@ -139,6 +139,7 @@ class TweenBuilderChain {
    'rotateTo', 'rotateBy',
    'scaleTo', 'scaleBy',
    'tintTo', 'tintBy',
+   'shake', 'quake',
    'setProperty', 'callback');
 
 export default function tweenBuilder() {

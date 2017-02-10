@@ -377,6 +377,106 @@ class ScaleByAction extends AbstractAction {
     (y != null) && (target.scale.y += y * deltaProgress);
   }
 }
+class ShakeAction extends AbstractAction {
+  getState(_progress, offset) {
+    let progress = _progress;
+
+    let firstPart = 0;
+    let secondPart = 0;
+    let thirdPart = 0;
+    let forthPart = 0;
+
+    if (progress > 0.75) {
+      forthPart = progress % 0.75;
+      progress -= forthPart;
+    }
+    if (progress > 0.5) {
+      thirdPart = progress % 0.5;
+      progress -= thirdPart;
+    }
+    if (progress > 0.25) {
+      secondPart = progress % 0.250001;
+      progress -= secondPart;
+    }
+    firstPart = progress;
+
+    return (firstPart - secondPart - thirdPart + forthPart) * offset * 4;
+  }
+  updateTransform(progress, lastProgress, target, params) {
+    // const deltaProgress = progress - lastProgress;
+    const { offsetX, offsetY } = params;
+
+    if (!this.initialled) {
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.initialled = true;
+    }
+
+    if (progress === 1 || progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+    }
+
+    if (offsetX) {
+      const deltaX = this.getState(progress, offsetX);
+
+      target.x = (target.x - this.lastDeltaX) + deltaX;
+      this.lastDeltaX = deltaX;
+    }
+    if (offsetY) {
+      const deltaY = this.getState(progress, offsetY);
+
+      target.y = (target.y - this.lastDeltaY) + deltaY;
+      this.lastDeltaY = deltaY;
+    }
+  }
+}
+class QuakeAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    const { offsetX, offsetY, speed = 10 } = params;
+
+    if (!this.initialled) {
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.elapsedProgress = 0;
+      this.initialled = true;
+    }
+
+    this.elapsedProgress += Math.abs(deltaProgress);
+
+    if (this.elapsedProgress < 1 / speed && (this.progress !== 1 && this.progress !== 0)) {
+      return;
+    }
+
+    this.elapsedProgress = this.elapsedProgress % (1 / speed);
+
+    if (progress === 1 || progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.elapsedProgress = 0;
+
+      return;
+    }
+
+    if (offsetX) {
+      const deltaX = (Math.random() * offsetX * 2) - offsetX;
+
+      target.x = (target.x - this.lastDeltaX) + deltaX;
+      this.lastDeltaX = deltaX;
+    }
+    if (offsetY) {
+      const deltaY = (Math.random() * offsetY * 2) - offsetY;
+
+      target.y = (target.y - this.lastDeltaY) + deltaY;
+      this.lastDeltaY = deltaY;
+    }
+  }
+}
 class SetPropertyAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const keys = Object.keys(params);
@@ -429,6 +529,8 @@ export default function tweenGenerator(scheme, targetMap) {
       case 'rotateBy': return new RotateByAction(...args);
       case 'scaleTo': return new ScaleToAction(...args);
       case 'scaleBy': return new ScaleByAction(...args);
+      case 'shake': return new ShakeAction(...args);
+      case 'quake': return new QuakeAction(...args);
       case 'setProperty': return new SetPropertyAction(...args);
       case 'callback': return new CallbackAction(...args);
       default: logger.warn(`Unknown action '${scheme.name}', ignored.`);
