@@ -69,9 +69,9 @@ export default class TransitionContainer extends PIXI.Sprite {
           filter = new CrossFadeFilter(params.duration);
           break;
         case 'universal': {
-          const { ruleFile, vague, duration } = params;
+          const { rule, vague, duration } = params;
 
-          filter = new UniversalFilter(ruleFile, vague, duration);
+          filter = new UniversalFilter(rule, vague, duration);
           break;
         }
         case 'shutter': {
