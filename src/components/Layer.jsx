@@ -58,6 +58,7 @@ export const Layer = React.createClass({
     height: React.PropTypes.number,
     fillColor: React.PropTypes.number,
     fillAlpha: React.PropTypes.number,
+    clip: React.PropTypes.bool,
   },
   render() {
     const renderer = core.getRenderer();
