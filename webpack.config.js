@@ -37,7 +37,7 @@ module.exports = function (env) {
     },
     module: {
       rules: [
-        { test: /\.js$/, exclude: /node_modules\/(?!koa-compose)/, loader: 'babel-loader', query: { compact: true } },
+        { test: /\.js$/, exclude: /node_modules\/(?!(koa-compose|avg-.*))/, loader: 'babel-loader', query: { compact: true } },
         { test: /\.jsx$/, exclude: /node_modules/, loader: 'babel-loader', query: { compact: true } },
         { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
       ],
