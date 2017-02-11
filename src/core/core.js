@@ -225,8 +225,8 @@ class Core {
   }
 
   // TODO: need more elegent code
-  loadAssets(list) {
-    return loadResources(list);
+  loadAssets(list, onProgress) {
+    return loadResources(list, onProgress);
   }
 
   /**
