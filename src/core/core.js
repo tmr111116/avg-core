@@ -30,6 +30,7 @@ import Logger from './logger';
 import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
 
 const PIXI = require('pixi.js');
+const isMobile = require('ismobilejs');
 
 const logger = Logger.create('Core');
 
@@ -154,10 +155,11 @@ class Core {
     } else {
 
       /* create PIXI renderer */
-      if (navigator.platform === 'MacIntel') {
-        PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
-      } else {
+      if (isMobile.any) {
         PIXI.settings.RESOLUTION = 1;
+        PIXI.settings.TARGET_FPMS = 0.03;
+      } else {
+        PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
       }
       this.renderer = new PIXI.WebGLRenderer(width, height, {
         view: _options.view,
