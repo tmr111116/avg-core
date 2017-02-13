@@ -18,24 +18,24 @@
  * limitations under the License.
  */
 
+import core from 'core/core';
 import Logger from 'core/logger';
 
-const PIXI = require('pixi.js');
 const logger = Logger.create('Tween');
 
 class Ticker {
   constructor() {
-    const performance = window.performance || window.Date;
+    const ticker = core.ticker;
 
     this._update = () => {
-      this.update(performance.now());
+      this.update(ticker.elapsedTime);
     };
   }
   start() {
-    PIXI.ticker.shared.add(this._update);
+    core.getTicker().add(this._update);
   }
   stop() {
-    PIXI.ticker.shared.remove(this._update);
+    core.getTicker().remove(this._update);
   }
   update() {
 

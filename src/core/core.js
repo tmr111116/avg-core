@@ -28,6 +28,7 @@ import fitWindow from 'utils/fitWindow';
 import Logger from './logger';
 
 import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
+import Ticker from './ticker';
 
 const PIXI = require('pixi.js');
 const isMobile = require('ismobilejs');
@@ -49,6 +50,7 @@ class Core {
      * @readonly
      */
     this._init = false;
+    this._tickTime = 0;
 
     this.renderer = null;
     this.stage = null;
@@ -186,9 +188,8 @@ class Core {
     this.stage._ontap = e => this.post('tap', e);
     this.stage._onclick = e => this.post('click', e);
 
-    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker = new Ticker();
     this.ticker.add(this.tick.bind(this));
-
     sayHello();
     this._init = true;
   }
@@ -257,15 +258,18 @@ class Core {
    * @return {PIXI.ticker.Ticker} shared ticker
    */
   getTicker() {
-    return PIXI.ticker.shared;
+    return this.ticker;
   }
 
   /**
    * @private
    */
-  tick() {
-    if (this._init) {
+  tick(deltaTime) {
+    this._tickTime += deltaTime;
+    if (this._init && this._tickTime > 0.98) {
       this.renderer.render(this.stage);
+      this._tickTime = 0;
+      window.stats && window.stats.update();
     }
   }
 
