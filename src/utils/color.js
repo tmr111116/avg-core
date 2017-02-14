@@ -45,15 +45,15 @@ export default class Color {
   }
 
   set r(value) {
-    this._r = (value - 1) % 0xff + 1;
+    this._r = value % 256;
   }
 
   set g(value) {
-    this._g = (value - 1) % 0xff + 1;
+    this._g = value % 256;
   }
 
   set b(value) {
-    this._b = (value - 1) % 0xff + 1;
+    this._b = value % 256;
   }
 
   get r() {

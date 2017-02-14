@@ -20,6 +20,7 @@
 
 import core from 'core/core';
 import Logger from 'core/logger';
+import Color from '../../utils/color.js';
 
 const logger = Logger.create('Tween');
 
@@ -490,6 +491,68 @@ class ScaleByAction extends AbstractAction {
     (y != null) && (target.scale.y += y * deltaProgress);
   }
 }
+class TintToAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+
+    if (!this.initialled) {
+      this.targetColor = new Color(params);
+      this.lastDeltaColor = new Color(0);
+      this.initialled = true;
+    }
+
+    const currentColor = new Color(target.tint || 0xffffff);
+
+    if (progress === 0) {
+      currentColor.r = currentColor.r - this.lastDeltaColor.r;
+      currentColor.g = currentColor.g - this.lastDeltaColor.g;
+      currentColor.b = currentColor.b - this.lastDeltaColor.b;
+      target.tint = currentColor.toNumber();
+
+      this.lastDeltaColor = new Color(0);
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaColor.r = this.targetColor.r - currentColor.r + this.lastDeltaColor.r;
+      this.lastDeltaColor.g = this.targetColor.g - currentColor.g + this.lastDeltaColor.g;
+      this.lastDeltaColor.b = this.targetColor.b - currentColor.b + this.lastDeltaColor.b;
+      target.tint = this.targetColor.toNumber();
+
+      return;
+    }
+
+    currentColor.r -= this.lastDeltaColor.r;
+    currentColor.g -= this.lastDeltaColor.g;
+    currentColor.b -= this.lastDeltaColor.b;
+
+    const deltaColor = new Color(0);
+
+    deltaColor.r = (this.targetColor.r - currentColor.r) * progress;
+    deltaColor.g = (this.targetColor.g - currentColor.g) * progress;
+    deltaColor.b = (this.targetColor.b - currentColor.b) * progress;
+
+    currentColor.r += deltaColor.r;
+    currentColor.g += deltaColor.g;
+    currentColor.b += deltaColor.b;
+    target.tint = currentColor.toNumber();
+    this.lastDeltaColor = deltaColor;
+  }
+}
+class TintByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+
+    const currentColor = new Color(target.tint || 0xffffff);
+    const targetColor = new Color(params);
+
+    currentColor.r = (currentColor.r + (targetColor.r * deltaProgress)) % 256;
+    currentColor.g = (currentColor.g + (targetColor.g * deltaProgress)) % 256;
+    currentColor.b = (currentColor.b + (targetColor.b * deltaProgress)) % 256;
+
+    target.tint = currentColor.toNumber();
+  }
+}
 class ShakeAction extends AbstractAction {
   getState(_progress, offset) {
     let progress = _progress;
@@ -662,6 +725,8 @@ export default function tweenGenerator(scheme, targetMap) {
       case 'rotateBy': return new RotateByAction(...args);
       case 'scaleTo': return new ScaleToAction(...args);
       case 'scaleBy': return new ScaleByAction(...args);
+      case 'tintTo': return new TintToAction(...args);
+      case 'tintBy': return new TintByAction(...args);
       case 'shake': return new ShakeAction(...args);
       case 'quake': return new QuakeAction(...args);
       case 'setProperty': return new SetPropertyAction(...args);
