@@ -111,7 +111,7 @@ class TweenBuilderChain {
 ((...actionNames) => {
   for (const actionName of actionNames) {
     Object.defineProperty(TweenBuilderChain.prototype, actionName, {
-      value(target, params, duration = 4, easing = x => x, repeat = 0, yoyo = false) {
+      value(target, params, duration = 0, easing = x => x, repeat = 0, yoyo = false) {
         this._checkInScheme();
         const action = {
           type: 'action',

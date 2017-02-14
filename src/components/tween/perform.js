@@ -74,7 +74,7 @@ class AbstractAction extends Ticker {
     this.lastTime = 0;
   }
 
-  update(time) {
+  update(time, autoFinish = true) {
     if (this.finished) {
       return true;
     }
@@ -94,11 +94,14 @@ class AbstractAction extends Ticker {
     this.lastProgress = this.progress;
     this.progress += deltaProgress * this.direction * _direction;
 
+    // avoid Infinity caused by small duration value.
+    this.progress = isFinite(this.progress) ? this.progress : Math.sign(this.progress);
+
     if ((this.progress <= 0 || this.progress >= 1)
       && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
 
-      this.finished = true;
-      this.progress = Math.trunc(this.progress);
+      autoFinish && (this.finished = true);
+      this.progress = Math.max(0, Math.min(this.progress, 1));
 
     } else if ((this.progress <= 0 || this.progress >= 1)) {
       this.times += Number(_direction);
@@ -106,7 +109,7 @@ class AbstractAction extends Ticker {
       if (this.yoyo) {
         // change direction
         this.direction = -this.direction;
-        this.progress = Math.trunc(this.progress) + ((this.progress % 1) * this.direction);
+        this.progress = Math.max(0, Math.min(this.progress, 1)) + ((this.progress - (this.progress << 0)) * this.direction);
 
       } else {
         this.progress = 0 + (_direction === -1 ? 1 : 0);
@@ -612,8 +615,28 @@ class SetPropertyAction extends AbstractAction {
   }
 }
 class CallbackAction extends AbstractAction {
+  constructor(...args) {
+    super(...args);
+
+    /**
+     * autoFinish is designed to control whether a action should be setting to `finished`
+     * when after the specific `duration`.
+     *
+     * So, if duration was setting to 0 or undefined, `autoFinish` should be `false`,
+     * thus a callback `() => (this.finished = true)` must be passed to users
+     * so that they can finish it by themselves.
+     */
+    if (this.duration) {
+      this.autoFinish = true;
+    } else {
+      this.autoFinish = false;
+    }
+  }
+  update(time) {
+    return super.update(time, this.autoFinish);
+  }
   updateTransform(progress, lastProgress, target, params) {
-    params.call(target, progress, lastProgress);
+    params.call(target, progress, lastProgress, target, () => (this.finished = true));
   }
 }
 
