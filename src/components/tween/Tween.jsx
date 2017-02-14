@@ -33,13 +33,6 @@ class Tween extends React.Component {
   constructor(props) {
     super(props);
 
-    const properties = {};
-
-    React.Children.map(this.props.children, element => {
-      element && (properties[element.key] = { ...element.props, children: null });
-    });
-    this.state = properties;
-
     this.nodes = {};
     this.tweens = {};
     this.shadowState = {};
@@ -97,7 +90,7 @@ class Tween extends React.Component {
   }
   render() {
     this.nodes = {};
-    const element = React.Children.map(this.props.children, element =>
+    const elements = React.Children.map(this.props.children, element =>
       // const originState = this.state[element.key];
       // const updatedState = this.shadowState[element.key];
     element && React.cloneElement(element, {
@@ -105,7 +98,7 @@ class Tween extends React.Component {
       ref: node => { element.ref && element.ref(node); this.getNodes(element.key, node); },
     }));
 
-    return <Layer {...this.props}>{ element }</Layer>;
+    return <Layer {...this.props}>{ elements }</Layer>;
   }
 }
 
