@@ -51,7 +51,7 @@ class Layer extends PIXI.Container {
     this.setProperties({
       x: 0,
       y: 0,
-      opacity: 1,
+      alpha: 1,
       visible: true,
       width: 10,
       height: 10,
@@ -110,10 +110,10 @@ class Layer extends PIXI.Container {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-  setProperties({ x, y, opacity, visible, width, height, fillColor, fillAlpha, clip }) {
+  setProperties({ x, y, alpha, visible, width, height, fillColor, fillAlpha, clip }) {
     (x != null) && (this.x = x);
     (y != null) && (this.y = y);
-    (opacity != null) && (this.alpha = opacity);
+    (alpha != null) && (this.alpha = alpha);
     (visible != null) && (this.visible = visible);
     (width != null) && (this.rectWidth = width);
     (height != null) && (this.rectHeight = height);
