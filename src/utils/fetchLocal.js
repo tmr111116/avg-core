@@ -6,7 +6,11 @@ export default function fetchLocal(url) {
           const xhr = new XMLHttpRequest();
 
           xhr.onload = function () {
-            resolve(JSON.parse(xhr.responseText));
+            try {
+              resolve(JSON.parse(xhr.responseText));
+            } catch (e) {
+              reject(e);
+            }
           };
           xhr.onerror = function () {
             reject(new TypeError('Local request failed'));

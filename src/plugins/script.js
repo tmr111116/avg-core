@@ -208,7 +208,8 @@ class Script {
       await core.post('script-loading');
       const task1 = fetchLocal(scriptConfig)
       .then(res => res.json())
-      .then(json => core.loadAssets(json.resources, loader => core.post('script-loading-progress', loader)));
+      .then(json => core.loadAssets(json.resources, loader => core.post('script-loading-progress', loader)))
+      .catch(() => {});
       const task2 = fetchLocal(scriptFile)
       .then(res => res.text())
       .then(text => this.parser.load(text.trim()));
