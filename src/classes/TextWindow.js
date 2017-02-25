@@ -513,7 +513,11 @@ export default class TextWindow extends PIXI.Container {
       .then(() => this.m_promise = null);
     }
 
-    return this.m_promise;
+    if (this.visible && this.renderable) {
+      return this.m_promise;
+    } else {
+      return Promise.resolve();
+    }
   }
 
   removeChildren() {
