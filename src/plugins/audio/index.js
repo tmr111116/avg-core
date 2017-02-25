@@ -22,11 +22,14 @@ import * as manager from './manager';
 
 export default class Audio {
   constructor(core) {
-    core.use('script-exec', this.exec.bind(this));
-    core.use('save-archive', this.save.bind(this));
-    core.use('load-archive', this.load.bind(this));
 
-    core.plugins.audio = manager;
+    if (!core.plugins.audio) {
+      core.use('script-exec', this.exec.bind(this));
+      core.use('save-archive', this.save.bind(this));
+      core.use('load-archive', this.load.bind(this));
+      core.plugins.audio = manager;
+    }
+
   }
 
   /**
