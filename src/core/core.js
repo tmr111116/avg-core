@@ -63,6 +63,7 @@ class Core {
      * @private
      */
     this.middlewares = {};
+    this.plugins = {};
 
     this.assetsPath = null;
   }
@@ -125,6 +126,17 @@ class Core {
     }
 
     return Promise.resolve();
+  }
+
+  /**
+   * install a plugin
+   * 
+   * @param {any} constructor plugin class
+   * 
+   * @memberOf Core
+   */
+  installPlugin(constructor) {
+    new constructor(this);
   }
 
   /**
