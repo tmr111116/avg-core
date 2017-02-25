@@ -34,7 +34,7 @@
     "core-decorators": "^0.15.0",
     "deep-equal": "^1.0.1",
     "fontfaceobserver": "^2.0.7",
-    "howler": "^1.1.28",
+    "howler": "^2.0.2",
     "ismobilejs": "^0.4.0",
     "koa-compose": "^3.2.1",
     "pixi-particles": "^2.1.1",
