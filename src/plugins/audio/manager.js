@@ -49,19 +49,31 @@ export function globalMute(muted) {
   return Howler.muted(muted);
 }
 
-export function create(channel, src, options) {
-  if (options.exclusive && channelExist(channel)) {
+export function create(channel, src, options = {}) {
+  const _options = {
+    volume: 1,
+    loop: false,
+    preload: true,
+    autoplay: true,
+    mute: false,
+    rate: 1,
+    autounload: true,
+    exclusive: true,
+    ...options
+  };
+
+  if (_options.exclusive && channelExist(channel)) {
     destroy(channel);
   }
 
   const channelVolume = ChannelVolume[channel] || 1.0;
   const sound = new Howl({
     src,
-    ...options,
-    volume: options.volume * channelVolume
+    ..._options,
+    volume: _options.volume * channelVolume
   });
 
-  if (options.autounload) {
+  if (_options.autounload) {
     const autoUnload = () => {
       if (!sound.loop()) {
         destroy(channel);
@@ -71,6 +83,9 @@ export function create(channel, src, options) {
     sound.on('end', autoUnload);
     sound.on('stop', autoUnload);
   }
+
+  sound.autounload = _options.autounload;
+  sound.exclusive = _options.exclusive;
 
   Pool[channel] = sound;
 
@@ -269,18 +284,25 @@ export function getSaveData() {
     const sound = Pool[channel];
     const channelVolume = ChannelVolume[channel] || 1.0;
 
+    let pos = sound.seek();
+
+    if (typeof pos !== 'number') {
+      pos = 0;
+    }
+
     channelData.push({
       channel,
       src: sound._src,
       volume: sound.volume() / channelVolume,
       loop: sound.loop(),
       autoplay: sound._autoplay,
-      mute: sound.mute(),
+      mute: sound._muted,
       rate: sound.rate(),
       paused: sound._inactiveSound()._paused,
       ended: sound._inactiveSound()._ended,
-      position: sound.seek(),
-      autounload: sound._autounload
+      position: pos,
+      autounload: sound.autounload,
+      exclusive: sound.exclusive
     });
   }
 
