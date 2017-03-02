@@ -97,7 +97,7 @@ export default class Dialog extends React.Component {
   }
   render() {
     const core =  (
-      <Layer {...combineProps(this.props, Layer.propTypes)}
+      <Layer buttonMode={false} {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
         onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp} onMouseUpOutside={this.handleMouseUp}
         onMouseMove={this.handleMouseMove} onClick={e => e.stopPropagation()}

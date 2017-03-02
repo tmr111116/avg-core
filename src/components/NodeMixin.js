@@ -23,7 +23,7 @@ const NodeMixin = {
 
     for (const key of keys) {
       if (/^on[A-Z]/.test(key)) {
-        if (key === 'onClick') {
+        if (key === 'onClick' && element.props.buttonMode !== false) {
           this.node.buttonMode = true;
         }
         this.node[`_on${key.replace(/^on/, '').toLowerCase()}`] = element.props[key];
@@ -86,7 +86,7 @@ const NodeMixin = {
 
       for (const key of keys) {
         if (/^on[A-Z]/.test(key)) {
-          if (key === 'onClick') {
+          if (key === 'onClick' && props.buttonMode !== false) {
             this.node.buttonMode = true;
           }
           this.node[`_on${key.replace(/^on/, '').toLowerCase()}`] = props[key];

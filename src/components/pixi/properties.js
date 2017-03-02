@@ -111,6 +111,7 @@ export function mountNode(node, props) {
   setNodeValue('alpha', props.alpha);
   setNodeValue('visible', props.visible);
   setNodeValue('cacheAsBitmap', props.cacheAsBitmap);
+  setNodeValue('buttonMode', props.buttonMode);
 
   setNodeValue('x', props.x);
   setNodeValue('y', props.y);
@@ -136,6 +137,7 @@ export function updateNode(node, prevProps, props) {
   updateNodeValue('alpha', prevProps.alpha, props.alpha);
   updateNodeValue('visible', prevProps.visible, props.visible);
   updateNodeValue('cacheAsBitmap', prevProps.cacheAsBitmap, props.cacheAsBitmap);
+  updateNodeValue('buttonMode', prevProps.buttonMode, props.buttonMode);
 
   updateNodeValue('x', prevProps.x, props.x);
   updateNodeValue('y', prevProps.y, props.y);
