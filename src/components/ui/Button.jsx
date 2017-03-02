@@ -25,7 +25,7 @@ import NodeMixin from 'components/NodeMixin';
 import Sprite from 'classes/Sprite';
 import core from 'core/core';
 import pixiPropTypes from '../pixi/propTypes';
-import { mountNode, updateNode } from '../pixi/properties';
+import { mountNode, updateNode, setValue, updateValue } from '../pixi/properties';
 
 const PIXI = require('pixi.js');
 
@@ -41,11 +41,13 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     node.buttonMode = true;
     node.on('mouseover', () => this.setFrame(1));
     node.on('mouseout', () => this.setFrame(0));
-    node.on('mousedown', () => this.setFrame(2));
+    node.on('mousedown', () => this.setFrame(node.lite ? 1 : 2));
     node.on('mouseup', () => this.setFrame(1));
     node.on('mouseupoutside', () => this.setFrame(0));
 
     mountNode(node, props);
+    setValue.call(node, 'lite', props.lite, true);
+
     node.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
 
@@ -54,6 +56,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
   updateNode(prevProps, props) {
     // this.setProperties(props);
     updateNode(this.node, prevProps, props);
+    updateValue.call(this.node, 'lite', prevProps.lite, props.lite);
     this.node.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
   },
@@ -68,7 +71,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     }
 
     // frame: idle, hover, active
-    layer.texture = core.getTexture(props.file);
+    layer.texture = core.getTexture(props.src);
 
     layer.texture.baseTexture.on('loaded', () => this.setFrame(0));
     this.setFrame(0);
@@ -76,6 +79,7 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
   },
   setFrame(num) {
     const layer = this.node;
+    const frameCount = layer.lite ? 2 : 3;
 
     if (!layer.texture || !layer.texture.baseTexture.hasLoaded) {
       return false;
@@ -86,11 +90,13 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
 
     const frame = new PIXI.Rectangle();
 
-    frame.x = width * num / 3;
+    frame.x = width * num / frameCount;
     frame.y = 0;
-    frame.width = width / 3;
+    frame.width = width / frameCount;
     frame.height = height;
     layer.texture.frame = frame;
+
+    // layer.texture.emit('update');
 
     // e.stopped = true;
     return false;
