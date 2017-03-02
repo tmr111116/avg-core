@@ -23,6 +23,7 @@ import core from 'core/core';
 import { Layer } from '../Layer';
 import { Scroller } from './Scroller';
 import combineProps from 'utils/combineProps';
+import deepEqual from 'deep-equal';
 
 const PIXI = require('pixi.js');
 
@@ -80,6 +81,35 @@ export default class Layout extends React.Component {
     };
   }
   componentDidMount() {
+    this.calcPosition();
+  }
+  componentDidUpdate(prevProps) {
+    if (this.checkChildrenChanged(prevProps, this.props)) {
+      this.calcPosition();
+    }
+  }
+  checkChildrenChanged(prevProps, props) {
+    if (prevProps.children && props.children && prevProps.children.length === props.children.length) {
+      const prevChildren = prevProps.children;
+      const children = props.children;
+
+      for (let i = 0; i < props.children.length; i++) {
+        const prevChild = prevChildren[i];
+        const child = children[i];
+
+        if (child.displayName === prevChild.displayName && deepEqual({...child.props, children: null}, {...prevChild.props, children: null})) {
+          continue;
+        } else {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    return true;
+  }
+  calcPosition() {
     let maxWidth = 0;
     let maxHeight = 0;
     const refs = Object.keys(this.children);
@@ -372,7 +402,7 @@ export default class Layout extends React.Component {
           width={this.state.width} height={this.state.height}
         >
           {React.Children.map(this.props.children, (element, index) => React.cloneElement(element, {
-            ref: arg => { element.ref && element.ref(arg); this.children[index] = arg; },
+            ref: arg => { element.ref && element.ref(arg); arg && (this.children[index] = arg); },
             key: index,
             x: this.state.childPositions[index * 2],
             y: this.state.childPositions[(index * 2) + 1],
