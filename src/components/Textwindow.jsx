@@ -152,6 +152,7 @@ export class Textwindow extends React.Component {
     } else if (flags.includes('show')) {
       layer.setVisible(true);
     } else if (flags.includes('hide')) {
+      this.reshowWhenScriptTrigger = flags.includes('soft');
       layer.setVisible(false);
     } else if (flags.includes('continue')) {
       waitClick = true;
@@ -173,6 +174,13 @@ export class Textwindow extends React.Component {
     await next();
   }
   async handleScriptTrigger(ctx, next) {
+    const layer = this.layer;
+
+    if (!layer.visible && this.reshowWhenScriptTrigger) {
+      layer.setVisible(true);
+
+      return;
+    }
     if (this.state.switchPageAfterClick) {
       await this.layer.drawText('', true);
       this.state.switchPageAfterClick = false;
