@@ -143,6 +143,8 @@ class Script {
       } else if (ctx.mode === 'skip') {
         this.isSkip = true;
         core.post('script-trigger', { DONOTSTOPAUTOORSKIP: true });
+      } else {
+        core.post('script-trigger', { DONOTSTOPAUTOORSKIP: false });
       }
     });
 
