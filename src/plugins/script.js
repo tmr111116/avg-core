@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-import StoryScript from 'avg-storyscript';
+import StoryScript from 'avg-storyscript/index';
 import parser from 'avg-storyscript/libs/parser';
-import { IfBlock } from 'avg-storyscript/libs/block';
+import { InsertedBlock } from 'avg-storyscript/libs/block';
 import core from 'core/core';
 import fetchLocal from 'utils/fetchLocal';
 
@@ -77,13 +77,13 @@ class Script {
         if (typeof macroData === 'string') {
           ss.BLOCKSTACK.push(ss.CURRENTBLOCK);
           const blockData = parser.parse(macroData);
-          const block = new IfBlock(blockData, 0);
+          const block = new InsertedBlock(blockData);
 
           ss.CURRENTBLOCK = block;
         } else {
           ss.BLOCKSTACK.push(ss.CURRENTBLOCK);
           const blockData = macroData;
-          const block = new IfBlock(blockData, 0);
+          const block = new InsertedBlock(blockData);
 
           ss.CURRENTBLOCK = block;
         }
