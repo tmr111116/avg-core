@@ -298,8 +298,8 @@ export function getSaveData() {
       autoplay: sound._autoplay,
       mute: sound._muted,
       rate: sound.rate(),
-      paused: sound._inactiveSound()._paused,
-      ended: sound._inactiveSound()._ended,
+      paused: !sound.playing(),
+      ended: !sound.playing(),
       position: pos,
       autounload: sound.autounload,
       exclusive: sound.exclusive
@@ -334,13 +334,13 @@ export function setSaveData(data) {
       rate: item.rate
     });
 
-    Pool[item.channel].seek(item.seek);
+    // Pool[item.channel].seek(item.seek);
 
     if (item.ended) {
       // do nothing
     } else if (item.paused) {
       // do nothing
-    } else if (!item.autoplay && item.seek === 0) {
+    // } else if (!item.autoplay && item.seek === 0) {
       // do noting
     } else {
 
