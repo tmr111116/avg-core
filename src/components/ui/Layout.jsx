@@ -168,16 +168,18 @@ export default class Layout extends React.Component {
       const child = this.children[ref];
       const node = child._reactInternalInstance._mountImage;
       const bound = node.getBounds();
+      const anchorX = node.anchor ? node.anchor.x : 0;
+      const anchorY = node.anchor ? node.anchor.y : 0;
 
       if (direction === 'vertical') {
-        childPositions.push(lastRight + ((maxWidth - bound.width) * baseline) + (bound.width * node.anchor.x));
-        childPositions.push(lastBottom + (bound.height * node.anchor.y));
+        childPositions.push(lastRight + ((maxWidth - bound.width) * baseline) + (bound.width * (anchorX)));
+        childPositions.push(lastBottom + (bound.height * anchorY));
         // node.x = lastRight + (maxWidth - node.width) * baseline;
         // node.y = lastBottom;
         lastBottom += interval + bound.height;
       } else {
-        childPositions.push(lastRight + (bound.width * node.anchor.x));
-        childPositions.push(lastBottom + ((maxHeight - bound.height) * baseline) + (bound.height * node.anchor.y));
+        childPositions.push(lastRight + (bound.width * anchorX));
+        childPositions.push(lastBottom + ((maxHeight - bound.height) * baseline) + (bound.height * anchorY));
         // node.x = lastRight;
         // node.y = lastBottom + (maxHeight - node.height) * baseline;
         lastRight += interval + bound.width;
