@@ -109,9 +109,14 @@ const NodeMixin = {
 
   unmountComponent() {
     // this.destroyEventListeners();
+    this.unmountNode();
     this.unmountChildren();
     this.node.removeChildren();
   },
+
+  unmountNode() {
+
+  }
 };
 
 export default NodeMixin;
