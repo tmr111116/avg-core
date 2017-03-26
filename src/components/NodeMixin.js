@@ -18,7 +18,9 @@ const NodeMixin = {
 
     // bind event handlers
     attachToSprite(this.node);
-    this.node.buttonMode = false;
+
+    // Avoid reset buttonMode value setting in `mountNode()`
+    this.node.buttonMode = this.node.buttonMode || false;
     const keys = Object.keys(element.props);
 
     for (const key of keys) {
@@ -81,7 +83,9 @@ const NodeMixin = {
           delete this.node[`_on${key.replace(/^on/, '').toLowerCase()}`];
         }
       }
-      this.node.buttonMode = false;
+
+      // Avoid reset buttonMode value setting in `mountNode()`
+      this.node.buttonMode = this.node.buttonMode || false;
       const keys = Object.keys(props);
 
       for (const key of keys) {
