@@ -88,7 +88,7 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
     // node.on('mouseupoutside', () => this.check(0));
 
     mountNode(node, props);
-    setValue.call(node, 'lite', props.lite, true);
+    // setValue.call(node, 'lite', props.lite, true);
     setValue.call(node, 'defaultChecked', props.defaultChecked, false);
     setValue.call(node, 'value', props.value, null);
     setValue.call(node, 'onchange', props.onChange, null);
@@ -101,7 +101,11 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
       node.controlled = false;
     }
 
-    node.texture.baseTexture.on('loaded', () => this.setChecked(props.checked || node.defaultChecked, false));
+    node.texture.baseTexture.on('loaded', () => {
+      this.setFrame(0);
+      this.setChecked(props.checked || node.defaultChecked, false)
+    });
+    this.setFrame(0);
     this.setChecked(props.checked || node.defaultChecked, false);
 
     return node;
@@ -111,7 +115,7 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
     const node = this.node;
 
     updateNode(node, prevProps, props);
-    updateValue.call(node, 'lite', prevProps.lite, props.lite);
+    // updateValue.call(node, 'lite', prevProps.lite, props.lite);
     updateValue.call(node, 'defaultChecked', prevProps.defaultChecked, props.defaultChecked);
     updateValue.call(node, 'value', prevProps.value, props.value);
     updateValue.call(node, 'onchange', prevProps.onChange, props.onChange);
@@ -124,8 +128,8 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
       node.controlled = false;
     }
 
-    node.texture.baseTexture.on('loaded', () => this.setChecked(node.checked || node.defaultChecked));
-    this.setChecked(node.checked || node.defaultChecked);
+    node.texture.baseTexture.on('loaded', () => this.setChecked(node.checked || node.defaultChecked, false));
+    this.setChecked(node.checked || node.defaultChecked, false);
   },
   unmountNode() {
     removeFromGroup(this.node.name, this);
@@ -141,9 +145,9 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
       }
 
       // 互斥模式下不能取消选择（like radio in html）
-      // if (this.node.checked && !checked) {
-      //   return;
-      // }
+      if (!checked) {
+        return;
+      }
 
       const elements = getAllFromGroupByName(name);
 
@@ -183,7 +187,7 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
   },
   setFrame(num) {
     const layer = this.node;
-    const frameCount = layer.lite ? 2 : 3;
+    const frameCount = 2;
 
     if (!layer.texture || !layer.texture.baseTexture.hasLoaded) {
       return false;
