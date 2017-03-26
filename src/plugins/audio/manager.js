@@ -174,7 +174,7 @@ export function volume(channel, vol) {
     return sound.volume();
   }
 
-  return Promise.resolve();
+  return NaN;
 }
 
 export function fade(channel, from = 0, to = 1, duration) {
