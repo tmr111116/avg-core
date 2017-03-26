@@ -56,6 +56,8 @@ class Core {
     this.stage = null;
     this.canvas = null;
 
+    this.options = {};
+
     /**
      * Currently used middleware
      * @member {object<string, function[]>}
@@ -150,11 +152,13 @@ class Core {
    * @param {string|array<string>} [options.fontFamily] load custom web-font
    * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
    * @param {string} [options.assetsPath='assets'] assets path
+   * @param {string} [options.tryWebp=false] auto replace image file extension with .webp format when webp is supported by browser
    */
   async init(width, height, options = {}) {
     const _options = {
       fitWindow: false,
       assetsPath: '/',
+      tryWebp: false,
       ...options,
     };
 
@@ -183,6 +187,8 @@ class Core {
       });
     }
 
+    this.options = _options;
+
     if (_options.fitWindow) {
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
@@ -193,7 +199,7 @@ class Core {
       assetsPath += '/';
     }
     this.assetsPath = assetsPath;
-    preloaderInit(assetsPath);
+    preloaderInit(assetsPath, _options.tryWebp);
 
     this.stage = new Container();
     attachToSprite(this.stage);

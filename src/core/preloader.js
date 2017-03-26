@@ -25,6 +25,11 @@ const AUDIOS = {};
 const VIDEOS = {};
 // const SCRIPTS = {};
 let HOST = '/';
+let TRYWEBP = false;
+
+const isSafari = (navigator.userAgent.indexOf('Safari') !== -1)
+              && (navigator.userAgent.indexOf('Chrome') === -1)
+              && navigator.userAgent.indexOf('Android') === -1;
 
 const Resource = PIXI.loaders.Loader.Resource;
 
@@ -41,9 +46,16 @@ Resource.setExtensionXhrType('bks', Resource.XHR_RESPONSE_TYPE.TEXT);
 Resource.setExtensionXhrType('ttf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 Resource.setExtensionXhrType('otf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 
-export function init(host) {
+function changeExtension(filename, ext) {
+  const basename = filename.substr(0, filename.lastIndexOf('.'));
+
+  return `${basename}.${ext}`;
+}
+
+export function init(host, tryWebp) {
   TEXTURES = {};
   HOST = host || HOST;
+  TRYWEBP = !!tryWebp;
 }
 
 export function load(resources, onProgress) {
@@ -52,7 +64,11 @@ export function load(resources, onProgress) {
   if (resources && resources.length) {
 
     for (const res of [...new Set(resources)]) {
-      loader.add(res, res);
+      if (isSafari) {
+        loader.add(res, res);
+      } else {
+        loader.add(res, changeExtension(res, 'webp'));
+      }
     }
     const promise = new Promise((resolve, reject) => {
       loader.once('complete', resolve);
@@ -91,7 +107,15 @@ export function getTexture(url = '') {
     if (url.startsWith('data:')) {
       obj = PIXI.Texture.fromImage(url);
     } else {
-      obj = PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+      let _url;
+
+      if (url) {
+        _url = isSafari ? `${HOST}${url}` : changeExtension(`${HOST}${url}`, 'webp');
+      } else {
+        _url = '';
+      }
+
+      obj = PIXI.Texture.fromImage(_url);
     }
     TEXTURES[url] = obj;
   }
