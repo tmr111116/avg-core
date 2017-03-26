@@ -38,9 +38,11 @@ export function attachToSprite(sprite) {
   sprite.on('pointerdown', pointerHandler);
   sprite.on('pointermove', pointerHandler);
   sprite.on('pointerup', pointerHandler);
+  sprite.on('pointerupoutside', pointerHandler);
   sprite.on('pointercancel', pointerHandler);
   sprite.on('pointerout', pointerHandler);
   sprite.on('pointerleave', pointerHandler);
+  sprite.on('pointertap', pointerHandler);
 }
 
 class EventData {
