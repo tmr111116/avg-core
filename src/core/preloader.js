@@ -64,7 +64,7 @@ export function load(resources, onProgress) {
   if (resources && resources.length) {
 
     for (const res of [...new Set(resources)]) {
-      if (isSafari) {
+      if (isSafari || !TRYWEBP) {
         loader.add(res, res);
       } else {
         loader.add(res, changeExtension(res, 'webp'));
@@ -110,7 +110,7 @@ export function getTexture(url = '') {
       let _url;
 
       if (url) {
-        _url = isSafari ? `${HOST}${url}` : changeExtension(`${HOST}${url}`, 'webp');
+        _url = (isSafari || !TRYWEBP) ? `${HOST}${url}` : changeExtension(`${HOST}${url}`, 'webp');
       } else {
         _url = '';
       }
