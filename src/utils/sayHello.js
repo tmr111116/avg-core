@@ -12,7 +12,7 @@ export default function sayHello() {
 
   if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
     const args = [
-      `\n %c %c %c AVG.js ${VERSION} - ✰ OpenSource ✰  %c  %c  https://avgjs.org/  %c %c 🍞🍞🍞 \n\n`,
+      `\n %c %c %c AVG.js ${VERSION} - ✰ Setsumi ✰  %c  %c  https://avgjs.org/  %c %c 🍞🍞🍞 \n\n`,
       'background: #EFCEA1; padding:5px 0;',
       'background: #EFCEA1; padding:5px 0;',
       'color: #EFCEA1; background: #794E3E; padding:5px 0;',
