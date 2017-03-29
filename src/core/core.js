@@ -190,6 +190,9 @@ class Core {
     this.options = _options;
 
     if (_options.fitWindow) {
+      window.addEventListener('resize', () => {
+        fitWindow(this.renderer, window.innerWidth, window.innerHeight);
+      });
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
 
