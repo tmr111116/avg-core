@@ -53,7 +53,9 @@ export default function fitWindow(renderer, width, height) {
   // renderer.view.style.height = contentH + "px";
   view.style.backfaceVisibility = 'hidden';
   view.style.transformOrigin = 'left top';
+  view.style.webkitTransformOrigin = 'left top';
   view.style.transform = `scale(${contentW / renderer.width * resolution}, ${contentH / renderer.height * resolution}) translateZ(0)`;
+  view.style.webkitTransform = `scale(${contentW / renderer.width * resolution}, ${contentH / renderer.height * resolution}) translateZ(0)`;
 
   view.style.left = `${offsetW}px`;
   view.style.top = `${offsetH}px`;
