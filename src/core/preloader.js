@@ -27,9 +27,11 @@ const VIDEOS = {};
 let HOST = '/';
 let TRYWEBP = false;
 
-const isSafari = (navigator.userAgent.indexOf('Safari') !== -1)
+const isSafari = ((navigator.userAgent.indexOf('Safari') !== -1)
               && (navigator.userAgent.indexOf('Chrome') === -1)
-              && navigator.userAgent.indexOf('Android') === -1;
+              && navigator.userAgent.indexOf('Android') === -1)
+              || navigator.userAgent.indexOf('iPhone') !== -1
+              || navigator.userAgent.indexOf('iPad') !== -1;
 
 const Resource = PIXI.loaders.Loader.Resource;
 
