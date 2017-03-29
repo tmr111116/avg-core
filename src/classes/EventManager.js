@@ -96,7 +96,7 @@ function handleEvent(evt) {
 function pointerHandler(evt) {
   const e = new EventData(evt);
   // console.log(e.type)
-  const defaultHandler = e.target ? e.target[`_on${e.type}`] : null;
+  const defaultHandler = e.currentTarget ? e.currentTarget[`_on${e.type}`] : null;
 
   defaultHandler && defaultHandler(e);
 }
