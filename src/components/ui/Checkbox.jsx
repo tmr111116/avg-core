@@ -85,6 +85,7 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
     // node.on('mouseout', () => this.check(0));
     // node.on('mousedown', () => this.setFrame(node.lite ? 1 : 2));
     node.on('mouseup', () => this.switch());
+    node.on('touchend', () => this.switch());
     // node.on('mouseupoutside', () => this.check(0));
 
     mountNode(node, props);

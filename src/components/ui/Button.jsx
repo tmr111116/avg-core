@@ -42,8 +42,11 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
     node.on('mouseover', () => this.setFrame(1));
     node.on('mouseout', () => this.setFrame(0));
     node.on('mousedown', () => this.setFrame(node.lite ? 1 : 2));
+    node.on('touchstart', () => this.setFrame(node.lite ? 1 : 2));
     node.on('mouseup', () => this.setFrame(1));
     node.on('mouseupoutside', () => this.setFrame(0));
+    node.on('touchend', () => this.setFrame(0));
+    node.on('touchendoutside', () => this.setFrame(0));
 
     mountNode(node, props);
     setValue.call(node, 'lite', props.lite, true);
