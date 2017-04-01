@@ -1,6 +1,6 @@
 {
   "name": "avg-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Develop Adventure Game (or ADV, Visual Novel, Galgame, etc.) on your own!",
   "main": "dist/avg.js",
   "author": "Icemic Jia <bingfeng.web@gmail.com>",
