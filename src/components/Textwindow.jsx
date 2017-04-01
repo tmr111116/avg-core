@@ -98,6 +98,9 @@ export class Textwindow extends React.Component {
   componentWillMount() {
     this.setState({
       props: this.props,
+      clickCallback: false,
+      switchPageAfterClick: false,
+      waitClick: false
     });
   }
   componentDidMount() {
@@ -205,15 +208,20 @@ export class Textwindow extends React.Component {
   async handleArchiveSave(ctx, next) {
     const layer = this.layer;
 
-    ctx.data.textwindow = { ...this.state.props, text: layer.text, children: null };
+    ctx.data.textwindow = { props: { ...this.state.props, children: null }, text: layer.text, children: null, switchPageAfterClick: this.state.switchPageAfterClick };
     await next();
   }
   async handleArchiveLoad(ctx, next) {
+    const { props, text, children, switchPageAfterClick } = ctx.data.textwindow;
+
     this.setState({
       props: {
         ...this.props,
-        ...ctx.data.textwindow
-      }
+        ...props,
+        text,
+        children
+      },
+      switchPageAfterClick
     });
     const layer = this.layer;
 
