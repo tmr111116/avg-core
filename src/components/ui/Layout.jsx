@@ -308,6 +308,8 @@ export default class Layout extends React.Component {
       scrollVisibleH: visibleH,
       scrollButtonLengthH: lengthH,
     });
+
+    this.tempScrollHandler({ deltaX: 0, deltaY: 0 });
   }
   scrollDragV(e) {
     this.tempScrollHandler({ deltaX: 0, deltaY: e.deltaY * this.state.height });
