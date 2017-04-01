@@ -179,9 +179,10 @@ export function volume(channel, vol) {
 
 export function fade(channel, from = 0, to = 1, duration) {
   const sound = getByChannel(channel);
+  const channelVolume = ChannelVolume[channel] || 1.0;
 
   if (sound) {
-    sound.fade(from, to, duration);
+    sound.fade(from * channelVolume, to * channelVolume, duration);
 
     return new Promise(resolve => {
       sound.once('fade', resolve);
