@@ -27,9 +27,11 @@ const PIXI = require('pixi.js');
  * @extends PIXI.Graphics
  */
 class Layer extends PIXI.Container {
+
     /**
      * Create a sprite.
-     * It is a empty sprite, you should specify is content (use {@link Sprite#setFile}, for example) and call {@link Sprite#execSync}.
+     * It is a empty sprite, you should specify its content (use {@link Sprite#setFile}, for example)
+     * and call {@link Sprite#execSync}.
      */
   constructor() {
     super();
@@ -38,10 +40,18 @@ class Layer extends PIXI.Container {
     this.background = new PIXI.Graphics();
     this.addChild(this.background);
 
+    const voidFilter = new PIXI.filters.VoidFilter();
+
+    voidFilter.padding = 0;
+    voidFilter.enabled = false;
+    this.filters = [voidFilter];
+    this.clipFilter = voidFilter;
+    this.localFilterArea = null;
+
     this.setProperties({
       x: 0,
       y: 0,
-      opacity: 1,
+      alpha: 1,
       visible: true,
       width: 10,
       height: 10,
@@ -49,11 +59,6 @@ class Layer extends PIXI.Container {
       fillAlpha: 0,
       anchor: [0, 0]
     });
-
-    const voidFilter = new PIXI.filters.VoidFilter();
-    voidFilter.padding = 0;
-    this.filters = [voidFilter];
-    this.localFilterArea = null;
   }
 
     /**
@@ -64,6 +69,7 @@ class Layer extends PIXI.Container {
      */
   setIndex(index) {
     this.index = index;
+
     return this;
   }
 
@@ -75,6 +81,7 @@ class Layer extends PIXI.Container {
     if (rect instanceof PIXI.Rectangle) {
       const gPoint = new PIXI.Point(rect.x, rect.y);
       const lPoint = this.toLocal(gPoint);
+
       this.localFilterArea = new PIXI.Rectangle(lPoint.x, lPoint.y, rect.width, rect.height);
     } else {
       this.localFilterArea = null;
@@ -83,14 +90,17 @@ class Layer extends PIXI.Container {
 
   get filterArea() {
     const localFilterArea = this.localFilterArea;
+
     if (localFilterArea) {
       const x = localFilterArea.x;
       const y = localFilterArea.y;
       const point = this.toGlobal(new PIXI.Point(x, y));
+
       return new PIXI.Rectangle(point.x, point.y, localFilterArea.width, localFilterArea.height);
-    } else {
-      return null;
     }
+
+    return null;
+
   }
 
     /**
@@ -100,17 +110,19 @@ class Layer extends PIXI.Container {
      * @param {Array[]} index - the id of sprite
      * @returns {Sprite} - this
      */
-  setProperties({ x, y, opacity, visible, width, height, fillColor, fillAlpha, anchor }) {
+  setProperties({ x, y, alpha, visible, width, height, fillColor, fillAlpha, clip }) {
     (x != null) && (this.x = x);
     (y != null) && (this.y = y);
-    (opacity != null) && (this.alpha = opacity);
+    (alpha != null) && (this.alpha = alpha);
     (visible != null) && (this.visible = visible);
     (width != null) && (this.rectWidth = width);
     (height != null) && (this.rectHeight = height);
     (fillColor != null) && (this.fillColor = fillColor);
     (fillAlpha != null) && (this.fillAlpha = fillAlpha);
-    // (anchor != null) && (this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]), Math.round(this.rectHeight * anchor[1])));
-    
+    this.clipFilter.enabled = !!clip;
+    // (anchor != null) && (this.pivot = new PIXI.Point(Math.round(this.rectWidth * anchor[0]),
+    // Math.round(this.rectHeight * anchor[1])));
+
     this.repaintBackground();
 
     this.localFilterArea = new PIXI.Rectangle(0 - this.pivot.x,
@@ -156,8 +168,6 @@ class Layer extends PIXI.Container {
     this.background.endFill();
   }
 
-
-
   containsPoint(...args) {
     // TODO: Problem same as .removeChildren()
     try {
@@ -175,12 +185,14 @@ class Layer extends PIXI.Container {
      * When .destroy() was called, it will call .removeChildren()
      * because of the implement of Container.destory(),
      * but that time `this.background` had been destroyed, so .addChild() will throw an error.
-     * 
+     *
      * TODO: find reason
      */
     try {
       this.addChild(this.background);
-    } catch (e) { }
+    } catch (e) {
+      // do nothing
+    }
   }
 
   destroy() {
@@ -191,6 +203,5 @@ class Layer extends PIXI.Container {
 }
 
 // TransitionPlugin(Layer);
-
 
 export default Layer;

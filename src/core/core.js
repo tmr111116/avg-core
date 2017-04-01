@@ -28,8 +28,10 @@ import fitWindow from 'utils/fitWindow';
 import Logger from './logger';
 
 import { init as preloaderInit, getTexture, load as loadResources } from './preloader';
+import Ticker from './ticker';
 
 const PIXI = require('pixi.js');
+const isMobile = require('ismobilejs');
 
 const logger = Logger.create('Core');
 
@@ -48,10 +50,13 @@ class Core {
      * @readonly
      */
     this._init = false;
+    this._tickTime = 0;
 
     this.renderer = null;
     this.stage = null;
     this.canvas = null;
+
+    this.options = {};
 
     /**
      * Currently used middleware
@@ -60,6 +65,7 @@ class Core {
      * @private
      */
     this.middlewares = {};
+    this.plugins = {};
 
     this.assetsPath = null;
   }
@@ -73,6 +79,7 @@ class Core {
    */
   use(name, middleware) {
     let middlewares;
+
     if (!this.middlewares[name]) {
       middlewares = [];
       this.middlewares[name] = middlewares;
@@ -91,8 +98,10 @@ class Core {
    */
   unuse(name, middleware) {
     const middlewares = this.middlewares[name];
+
     if (middlewares) {
       const pos = middlewares.indexOf(middleware);
+
       if (pos !== -1) {
         middlewares.splice(pos, 1);
       } else {
@@ -108,19 +117,33 @@ class Core {
    *
    * @param {string} name signal name
    * @param {object} [context={}] context to process
+   * @param {function} next
    * @return {promise}
    */
   post(name, context, next) {
     const middlewares = this.middlewares[name];
+
     if (middlewares) {
       return compose(middlewares)(context || {}, next);
     }
+
     return Promise.resolve();
   }
 
   /**
-   * Initial AVG.js core functions
+   * install a plugin
    * 
+   * @param {any} constructor plugin class
+   * 
+   * @memberOf Core
+   */
+  installPlugin(constructor) {
+    new constructor(this);
+  }
+
+  /**
+   * Initial AVG.js core functions
+   *
    * @param {number} width width of screen
    * @param {number} height height of screen
    * @param {object} [options]
@@ -129,49 +152,68 @@ class Core {
    * @param {string|array<string>} [options.fontFamily] load custom web-font
    * @param {boolean} [options.fitWindow=false] auto scale canvas to fit window
    * @param {string} [options.assetsPath='assets'] assets path
+   * @param {string} [options.tryWebp=false] auto replace image file extension with .webp format when webp is supported by browser
    */
-  async init(width, height, _options = {}) {
-    const options = {
+  async init(width, height, options = {}) {
+    if (this._init) {
+      return;
+    }
+    const _options = {
       fitWindow: false,
       assetsPath: '/',
-      ..._options,
+      tryWebp: false,
+      ...options,
     };
 
-    if (options.fontFamily) {
-      const font = new FontFaceObserver(options.fontFamily);
+    if (_options.fontFamily) {
+      const font = new FontFaceObserver(_options.fontFamily);
+
       await font.load();
     }
 
-    if (options.renderer) {
-      this.renderer = options.renderer;
+    if (_options.renderer) {
+      this.renderer = _options.renderer;
     } else {
+
       /* create PIXI renderer */
+      if (isMobile.any) {
+        PIXI.settings.RESOLUTION = 1;
+        PIXI.settings.TARGET_FPMS = 0.03;
+      } else {
+        PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
+      }
       this.renderer = new PIXI.WebGLRenderer(width, height, {
-        view: options.view,
+        view: _options.view,
         autoResize: true,
+        // resolution: 2,
         roundPixels: true,
       });
     }
 
-    if (options.fitWindow) {
+    this.options = _options;
+
+    if (_options.fitWindow) {
+      window.addEventListener('resize', () => {
+        fitWindow(this.renderer, window.innerWidth, window.innerHeight);
+      });
       fitWindow(this.renderer, window.innerWidth, window.innerHeight);
     }
 
-    let assetsPath = options.assetsPath;
+    let assetsPath = _options.assetsPath;
+
     if (!assetsPath.endsWith('/')) {
       assetsPath += '/';
     }
     this.assetsPath = assetsPath;
-    preloaderInit(assetsPath);
+    preloaderInit(assetsPath, _options.tryWebp);
 
     this.stage = new Container();
     attachToSprite(this.stage);
     this.stage._ontap = e => this.post('tap', e);
     this.stage._onclick = e => this.post('click', e);
 
-    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker = new Ticker();
     this.ticker.add(this.tick.bind(this));
-
     sayHello();
     this._init = true;
   }
@@ -181,6 +223,7 @@ class Core {
       return this.renderer;
     }
     logger.error('Renderer hasn\'t been initialed.');
+
     return null;
   }
   getStage() {
@@ -188,6 +231,7 @@ class Core {
       return this.stage;
     }
     logger.error('Stage hasn\'t been initialed.');
+
     return null;
   }
   getAssetsPath() {
@@ -199,7 +243,7 @@ class Core {
 
   /**
    * create a logger for specific name
-   * 
+   *
    * @param {string} name
    * @return {Logger} logger instance
    */
@@ -208,8 +252,8 @@ class Core {
   }
 
   // TODO: need more elegent code
-  loadAssets(list) {
-    return loadResources(list);
+  loadAssets(list, onProgress) {
+    return loadResources(list, onProgress);
   }
 
   /**
@@ -217,13 +261,15 @@ class Core {
    *
    * @param {React.Component} component
    * @param {HTMLDOMElement} target
+   * @param {boolean} append whether append canvas element to target
    * @return {Promise}
    */
   async render(component, target, append = true) {
     if (!this._init) {
-      throw 'not initialed';
+      throw Error('not initialed');
     }
-    return new Promise((resolve) => {
+
+    return new Promise(resolve => {
       renderReact(component, target, resolve);
     }).then(() => {
       append && target.appendChild(this.renderer.view);
@@ -232,17 +278,22 @@ class Core {
 
   /**
    * Get ticker of AVG.js render loop
+   *
+   * @return {PIXI.ticker.Ticker} shared ticker
    */
   getTicker() {
-    return PIXI.ticker.shared;
+    return this.ticker;
   }
 
   /**
    * @private
    */
-  tick() {
-    if (this._init) {
+  tick(deltaTime) {
+    this._tickTime += deltaTime;
+    if (this._init && this._tickTime > 0.98) {
       this.renderer.render(this.stage);
+      this._tickTime = 0;
+      window.stats && window.stats.update();
     }
   }
 

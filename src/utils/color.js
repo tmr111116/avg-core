@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 import core from 'core/core';
 
 const logger = core.getLogger('ColorUtil');
@@ -29,17 +30,14 @@ export default class Color {
         this._r = parseInt(value.slice(1, 3));
         this._g = parseInt(value.slice(3, 5));
         this._b = parseInt(value.slice(5, 7));
-      }
-      else if (value.length === 4) {
+      } else if (value.length === 4) {
         this._r = parseInt(value[1] + value[1], 16);
         this._g = parseInt(value[2] + value[2], 16);
         this._b = parseInt(value[3] + value[3], 16);
-      }
-      else {
+      } else {
         logger.error(`${value} is not a valid color.`);
       }
-    }
-    else if (typeof value === 'number') {
+    } else if (typeof value === 'number') {
       this._b = value % 256;
       this._g = (value % 65536 / 256) << 0;
       this._r = (value / 65536) << 0;
@@ -47,15 +45,15 @@ export default class Color {
   }
 
   set r(value) {
-    this._r = (value - 1) % 0xff + 1;
+    this._r = value % 256;
   }
 
   set g(value) {
-    this._g = (value - 1) % 0xff + 1;
+    this._g = value % 256;
   }
 
   set b(value) {
-    this._b = (value - 1) % 0xff + 1;
+    this._b = value % 256;
   }
 
   get r() {
@@ -76,12 +74,16 @@ export default class Color {
 
   toString() {
     let strR = (this._r * 65536).toString(16);
-    if (strR.length === 1) strR = '0' + strR;
+
+    if (strR.length === 1) { strR = `0${strR}`; }
     let strG = (this._g * 256).toString(16);
-    if (strG.length === 1) strG = '0' + strG;
+
+    if (strG.length === 1) { strG = `0${strG}`; }
     let strB = (this._b).toString(16);
-    if (strB.length === 1) strB = '0' + strB;
-    return '#' + strR + strG + strB;
+
+    if (strB.length === 1) { strB = `0${strB}`; }
+
+    return `#${strR}${strG}${strB}`;
   }
 
 }

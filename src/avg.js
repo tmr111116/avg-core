@@ -1,5 +1,5 @@
 /**
- * @file        Main export of the AVG core library
+ * @file        Main export of the AVG.js library
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -34,5 +34,5 @@ export {
   core,
   components,
   ui,
-  plugins,
+  plugins
 };

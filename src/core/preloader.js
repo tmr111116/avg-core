@@ -21,10 +21,17 @@
 const PIXI = require('pixi.js');
 
 let TEXTURES = {};
-let AUDIOS = {};
-let VIDEOS = {};
-let SCRIPTS = {};
+const AUDIOS = {};
+const VIDEOS = {};
+// const SCRIPTS = {};
 let HOST = '/';
+let TRYWEBP = false;
+
+const isSafari = ((navigator.userAgent.indexOf('Safari') !== -1)
+              && (navigator.userAgent.indexOf('Chrome') === -1)
+              && navigator.userAgent.indexOf('Android') === -1)
+              || navigator.userAgent.indexOf('iPhone') !== -1
+              || navigator.userAgent.indexOf('iPad') !== -1;
 
 const Resource = PIXI.loaders.Loader.Resource;
 
@@ -41,61 +48,95 @@ Resource.setExtensionXhrType('bks', Resource.XHR_RESPONSE_TYPE.TEXT);
 Resource.setExtensionXhrType('ttf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 Resource.setExtensionXhrType('otf', Resource.XHR_RESPONSE_TYPE.BUFFER);
 
+function changeExtension(filename, ext) {
+  const basename = filename.substr(0, filename.lastIndexOf('.'));
 
-export function init(host) {
+  return `${basename}.${ext}`;
+}
+
+export function init(host, tryWebp) {
   TEXTURES = {};
   HOST = host || HOST;
+  TRYWEBP = !!tryWebp;
 }
 
 export function load(resources, onProgress) {
-  const loader = new PIXI.loaders.Loader(HOST); // http://7xi9kn.com1.z0.glb.clouddn.com
-  for (const res of [...new Set(resources)]) {
-    loader.add(res, res);
-  }
-  const promise = new Promise((resolve, reject) => {
-    loader.once('complete', resolve);
-    loader.once('error', reject);
-    loader.on('progress', onProgress);
-  });
-  loader.load((loader, resources) => {
-    // `resources` is a Object
-    for (let name in resources){
-      let res = resources[name];
-      if (res.isImage) {
-        TEXTURES[name] = res.texture;
-      } else if (res.isAudio) {
-        AUDIOS[name] = res.data;  // audio object
-      } else if (res.isVideo) {
-        VIDEO[name] = res.data;
+  const loader = new PIXI.loaders.Loader(HOST);
+
+  if (resources && resources.length) {
+
+    for (const res of [...new Set(resources)]) {
+      if (isSafari || !TRYWEBP) {
+        loader.add(res, res);
+      } else {
+        loader.add(res, changeExtension(res, 'webp'));
       }
     }
-    // Object.assign(TEXTURES, resources);
-  });
-  return promise;
+    const promise = new Promise((resolve, reject) => {
+      loader.once('complete', resolve);
+      loader.once('error', reject);
+      loader.on('progress', onProgress);
+    });
+
+    loader.load((loader, resources) => {
+      // `resources` is a Object
+      for (const name in resources) {
+        const res = resources[name];
+
+        if (res.type === Resource.TYPE.IMAGE || res.isImage) {
+          TEXTURES[name] = res.texture;
+        } else if (res.type === Resource.TYPE.AUDIO || res.isAudio) {
+          // audio object
+          AUDIOS[name] = res.data;
+        } else if (res.type === Resource.TYPE.VIDEO || res.isVideo) {
+          VIDEOS[name] = res.data;
+        }
+      }
+      // Object.assign(TEXTURES, resources);
+    });
+
+    return promise;
+
+  } else {
+    return Promise.resolve();
+  }
 }
 
 export function getTexture(url = '') {
   let obj = TEXTURES[url];
+
   if (!obj) {
     if (url.startsWith('data:')) {
       obj = PIXI.Texture.fromImage(url);
     } else {
-      obj = PIXI.Texture.fromImage(url ? `${HOST}${url}` : '');
+      let _url;
+
+      if (url) {
+        _url = (isSafari || !TRYWEBP) ? `${HOST}${url}` : changeExtension(`${HOST}${url}`, 'webp');
+      } else {
+        _url = '';
+      }
+
+      obj = PIXI.Texture.fromImage(_url);
     }
     TEXTURES[url] = obj;
   }
+
   return new PIXI.Texture(obj.baseTexture);
 }
 
 export function getAudio(url) {
   const obj = AUDIOS[url];
+
   if (obj) {
     return obj;
-  } else {
-    const audio = new Audio();
-    audio.src = `${HOST}${url}`;
-    audio.preload = 'auto';
-    audio.load();
-    return audio;
   }
+  const audio = new Audio();
+
+  audio.src = `${HOST}${url}`;
+  audio.preload = 'auto';
+  audio.load();
+
+  return audio;
+
 }

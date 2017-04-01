@@ -26,23 +26,24 @@ import NodeMixin from 'components/NodeMixin';
 import PixiLayer from 'classes/Layer';
 import pixiPropTypes from './pixi/propTypes';
 
-const PIXI = require('pixi.js');
-
 const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new PixiLayer();
   },
   mountNode(props) {
     // color, opacity, width, height, x, y, etc.
     const layer = this.node;
+
     layer.setProperties(props);
     //  layer.x = props.x || 0;
     //  layer.y = props.y || 0;
+
     return layer;
   },
   updateNode(prevProps, props) {
     const layer = this.node;
+
     layer.setProperties(props);
   },
 });
@@ -57,6 +58,7 @@ export const Layer = React.createClass({
     height: React.PropTypes.number,
     fillColor: React.PropTypes.number,
     fillAlpha: React.PropTypes.number,
+    clip: React.PropTypes.bool,
   },
   render() {
     const renderer = core.getRenderer();
@@ -65,6 +67,7 @@ export const Layer = React.createClass({
       height: renderer.height,
       ...this.props,
     };
+
     return React.createElement(RawLayer, props, this.props.children);
   },
 });

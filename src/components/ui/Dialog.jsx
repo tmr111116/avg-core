@@ -23,8 +23,6 @@ import core from 'core/core';
 import { Layer } from '../Layer';
 import combineProps from 'utils/combineProps';
 
-const PIXI = require('pixi.js');
-
 function getValidValueInRange(min, max, value) {
   return Math.min(Math.max(min, value), max);
 }
@@ -59,6 +57,7 @@ export default class Dialog extends React.Component {
   handleMouseDown(e) {
     const [left, top, right, bottom] = this.props.dragArea;
     const { x, y } = e.local;
+
     if (this.props.dragable && x > left && x < right && y > top && y < bottom) {
       this.setState({
         clicked: true,
@@ -83,11 +82,12 @@ export default class Dialog extends React.Component {
       const renderer = core.getRenderer();
       const state = this.state;
       const xMin = this.props.width * (0 + this.props.anchor[0] || 0);
-      const xMax = renderer.width - this.props.width * (1 - this.props.anchor[0] || 0);
+      const xMax = renderer.width - (this.props.width * (1 - this.props.anchor[0] || 0));
       const x = state.startX + (e.global.x - state.startGlobalX);
       const yMin = this.props.height * (0 + this.props.anchor[1] || 0);
-      const yMax = renderer.height - this.props.height * (1 - this.props.anchor[1] || 0);
+      const yMax = renderer.height - (this.props.height * (1 - this.props.anchor[1] || 0));
       const y = state.startY + (e.global.y - state.startGlobalY);
+
       this.setState({
         x: getValidValueInRange(xMin, xMax, x),
         y: getValidValueInRange(yMin, yMax, y),
@@ -97,16 +97,17 @@ export default class Dialog extends React.Component {
   }
   render() {
     const core =  (
-      <Layer {...combineProps(this.props, Layer.propTypes)}
+      <Layer buttonMode={false} {...combineProps(this.props, Layer.propTypes)}
         x={this.state.x} y={this.state.y}
         onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp} onMouseUpOutside={this.handleMouseUp}
-        onMouseMove={this.handleMouseMove} onClick={(e) => e.stopPropagation()}
+        onMouseMove={this.handleMouseMove} onClick={e => e.stopPropagation()}
         onTouchStart={this.handleMouseDown} onTouchEnd={this.handleMouseUp} onTouchEndOutside={this.handleMouseUp}
-        onTouchMove={this.handleMouseMove} onTap={(e) => e.stopPropagation()}
+        onTouchMove={this.handleMouseMove} onTap={e => e.stopPropagation()}
       >
         {this.props.children}
       </Layer>
     );
+
     return this.props.modal ? (<Layer visible={this.props.visible}>{core}</Layer>) : core;
   }
 }

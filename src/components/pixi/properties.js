@@ -27,10 +27,16 @@ const logger = core.getLogger('MountNode');
 
 /**
  * Convert pure array to proper Pixi Object, non-array will be returned as-is.
- * 
+ *
  * Array[2] --> PIXI.Point
+ *
  * Array[4] --> PIXI.Rectangle
+ *
  * Array[9] --> PIXI.Matrix
+ *
+ *
+ * @param {any} value
+ * @return {any}
  */
 function convertToPixiValue(value) {
   if (value instanceof Array) {
@@ -42,37 +48,48 @@ function convertToPixiValue(value) {
       return PIXI.Matrix.fromArray(value);
     }
     logger.warn(`Unrecognized array: ${value}`);
+
     return value;
   }
+
   return value;
 }
 
 /**
  * Set value for PIXI.DisplayObject
- * 
+ *
  * 1. value === undefined && defaultValue !== undefined: set node[key] to defaultValue
  * 2. value === undefined && defaultValue === undefined: do nothing
  * 3. value !== undefined: set node[key] to value
+ *
+ * @this node
+ * @param {string} key
+ * @param {any} value
+ * @param {any} defaultValue
  */
 export function setValue(key, value, defaultValue) {
   const node = this;
+
   if (value === undefined) {
     if (defaultValue === undefined) {
       // do nothing
     } else {
       node[key] = defaultValue;
     }
+  } else if (key === 'src') {
+    node.src = core.getTexture(value);
   } else {
-    if (key === 'src') {
-      node.src = core.getTexture(value);
-    } else {
-      node[key] = convertToPixiValue(value);
-    }
+    node[key] = convertToPixiValue(value);
   }
 }
 
 /**
  * update value for PIXI.DisplayObject, if prevValue !== value, update will be executed.
+ *
+ * @this node
+ * @param {string} key
+ * @param {any} prevValue
+ * @param {any} value
  */
 export function updateValue(key, prevValue, value) {
   if (!deepEqual(prevValue, value)) {
@@ -82,6 +99,9 @@ export function updateValue(key, prevValue, value) {
 
 /**
  * Apply props to PIXI.DisplayObject
+ *
+ * @param {PIXI.DisplayObject} node
+ * @param {object} props
  */
 export function mountNode(node, props) {
   const setNodeValue = setValue.bind(node);
@@ -91,6 +111,7 @@ export function mountNode(node, props) {
   setNodeValue('alpha', props.alpha);
   setNodeValue('visible', props.visible);
   setNodeValue('cacheAsBitmap', props.cacheAsBitmap);
+  setNodeValue('buttonMode', props.buttonMode);
 
   setNodeValue('x', props.x);
   setNodeValue('y', props.y);
@@ -116,6 +137,7 @@ export function updateNode(node, prevProps, props) {
   updateNodeValue('alpha', prevProps.alpha, props.alpha);
   updateNodeValue('visible', prevProps.visible, props.visible);
   updateNodeValue('cacheAsBitmap', prevProps.cacheAsBitmap, props.cacheAsBitmap);
+  updateNodeValue('buttonMode', prevProps.buttonMode, props.buttonMode);
 
   updateNodeValue('x', prevProps.x, props.x);
   updateNodeValue('y', prevProps.y, props.y);

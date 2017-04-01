@@ -26,20 +26,22 @@ const PIXI = require('pixi.js');
 
 const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     // this.node = new PixiLayer();
     this.node = new PIXI.Graphics();
     const button = new PIXI.Graphics();
+
     this.node.addChild(button);
   },
   mountNode(props) {
     this.setProperties(props);
     const layer = this.node;
     const button = this.node.children[0];
+
     layer.interactive = true;
     button.interactive = true;
     button.buttonMode = true;
-    const buttonMouseDown = (e) => {
+    const buttonMouseDown = e => {
       button.cachedX = button.x;
       button.cachedY = button.y;
       button.clear();
@@ -47,10 +49,12 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
 
       if (layer.direction === 'vertical') {
         const radius = layer.backgroundWidth / 2;
+
         button.drawRoundedRect(0, 0, layer.backgroundWidth, button.buttonLength, radius);
         button.x = 0;
       } else {
         const radius = layer.backgroundHeight / 2;
+
         button.drawRoundedRect(0, 0, button.buttonLength, layer.backgroundHeight, radius);
         button.y = 0;
       }
@@ -62,16 +66,18 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
 
       // e.stopPropagation();
     };
-    const buttonMouseUp = (e) => {
+    const buttonMouseUp = () => {
       button.clear();
       button.beginFill(button.buttonColor, button.buttonAlpha);
 
       if (layer.direction === 'vertical') {
         const radius = button.buttonWidth / 2;
+
         button.drawRoundedRect(0, 0, button.buttonWidth, button.buttonLength, radius);
         button.x = button.cachedX;
       } else {
         const radius = button.buttonWidth / 2;
+
         button.drawRoundedRect(0, 0, button.buttonLength, button.buttonWidth, radius);
         button.y = button.cachedY;
       }
@@ -81,6 +87,7 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
 
       // e.stopPropagation();
     };
+
     button.on('mousedown', buttonMouseDown);
     button.on('touchstart', buttonMouseDown);
     button.on('mouseup', buttonMouseUp);
@@ -92,15 +99,16 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
     layer._ongoto = props.onGoto;
     button._ondrag = props.onDrag;
 
-    const layerMouseDown = (e) => {
+    const layerMouseDown = e => {
       if (!button.isPressDown) {
         layer._ongoto && layer._ongoto(e);
       }
       e.stopPropagation();
     };
+
     layer.on('mousedown', layerMouseDown);
 
-    const buttonMouseMove = (e) => {
+    const buttonMouseMove = e => {
       if (button.isPressDown) {
         button._ondrag && button._ondrag({
           deltaX: (e.data.global.x - button.startPointerGlobalX) / layer.backgroundWidth,
@@ -111,6 +119,7 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
         e.stopPropagation();
       }
     };
+
     button.on('mousemove', buttonMouseMove);
     button.on('touchmove', buttonMouseMove);
 
@@ -120,6 +129,7 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
     this.setProperties(props);
     const layer = this.node;
     const button = this.node.children[0];
+
     layer._ongoto = props.onGoto;
     button._ondrag = props.onDrag;
   },
@@ -139,8 +149,9 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
       buttonAlpha: (typeof props.buttonAlpha === 'number') ? props.buttonAlpha : 1,
       buttonLength: props.buttonLength || 10,
       buttonPosition: props.buttonPosition || 0,
-    }
+    };
     const layer = this.node;
+
     layer.clear();
     layer.beginFill(p.backgroundColor, p.backgroundAlpha);
     layer.drawRect(0, 0, p.backgroundWidth, p.backgroundHeight);
@@ -157,9 +168,11 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
 
     if (p.direction === 'vertical') {
       const radius = (button.isPressDown ? p.backgroundWidth : p.buttonWidth) / 2;
+
       button.drawRoundedRect(0, 0, (button.isPressDown ? p.backgroundWidth : p.buttonWidth), p.buttonLength, radius);
     } else {
       const radius = (button.isPressDown ? p.backgroundHeight : p.buttonWidth) / 2;
+
       button.drawRoundedRect(0, 0, p.buttonLength, (button.isPressDown ? p.backgroundHeight : p.buttonWidth), radius);
     }
     button.endFill();
@@ -181,7 +194,7 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
     button.buttonAlpha = p.buttonAlpha;
     button.buttonWidth = p.buttonWidth;
     button.buttonLength = p.buttonLength;
-    layer.direction = p.direction
+    layer.direction = p.direction;
 
   }
 });

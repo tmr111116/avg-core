@@ -18,58 +18,25 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
+import core from 'core/core';
+import Logger from 'core/logger';
+import Color from '../../utils/color.js';
 
-export default function tweenGenerator(scheme, targetMap) {
-  if (scheme.type === 'action') {
-    let target;
-    if (typeof scheme.target === 'string') {
-      target = targetMap[scheme.target];
-    } else {
-      target = scheme.target;
-    }
-
-    const args = [target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo];
-    switch (scheme.name) {
-      case 'moveTo': return new MoveToAction(...args);
-      case 'moveBy': return new MoveByAction(...args);
-      case 'delay': return new DelayAction(...args);
-      case 'fadeTo': return new FadeToAction(...args);
-      case 'fadeBy': return new FadeByAction(...args);
-      case 'rotateTo': return new RotateToAction(...args);
-      case 'rotateBy': return new RotateByAction(...args);
-      case 'scaleTo': return new ScaleToAction(...args);
-      case 'scaleBy': return new ScaleByAction(...args);
-      case 'setProperty': return new SetPropertyAction(...args);
-      case 'callback': return new CallbackAction(...args);
-    }
-  }
-
-  const actions = [];
-  for (const action of scheme.actions) {
-    actions.push(tweenGenerator(action, targetMap));
-  }
-  if (scheme.type === 'sequence') {
-    return new Sequence(actions, scheme.repeat, scheme.yoyo);
-  } else if (scheme.type === 'parallel') {
-    return new Parallel(actions, scheme.repeat, scheme.yoyo);
-  }
-
-  return new Sequence([], scheme.repeat, scheme.yoyo);
-}
+const logger = Logger.create('Tween');
 
 class Ticker {
   constructor() {
-    const performance = window.performance || window.Date;
+    const ticker = core.ticker;
+
     this._update = () => {
-      this.update(performance.now());
+      this.update(ticker.elapsedTime);
     };
   }
   start() {
-    PIXI.ticker.shared.add(this._update);
+    core.getTicker().add(this._update);
   }
   stop() {
-    PIXI.ticker.shared.remove(this._update);
+    core.getTicker().remove(this._update);
   }
   update() {
 
@@ -108,13 +75,14 @@ class AbstractAction extends Ticker {
     this.lastTime = 0;
   }
 
-  update(time) {
+  update(time, autoFinish = true) {
     if (this.finished) {
       return true;
     }
 
     if (!this.lastTime) {
       this.lastTime = time;
+
       return false;
     }
 
@@ -122,20 +90,28 @@ class AbstractAction extends Ticker {
 
     const delta = time - this.lastTime;
     const deltaProgress = delta / this.duration;
+
     this.lastTime = time;
     this.lastProgress = this.progress;
     this.progress += deltaProgress * this.direction * _direction;
 
-    if ((this.progress <= 0 || this.progress >= 1) && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
-      this.finished = true;
-      this.progress = this.progress << 0;
+    // avoid Infinity caused by small duration value.
+    this.progress = isFinite(this.progress) ? this.progress : Math.sign(this.progress);
+
+    if ((this.progress <= 0 || this.progress >= 1)
+      && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+
+      autoFinish && (this.finished = true);
+      this.progress = Math.max(0, Math.min(this.progress, 1));
+
     } else if ((this.progress <= 0 || this.progress >= 1)) {
-      this.times += 1 * _direction;
+      this.times += Number(_direction);
 
       if (this.yoyo) {
         // change direction
         this.direction = -this.direction;
-        this.progress = (this.progress << 0) + (this.progress % 1) * this.direction;
+        this.progress = Math.max(0, Math.min(this.progress, 1)) + ((this.progress - (this.progress << 0)) * this.direction);
+
       } else {
         this.progress = 0 + (_direction === -1 ? 1 : 0);
       }
@@ -146,10 +122,11 @@ class AbstractAction extends Ticker {
     return this.finished;
   }
 
+  /* eslint-disable */
   updateTransform(progress, lastProgress, target, params) {
 
   }
-
+  /* eslint-enable */
 }
 
 class Sequence extends Ticker {
@@ -199,20 +176,26 @@ class Sequence extends Ticker {
 
       const length = this.actions.length;
 
-      if ((this.position < 0 || this.position >= length) && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+      if ((this.position < 0 || this.position >= length)
+        && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
+
         this.finished = true;
+
         return true;
+
       } else if (this.position < 0 || this.position >= length) {
-        this.times += 1 * _direction;
+        this.times += Number(_direction);
 
         if (this.yoyo) {
           // change direction
           this.direction = -this.direction;
           const maxPosition = length - 1;
-          this.position = ((this.position / maxPosition) << 0) * length + (this.position % maxPosition) * this.direction;
+
+          this.position = (((this.position / maxPosition) << 0) * length) + ((this.position % maxPosition) * this.direction);
           for (const action of this.actions) {
             action.reverse();
           }
+
         } else {
           this.position = 0 + (_direction === -1 ? length - 1 : 0);
           for (const action of this.actions) {
@@ -265,6 +248,7 @@ class Parallel extends Ticker {
 
     if (!this.startTime) {
       this.startTime = time;
+
       return false;
     }
 
@@ -273,12 +257,15 @@ class Parallel extends Ticker {
 
     // records of delays's accuracy: ± 1/fps ms
     let totalFinished = true;
+
     for (const action of this.actions) {
       let finished = false;
+
       if (direction > 0) {
         finished = action.update(time);
       } else {
         const passed = time - this.startTime;
+
         if (this.duration - passed <= action.duration * action.repeat) {
           finished = action.update(time);
         }
@@ -288,9 +275,10 @@ class Parallel extends Ticker {
 
     if (totalFinished && ((this.times === this.repeat && _direction === 1) || (this.times === 0 && _direction === -1))) {
       this.finished = true;
+
       return true;
     } else if (totalFinished) {
-      this.times += 1 * _direction;
+      this.times += Number(_direction);
 
       if (this.yoyo) {
         // change direction
@@ -313,20 +301,55 @@ class Parallel extends Ticker {
 class MoveToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
-      this.x = target.x;
-      this.y = target.y;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
       this.initialled = true;
     }
-    const { x, y } = params;
-    // console.log(target.y, progress, lastProgress, deltaProgress)
-    (x != null) && (target.x = this.x + (x - this.x) * progress);
-    (y != null) && (target.y = this.y + (y - this.y) * progress);
+    const { x = target.x, y = target.y } = params;
+
+    if (progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaX = x - target.x + this.lastDeltaX;
+      this.lastDeltaY = y - target.y + this.lastDeltaY;
+      target.x = x;
+      target.y = y;
+
+      return;
+    }
+
+    if (x != null) {
+      target.x -= this.lastDeltaX;
+
+      const deltaX = (x - target.x) * progress;
+
+      target.x += deltaX;
+
+      this.lastDeltaX = deltaX;
+    }
+    if (y != null) {
+      target.y -= this.lastDeltaY;
+
+      const deltaY = (y - target.y) * progress;
+
+      target.y += deltaY;
+
+      this.lastDeltaY = deltaY;
+    }
   }
 }
 class MoveByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
     const { x, y } = params;
+
     (x != null) && (target.x += x * deltaProgress);
     (y != null) && (target.y += y * deltaProgress);
   }
@@ -335,60 +358,305 @@ class FadeToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
       this.alpha = target.alpha;
+      this.lastDeltaAlpha = 0;
       this.initialled = true;
     }
-    target.alpha = this.alpha + (params - this.alpha) * progress;
+
+    const alpha = params;
+
+    if (progress === 0) {
+      target.alpha = target.alpha - this.lastDeltaAlpha;
+      this.lastDeltaAlpha = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaAlpha = alpha - target.alpha + this.lastDeltaAlpha;
+      target.alpha = alpha;
+
+      return;
+    }
+
+    target.alpha -= this.lastDeltaAlpha;
+    const deltaAlpha = (alpha - target.alpha) * progress;
+
+    target.alpha += deltaAlpha;
+    this.lastDeltaAlpha = deltaAlpha;
   }
 }
 class FadeByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
+
     target.alpha += params * deltaProgress;
   }
 }
 class DelayAction extends AbstractAction {
-  updateTransform(progress, lastProgress, target, params) {
+  updateTransform() {
     // do nothing :)
   }
 }
 class RotateToAction extends AbstractAction {
-  updateTransform(progress, lastProgress, target, params) {if (!this.initialled) {
-      this.rotation = target.rotation;
+  updateTransform(progress, lastProgress, target, params) {
+    if (!this.initialled) {
+      this.lastDeltaRotation = 0;
       this.initialled = true;
     }
-    target.rotation = this.rotation + (params - this.rotation) * progress;
+
+    const rotation = params;
+
+    if (progress === 0) {
+      target.rotation = target.rotation - this.lastDeltaRotation;
+      this.lastDeltaRotation = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaRotation = rotation - target.rotation + this.lastDeltaRotation;
+      target.rotation = rotation;
+
+      return;
+    }
+
+    target.rotation -= this.lastDeltaRotation;
+    const deltaAlpha = (rotation - target.rotation) * progress;
+
+    target.rotation += deltaAlpha;
+    this.lastDeltaRotation = deltaAlpha;
   }
 }
 class RotateByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
+
     target.rotation += params * deltaProgress;
   }
 }
 class ScaleToAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     if (!this.initialled) {
-      this.scaleX = target.scale.x;
-      this.scaleY = target.scale.y;
+      this.lastDeltaScaleX = 0;
+      this.lastDeltaScaleY = 0;
       this.initialled = true;
     }
-    const { x, y } = params;
-    // console.log(target.y, progress, lastProgress, deltaProgress)
-    (x != null) && (target.scale.x = this.scaleX + (x - this.scaleX) * progress);
-    (y != null) && (target.scale.y = this.scaleY + (y - this.scaleY) * progress);
+
+    const { x = target.scale.x, y = target.scale.y } = params;
+
+    if (progress === 0) {
+      target.scale.x = target.scale.x - this.lastDeltaScaleX;
+      target.scale.y = target.scale.y - this.lastDeltaScaleY;
+      this.lastDeltaScaleX = 0;
+      this.lastDeltaScaleY = 0;
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaScaleX = x - target.scale.x + this.lastDeltaScaleX;
+      this.lastDeltaScaleY = y - target.scale.y + this.lastDeltaScaleY;
+      target.scale.x = x;
+      target.scale.y = y;
+
+      return;
+    }
+
+    if (x != null) {
+      target.scale.x -= this.lastDeltaScaleX;
+
+      const deltaX = (x - target.scale.x) * progress;
+
+      target.scale.x += deltaX;
+
+      this.lastDeltaScaleX = deltaX;
+    }
+    if (y != null) {
+      target.scale.y -= this.lastDeltaScaleY;
+
+      const deltaY = (y - target.scale.y) * progress;
+
+      target.scale.y += deltaY;
+
+      this.lastDeltaScaleY = deltaY;
+    }
   }
 }
 class ScaleByAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const deltaProgress = progress - lastProgress;
     const { x, y } = params;
+
     (x != null) && (target.scale.x += x * deltaProgress);
     (y != null) && (target.scale.y += y * deltaProgress);
+  }
+}
+class TintToAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+
+    if (!this.initialled) {
+      this.targetColor = new Color(params);
+      this.lastDeltaColor = new Color(0);
+      this.initialled = true;
+    }
+
+    const currentColor = new Color(target.tint || 0xffffff);
+
+    if (progress === 0) {
+      currentColor.r = currentColor.r - this.lastDeltaColor.r;
+      currentColor.g = currentColor.g - this.lastDeltaColor.g;
+      currentColor.b = currentColor.b - this.lastDeltaColor.b;
+      target.tint = currentColor.toNumber();
+
+      this.lastDeltaColor = new Color(0);
+
+      return;
+    }
+
+    if (progress === 1) {
+      this.lastDeltaColor.r = this.targetColor.r - currentColor.r + this.lastDeltaColor.r;
+      this.lastDeltaColor.g = this.targetColor.g - currentColor.g + this.lastDeltaColor.g;
+      this.lastDeltaColor.b = this.targetColor.b - currentColor.b + this.lastDeltaColor.b;
+      target.tint = this.targetColor.toNumber();
+
+      return;
+    }
+
+    currentColor.r -= this.lastDeltaColor.r;
+    currentColor.g -= this.lastDeltaColor.g;
+    currentColor.b -= this.lastDeltaColor.b;
+
+    const deltaColor = new Color(0);
+
+    deltaColor.r = (this.targetColor.r - currentColor.r) * progress;
+    deltaColor.g = (this.targetColor.g - currentColor.g) * progress;
+    deltaColor.b = (this.targetColor.b - currentColor.b) * progress;
+
+    currentColor.r += deltaColor.r;
+    currentColor.g += deltaColor.g;
+    currentColor.b += deltaColor.b;
+    target.tint = currentColor.toNumber();
+    this.lastDeltaColor = deltaColor;
+  }
+}
+class TintByAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+
+    const currentColor = new Color(target.tint || 0xffffff);
+    const targetColor = new Color(params);
+
+    currentColor.r = (currentColor.r + (targetColor.r * deltaProgress)) % 256;
+    currentColor.g = (currentColor.g + (targetColor.g * deltaProgress)) % 256;
+    currentColor.b = (currentColor.b + (targetColor.b * deltaProgress)) % 256;
+
+    target.tint = currentColor.toNumber();
+  }
+}
+class ShakeAction extends AbstractAction {
+  getState(_progress, offset) {
+    let progress = _progress;
+
+    let firstPart = 0;
+    let secondPart = 0;
+    let thirdPart = 0;
+    let forthPart = 0;
+
+    if (progress > 0.75) {
+      forthPart = progress % 0.75;
+      progress -= forthPart;
+    }
+    if (progress > 0.5) {
+      thirdPart = progress % 0.5;
+      progress -= thirdPart;
+    }
+    if (progress > 0.25) {
+      secondPart = progress % 0.250001;
+      progress -= secondPart;
+    }
+    firstPart = progress;
+
+    return (firstPart - secondPart - thirdPart + forthPart) * offset * 4;
+  }
+  updateTransform(progress, lastProgress, target, params) {
+    // const deltaProgress = progress - lastProgress;
+    const { offsetX, offsetY } = params;
+
+    if (!this.initialled) {
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.initialled = true;
+    }
+
+    if (progress === 1 || progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+    }
+
+    if (offsetX) {
+      const deltaX = this.getState(progress, offsetX);
+
+      target.x = (target.x - this.lastDeltaX) + deltaX;
+      this.lastDeltaX = deltaX;
+    }
+    if (offsetY) {
+      const deltaY = this.getState(progress, offsetY);
+
+      target.y = (target.y - this.lastDeltaY) + deltaY;
+      this.lastDeltaY = deltaY;
+    }
+  }
+}
+class QuakeAction extends AbstractAction {
+  updateTransform(progress, lastProgress, target, params) {
+    const deltaProgress = progress - lastProgress;
+    const { offsetX, offsetY, speed = 10 } = params;
+
+    if (!this.initialled) {
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.elapsedProgress = 0;
+      this.initialled = true;
+    }
+
+    this.elapsedProgress += Math.abs(deltaProgress);
+
+    if (this.elapsedProgress < 1 / speed && (this.progress !== 1 && this.progress !== 0)) {
+      return;
+    }
+
+    this.elapsedProgress = this.elapsedProgress % (1 / speed);
+
+    if (progress === 1 || progress === 0) {
+      target.x = target.x - this.lastDeltaX;
+      target.y = target.y - this.lastDeltaY;
+      this.lastDeltaX = 0;
+      this.lastDeltaY = 0;
+      this.elapsedProgress = 0;
+
+      return;
+    }
+
+    if (offsetX) {
+      const deltaX = (Math.random() * offsetX * 2) - offsetX;
+
+      target.x = (target.x - this.lastDeltaX) + deltaX;
+      this.lastDeltaX = deltaX;
+    }
+    if (offsetY) {
+      const deltaY = (Math.random() * offsetY * 2) - offsetY;
+
+      target.y = (target.y - this.lastDeltaY) + deltaY;
+      this.lastDeltaY = deltaY;
+    }
   }
 }
 class SetPropertyAction extends AbstractAction {
   updateTransform(progress, lastProgress, target, params) {
     const keys = Object.keys(params);
+
     if (!this.initialled) {
       this.params = {};
       for (const key of keys) {
@@ -397,6 +665,7 @@ class SetPropertyAction extends AbstractAction {
       this.initialled = true;
     }
     const deltaProgress = progress - lastProgress;
+
     if (deltaProgress > 0) {
       for (const key of keys) {
         target[key] = params[key];
@@ -409,7 +678,73 @@ class SetPropertyAction extends AbstractAction {
   }
 }
 class CallbackAction extends AbstractAction {
-  updateTransform(progress, lastProgress, target, params) {
-    params.call(target, progress, lastProgress);
+  constructor(...args) {
+    super(...args);
+
+    /**
+     * autoFinish is designed to control whether a action should be setting to `finished`
+     * when after the specific `duration`.
+     *
+     * So, if duration was setting to 0 or undefined, `autoFinish` should be `false`,
+     * thus a callback `() => (this.finished = true)` must be passed to users
+     * so that they can finish it by themselves.
+     */
+    if (this.duration) {
+      this.autoFinish = true;
+    } else {
+      this.autoFinish = false;
+    }
   }
+  update(time) {
+    return super.update(time, this.autoFinish);
+  }
+  updateTransform(progress, lastProgress, target, params) {
+    params.call(target, progress, lastProgress, target, () => (this.finished = true));
+  }
+}
+
+export default function tweenGenerator(scheme, targetMap) {
+  if (scheme.type === 'action') {
+    let target;
+
+    if (typeof scheme.target === 'string') {
+      target = targetMap[scheme.target];
+    } else {
+      target = scheme.target;
+    }
+
+    const args = [target, scheme.params, scheme.duration, scheme.easing, scheme.repeat, scheme.yoyo];
+
+    switch (scheme.name) {
+      case 'moveTo': return new MoveToAction(...args);
+      case 'moveBy': return new MoveByAction(...args);
+      case 'delay': return new DelayAction(...args);
+      case 'fadeTo': return new FadeToAction(...args);
+      case 'fadeBy': return new FadeByAction(...args);
+      case 'rotateTo': return new RotateToAction(...args);
+      case 'rotateBy': return new RotateByAction(...args);
+      case 'scaleTo': return new ScaleToAction(...args);
+      case 'scaleBy': return new ScaleByAction(...args);
+      case 'tintTo': return new TintToAction(...args);
+      case 'tintBy': return new TintByAction(...args);
+      case 'shake': return new ShakeAction(...args);
+      case 'quake': return new QuakeAction(...args);
+      case 'setProperty': return new SetPropertyAction(...args);
+      case 'callback': return new CallbackAction(...args);
+      default: logger.warn(`Unknown action '${scheme.name}', ignored.`);
+    }
+  }
+
+  const actions = [];
+
+  for (const action of scheme.actions) {
+    actions.push(tweenGenerator(action, targetMap));
+  }
+  if (scheme.type === 'sequence') {
+    return new Sequence(actions, scheme.repeat, scheme.yoyo);
+  } else if (scheme.type === 'parallel') {
+    return new Parallel(actions, scheme.repeat, scheme.yoyo);
+  }
+
+  return new Sequence([], scheme.repeat, scheme.yoyo);
 }

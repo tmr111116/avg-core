@@ -1,5 +1,5 @@
 /**
- * @file        Flow class
+ * @file        Container that provides transition functions
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,16 +18,25 @@
  * limitations under the License.
  */
 
-/* eslint-disable */
+const PIXI = require('pixi.js');
+
+const settings = PIXI.settings;
 
 /**
- * wait for some time
- * @method wait
- * @param  {Number} time how long you want to block script flow, in miliionseconds.
- * @return {Promise}
+ * Shared Timer
+ *
+ * @export
+ * @class Ticker
+ * @extends {PIXI.ticker.Ticker}
  */
-export function wait(time) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => resolve(), time);
-  });
+export default class Ticker extends PIXI.ticker.Ticker {
+  constructor(...args) {
+    super(...args);
+
+    this.elapsedTime = 0;
+
+    this.add(dt => {
+      this.elapsedTime += dt / settings.TARGET_FPMS;
+    });
+  }
 }

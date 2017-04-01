@@ -1,7 +1,7 @@
 /**
- * @file        Bind default command handler to Textwindow
+ * @file        Particle system module
  * @author      Icemic Jia <bingfeng.web@gmail.com>
- * @copyright   2015-2016 Icemic Jia
+ * @copyright   2015-2017 Icemic Jia
  * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
@@ -18,22 +18,6 @@
  * limitations under the License.
  */
 
-export default class defaultToText {
-  constructor(text) {
-    this.text = text;
-  }
-  execute(params, flags, name) {
-    let raw = params.raw;
-    const lastCharacter = raw.substr(raw.length - 2);
-    if (lastCharacter === '/c') {
-      flags.push('continue');
-      raw = raw.substr(0, raw.length - 2);
-    }
-    return this.text.execute({
-      text: raw,
-    }, flags, name);
-  }
-  reset() {}
-  getData() {}
-  setData() {}
-}
+import Particle from './Particle';
+
+export { Particle };

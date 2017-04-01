@@ -1,5 +1,5 @@
 /**
- * @file        General image component
+ * @file        Transition component
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,23 +18,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
-import Sprite from 'classes/Sprite';
-import pixiPropTypes from './pixi/propTypes';
-import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
+import TransitionContainer from './TransitionContainer';
+import { mountNode, updateNode } from '../pixi/properties';
 
-const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
+export const Transition = createComponent('Transition', ContainerMixin, NodeMixin, {
 
   createNode() {
-    this.node = new Sprite();
+    this.node = new TransitionContainer();
   },
   mountNode(props) {
     const node = this.node;
 
-    setValue.call(node, 'rectangle', props.rectangle);
     mountNode(node, props);
 
     return node;
@@ -42,23 +39,15 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
   updateNode(prevProps, props) {
     const node = this.node;
 
-    updateValue.call(node, 'rectangle', prevProps.rectangle, props.rectangle);
     updateNode(node, prevProps, props);
   },
 
 });
 
-export const Image = React.createClass({
-  displayName: 'Image',
-  propTypes: {
-    file: React.PropTypes.string,
-    dataUri: React.PropTypes.string,
-    rect: React.PropTypes.arrayOf(React.PropTypes.number),
-    ...pixiPropTypes,
-  },
-  render() {
-    return React.createElement(RawImage, this.props, this.props.children);
-  },
-});
-
-// module.exports = Image;
+// export const Transition = React.createClass({
+//   displayName: 'Transition',
+//   propTypes: pixiPropTypes,
+//   render() {
+//     return React.createElement(RawTransitionContainer, this.props, this.props.children);
+//   },
+// });

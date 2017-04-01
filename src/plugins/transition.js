@@ -19,40 +19,19 @@
  */
 
 import core from 'core/core';
-import { CrossFadeFilter } from 'classes/Transition/Filters';
-import { TransitionFilter } from 'classes/Transition/TransitionFilter';
-import { TransitionPlugin as installPlugin } from 'classes/Transition/TransitionPlugin';
 
-const logger = core.getLogger('Transition Plugin');
+// const logger = core.getLogger('Transition Plugin');
 
-export default class TransitionPlugin {
+class TransitionPlugin {
   constructor(node, method) {
-    try {
-      this.node = node._reactInternalInstance._renderedComponent.node;
-    } catch (e) {
-      this.node = node;
-    }
+    this.node = node;
     this.method = method;
     this.clickCallback = false;
     this.unskippable = false;
 
-    let hasTransFilter = false;
-    for (let filter of (this.node.filters || [])) {
-      if (filter instanceof TransitionFilter) {
-        hasTransFilter = true;
-        break;
-      }
-    }
-    if (!hasTransFilter) {
-      this.node.filters = this.node.filters || [];
-      this.node.filters = [...this.node.filters, new TransitionFilter()];
-      installPlugin(this.node);
-      logger.debug('not installed');
-    }
-
     core.use('script-trigger', async (ctx, next) => {
       if (this.clickCallback && !this.unskippable) {
-        this.node.completeTransition();
+        this.node.completeImmediate();
         this.clickCallback = false;
         this.unskippable = false;
       } else {
@@ -62,34 +41,38 @@ export default class TransitionPlugin {
   }
   static wrap(node, method) {
     const wrapped = new TransitionPlugin(node, method);
+
     return wrapped.process.bind(wrapped);
   }
   async process(ctx, next) {
     const layer = this.node;
     const method = this.method;
 
-    const { flags, params, command } = ctx;
+    const { flags, params } = ctx;
 
     const isSkip = flags.includes('_skip_');
 
     if (flags.includes('pretrans')) {
-      const renderer = core.getRenderer();
+      // const renderer = core.getRenderer();
+
       if (layer.transitionStatus !== 'prepare') {
-        layer.transitionStatus = 'prepare';
-        layer.prepareTransition(renderer);
+        // layer.transitionStatus = 'prepare';
+        layer.prepare();
       }
+
       return method(ctx, next);
     } else if (flags.includes('trans') || params.trans) {
-      params.trans = params.trans || 'crossfade';
-      const renderer = core.getRenderer();
+      params.method = params.method || 'crossfade';
+      // const renderer = core.getRenderer();
+
       if (layer.transitionStatus !== 'prepare') {
-        layer.transitionStatus = 'prepare';
-        layer.prepareTransition(renderer);
+        // layer.transitionStatus = 'prepare';
+        layer.prepare();
       }
       await method(ctx, next);
-      layer.transitionStatus = 'start';
-      const promise = layer.startTransition(renderer, new CrossFadeFilter(params.duration))
-        .then(() => layer.transitionStatus = null);
+      // layer.transitionStatus = 'start';
+      const promise = layer.start(params.method, params)
+        .then(() => (layer.transitionStatus = null));
 
       this.clickCallback = true;
 
@@ -103,7 +86,7 @@ export default class TransitionPlugin {
       }
 
       if (isSkip) {
-        layer.completeTransition();
+        layer.completeImmediate();
       }
 
       this.clickCallback = false;
@@ -111,5 +94,13 @@ export default class TransitionPlugin {
     } else {
       return method(ctx, next);
     }
+
+    return Promise.resolve();
   }
+}
+
+export default function transition(node, execute) {
+  const wrapped = new TransitionPlugin(node, execute);
+
+  return wrapped.process.bind(wrapped);
 }

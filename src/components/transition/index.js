@@ -1,5 +1,5 @@
 /**
- * @file        Filter classes
+ * @file        Transition module
  * @author      Icemic Jia <bingfeng.web@gmail.com>
  * @copyright   2015-2016 Icemic Jia
  * @link        https://www.avgjs.org
@@ -18,19 +18,9 @@
  * limitations under the License.
  */
 
-const PIXI = require('pixi.js');
+import AbstractFilter from './AbstractFilter';
+import { Transition } from './Transition';
 
-const commonVertex = require(__dirname + '/shaders/common.vert');
-const frozenFrag = require(__dirname + '/shaders/prepareTransition.frag');
+Transition.AbstractFilter = AbstractFilter;
 
-export default class FrozenTextureFilter extends PIXI.Filter {
-  constructor(texture) {
-    super(commonVertex, frozenFrag,
-        { texture: { type: 'sampler2D', value: PIXI.Texture.EMPTY } });
-  }
-
-  setTexture(texture) {
-    this.uniformData.texture.value = texture;
-    this.uniforms.texture = texture;
-  }
-}
+export { Transition };

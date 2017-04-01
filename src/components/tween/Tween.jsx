@@ -26,35 +26,34 @@ import tweenGenerator from './perform';
 const logger = core.getLogger('Tween');
 
 class Tween extends React.Component {
+  static propTypes = {
+    schemes: React.PropTypes.object,
+    children: React.PropTypes.any
+  }
   constructor(props) {
     super(props);
-
-    const properties = {};
-    React.Children.map(this.props.children, (element) => {
-      properties[element.key] = { ...element.props, children: null };
-    });
-    this.state = properties;
 
     this.nodes = {};
     this.tweens = {};
     this.shadowState = {};
 
-    this.runningTween = null;
+    this.tempSymbol = Symbol('tween');
+    this.runningTween = [];
   }
   componentDidMount() {
     this.registerTweens();
   }
   componentWillUnmount() {
     for (const key of Object.keys(this.tweens)) {
-      console.log(key)
       this.tweens[key].stop();
     }
   }
   registerTweens() {
-    const schemeNames = Object.keys(this.props.schemes);
+    const schemeNames = Object.keys(this.props.schemes || {});
 
     for (const schemeName of schemeNames) {
       const scheme = this.props.schemes[schemeName];
+
       this.tweens[schemeName] = tweenGenerator(scheme, this.nodes);
     }
 
@@ -64,13 +63,25 @@ class Tween extends React.Component {
   }
   runTween(name) {
     const tween = this.tweens[name];
+
     if (tween) {
-      this.runningTween && this.runningTween.stop();
-      this.runningTween = tween;
+      this.runningTween[name] && this.runningTween[name].stop();
+      this.runningTween[name] = tween;
       tween.start();
     } else {
       logger.warn(`Scheme ${name} is not defined.`);
     }
+  }
+  stopTween(name) {
+    this.runningTween[name] && this.runningTween[name].stop();
+  }
+  runScheme(scheme, name = this.tempSymbol) {
+    const tween = tweenGenerator(scheme, this.nodes);
+
+    this.runningTween[name] && this.runningTween[name].stop();
+    this.runningTween[name] = tween;
+
+    tween.start();
   }
   getNodes(key, element) {
     if (element) {
@@ -79,15 +90,15 @@ class Tween extends React.Component {
   }
   render() {
     this.nodes = {};
-    const element = React.Children.map(this.props.children, (element) => {
+    const elements = React.Children.map(this.props.children, element =>
       // const originState = this.state[element.key];
       // const updatedState = this.shadowState[element.key];
-      return React.cloneElement(element, {
-        // ...originState, ...updatedState,
-        ref: (node) => { element.ref && element.ref(node); this.getNodes(element.key, node); },
-      });
-    });
-    return <Layer>{ element }</Layer>;
+    element && React.cloneElement(element, {
+      // ...originState, ...updatedState,
+      ref: node => { element.ref && element.ref(node); this.getNodes(element.key, node); },
+    }));
+
+    return <Layer {...this.props}>{ elements }</Layer>;
   }
 }
 

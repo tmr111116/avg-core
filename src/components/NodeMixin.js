@@ -1,14 +1,13 @@
 import ReactUpdates from 'react-dom/lib/ReactUpdates';
-import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
 import deepEqual from 'deep-equal';
 import { attachToSprite } from 'classes/EventManager';
 import core from 'core/core';
 
 const logger = core.getLogger('NodeMixin');
 
-
 const NodeMixin = {
-  _hostNode: {},  // fill it to avoid throw error (occurs when using react devtools)
+  // fill it to avoid throw error (occurs when using react devtools)
+  _hostNode: {},
   construct(element) {
     this._currentElement = element;
 
@@ -19,14 +18,17 @@ const NodeMixin = {
 
     // bind event handlers
     attachToSprite(this.node);
-    this.node.buttonMode = false;
+
+    // Avoid reset buttonMode value setting in `mountNode()`
+    this.node.buttonMode = this.node.buttonMode || false;
     const keys = Object.keys(element.props);
+
     for (const key of keys) {
       if (/^on[A-Z]/.test(key)) {
-        if (key === 'onClick') {
+        if (key === 'onClick' && element.props.buttonMode !== false) {
           this.node.buttonMode = true;
         }
-        this.node['_on' + key.replace(/^on/, '').toLowerCase()] = element.props[key];
+        this.node[`_on${key.replace(/^on/, '').toLowerCase()}`] = element.props[key];
       }
     }
   },
@@ -35,14 +37,14 @@ const NodeMixin = {
     return this.node;
   },
 
-  mountComponentIntoNode(rootID, container) {
+  mountComponentIntoNode(/* rootID, container */) {
     throw new Error(
-      'You cannot render a Canvas component standalone. ' +
-      'You need to wrap it in a Surface.'
+      'You cannot render a Canvas component standalone. '
+      + 'You need to wrap it in a Surface.'
     );
   },
 
-  getHostNode(...props) {
+  getHostNode(/* ...props */) {
     // React@15.0 之后新添加的东西
     // 不知道干啥用的，先放着吧……
     return this;
@@ -53,15 +55,16 @@ const NodeMixin = {
 
     const layer = this.mountNode(props);
 
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-    transaction.perform(
+    const _transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+
+    _transaction.perform(
       this.mountAndInjectChildren,
       this,
       props.children,
-      transaction,
+      _transaction,
       context
     );
-    ReactUpdates.ReactReconcileTransaction.release(transaction);
+    ReactUpdates.ReactReconcileTransaction.release(_transaction);
 
     return layer;
   },
@@ -74,30 +77,35 @@ const NodeMixin = {
       this.updateNode(prevProps, props);
 
       const prevKeys = Object.keys(prevProps);
+
       for (const key of prevKeys) {
         if (/^on[A-Z]/.test(key)) {
-          delete this.node['_on' + key.replace(/^on/, '').toLowerCase()];
+          delete this.node[`_on${key.replace(/^on/, '').toLowerCase()}`];
         }
       }
-      this.node.buttonMode = false;
+
+      // Avoid reset buttonMode value setting in `mountNode()`
+      this.node.buttonMode = this.node.buttonMode || false;
       const keys = Object.keys(props);
+
       for (const key of keys) {
         if (/^on[A-Z]/.test(key)) {
-          if (key === 'onClick') {
+          if (key === 'onClick' && props.buttonMode !== false) {
             this.node.buttonMode = true;
           }
-          this.node['_on' + key.replace(/^on/, '').toLowerCase()] = props[key];
+          this.node[`_on${key.replace(/^on/, '').toLowerCase()}`] = props[key];
         }
       }
-      var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-      transaction.perform(
+      const _transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+
+      _transaction.perform(
         this.updateChildren,
         this,
         props.children,
-        transaction,
+        _transaction,
         context
       );
-      ReactUpdates.ReactReconcileTransaction.release(transaction);
+      ReactUpdates.ReactReconcileTransaction.release(_transaction);
 
       this._currentElement = nextComponent;
     }
@@ -105,9 +113,14 @@ const NodeMixin = {
 
   unmountComponent() {
     // this.destroyEventListeners();
+    this.unmountNode();
     this.unmountChildren();
     this.node.removeChildren();
   },
+
+  unmountNode() {
+
+  }
 };
 
 export default NodeMixin;

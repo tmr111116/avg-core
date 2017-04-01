@@ -21,7 +21,8 @@
 import React from 'react';
 import core from 'core/core';
 import { Image } from './Image';
-import TransitionPlugin from 'plugins/transition';
+import { Transition } from 'components/transition';
+import transition from 'plugins/transition';
 
 export class BGImage extends React.Component {
   constructor(props) {
@@ -31,8 +32,6 @@ export class BGImage extends React.Component {
     this.handleArchiveSave = this.handleArchiveSave.bind(this);
     this.handleArchiveLoad = this.handleArchiveLoad.bind(this);
 
-    this.transitionHandler = null;
-
     this.state = {
       file: null,
       x: 0,
@@ -40,14 +39,17 @@ export class BGImage extends React.Component {
     };
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this._reactInternalInstance._mountImage, async (ctx, next) => {
-      const { command, flags, params } = ctx;
-      this.setState(params);
-      await next();
-    });
     core.use('script-exec', this.handleScriptExec);
     core.use('save-archive', this.handleArchiveSave);
     core.use('load-archive', this.handleArchiveLoad);
+
+    this.execute = transition(this.transLayer, this.execute.bind(this));
+  }
+  async execute(ctx, next) {
+    const { params } = ctx;
+
+    this.setState(params);
+    await next();
   }
   componentWillUnmount() {
     core.unuse('script-exec', this.handleScriptExec);
@@ -56,7 +58,7 @@ export class BGImage extends React.Component {
   }
   async handleScriptExec(ctx, next) {
     if (ctx.command === 'bg') {
-      await this.transitionHandler(ctx, next);
+      await this.execute(ctx, next);
     } else {
       await next();
     }
@@ -76,6 +78,8 @@ export class BGImage extends React.Component {
   }
   render() {
     // TODO: It's weired that if you wrap Image with Layer.
-    return <Image src={this.state.file || ''} x={0} y={0} />;
+    return <Transition ref={transLayer => (this.transLayer = transLayer)}>
+      <Image src={this.state.file || ''} x={0} y={0} />
+    </Transition>;
   }
 }

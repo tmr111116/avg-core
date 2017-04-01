@@ -26,26 +26,28 @@ class Flow {
 
     core.use('flow-init', this.init.bind(this));
   }
-  async init(ctx, next) {
+  async init() {
     if (!this.initialed) {
       core.use('script-exec', this.exec.bind(this));
       this.initialed = true;
     }
   }
+
   /**
   * Supply flow-control commands:
+  *
   * `wait`: Prevents script execution for some time. ex.`[flow wait time=1000]`
   *
   * @method exec
   * @param  {object}   ctx  middleware context
   * @param  {Function} next execute next middleware
-  * @return {Promise}
   */
   async exec(ctx, next) {
     const { command, flags, params } = ctx;
+
     if (command === 'flow') {
       if (flags.includes('wait') && !flags.includes('_skip_')) {
-        await new Promise((resolve, reject) => {
+        await new Promise(resolve => {
           setTimeout(resolve, params.time || 0);
         });
       }

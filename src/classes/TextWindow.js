@@ -18,16 +18,18 @@
  * limitations under the License.
  */
 
+/* eslint-disable */
 const PIXI = require('pixi.js');
 // import { TransitionPlugin } from './Transition/TransitionPlugin'
 // import { TransitionFilter } from './Transition/TransitionFilter'
+
 import core from 'core/core';
 
 /**
  * Class representing a TextWindow. <br>
  * @extends PIXI.Container
  */
-class TextWindow extends PIXI.Container {
+export default class TextWindow extends PIXI.Container {
   constructor() {
     super();
 
@@ -122,8 +124,10 @@ class TextWindow extends PIXI.Container {
     this.background && this.background.destroy();
     if (color) {
       this.background = new PIXI.Graphics();
+
             /* 绘制*/
       const rect = this.textRectangle;
+
       this.background.beginFill(color, 1.0).drawRect(rect[0], rect[1], rect[2], rect[3]);
       this.addChildAt(this.background, 0);
     } else {
@@ -192,10 +196,7 @@ class TextWindow extends PIXI.Container {
      * @returns {TextSprite} - this
      */
   setVisible(value = false) {
-    if (typeof value === 'undefined')
-      this.visible = !this.visible;
-    else
-      this.visible = !!value;
+    if (typeof value === 'undefined') { this.visible = !this.visible; } else { this.visible = !!value; }
   }
 
     /**
@@ -227,10 +228,7 @@ class TextWindow extends PIXI.Container {
      * @param {boolean} value
     */
   setTextBold(bool) {
-    if (typeof bool === 'undefined')
-      this.style.bold = !this.style.bold;
-    else
-            this.style.bold = !!bool;
+    if (typeof bool === 'undefined') { this.style.bold = !this.style.bold; } else { this.style.bold = !!bool; }
   }
 
     /**
@@ -238,10 +236,7 @@ class TextWindow extends PIXI.Container {
      * @param {boolean} enable if no value passes, it will be a switch.
     */
   setTextItalic(bool) {
-    if (typeof bool === 'undefined')
-      this.style.italic = !this.style.italic;
-    else
-        this.style.italic = !!bool;
+    if (typeof bool === 'undefined') { this.style.italic = !this.style.italic; } else { this.style.italic = !!bool; }
   }
 
     /**
@@ -249,10 +244,7 @@ class TextWindow extends PIXI.Container {
      * @param {boolean} enable if no value passes, it will be a switch.
     */
   setTextStrike(bool) {
-    if (typeof bool === 'undefined')
-      this.style.strike = !this.style.strike;
-    else
-        this.style.strike = !!bool;
+    if (typeof bool === 'undefined') { this.style.strike = !this.style.strike; } else { this.style.strike = !!bool; }
   }
 
     /**
@@ -260,10 +252,7 @@ class TextWindow extends PIXI.Container {
      * @param {boolean} enable if no value passes, it will be a switch.
     */
   setTextUnderline(bool) {
-    if (typeof bool === 'undefined')
-      this.style.underline = !this.style.underline;
-    else
-        this.style.underline = !!bool;
+    if (typeof bool === 'undefined') { this.style.underline = !this.style.underline; } else { this.style.underline = !!bool; }
   }
 
     /**
@@ -336,7 +325,6 @@ class TextWindow extends PIXI.Container {
     }
   }
 
-
     // text printing
 
     /**
@@ -360,6 +348,7 @@ class TextWindow extends PIXI.Container {
       this.text += text;
     }
     this.initTextRender(clear);
+
     return this.wait();
   }
 
@@ -376,6 +365,7 @@ class TextWindow extends PIXI.Container {
     if (this.textRendering) {
       return this.wait();
     }
+
     return null;
   }
 
@@ -395,22 +385,23 @@ class TextWindow extends PIXI.Container {
     this.textContext.textBaseline = 'top';
     {
       let style = '';
-      if (this.style.bold) style += 'bold ';
-      if (this.style.italic) style += 'italic ';
-      if (!style.length) style = 'normal ';
-      this.textContext.font = style + this.style.size * this.resolution + 'px ' + this.style.font;
+
+      if (this.style.bold) { style += 'bold '; }
+      if (this.style.italic) { style += 'italic '; }
+      if (!style.length) { style = 'normal '; }
+      this.textContext.font = `${style + this.style.size * this.resolution}px ${this.style.font}`;
     }
-    this.textContext.fillStyle = (typeof this.style.color === 'number') ? ('#' + this.style.color.toString(16)) : this.style.color;
+    this.textContext.fillStyle = (typeof this.style.color === 'number') ? (`#${this.style.color.toString(16)}`) : this.style.color;
 
     if (this.style.shadow) {
       this.textContext.shadowBlur = 0;
       this.textContext.shadowOffsetX = this.style.size * this.resolution / 12 * 0.414;
       this.textContext.shadowOffsetY = this.style.size * this.resolution / 12 * 0.414;
-      this.textContext.shadowColor = (typeof this.style.shadowColor === 'number') ? ('#' + this.style.shadowColor.toString(16)) : this.style.shadowColor;
+      this.textContext.shadowColor = (typeof this.style.shadowColor === 'number') ? (`#${this.style.shadowColor.toString(16)}`) : this.style.shadowColor;
     }
 
     if (this.style.stroke) {
-      this.textContext.strokeStyle = (typeof this.style.strokeColor === 'number') ? ('#' + this.style.strokeColor.toString(16)) : this.style.strokeColor;
+      this.textContext.strokeStyle = (typeof this.style.strokeColor === 'number') ? (`#${this.style.strokeColor.toString(16)}`) : this.style.strokeColor;
       this.textContext.lineWidth = this.style.size * this.resolution / 24;
     }
 
@@ -425,31 +416,29 @@ class TextWindow extends PIXI.Container {
     }
   }
 
-
   async updateTransform() {
     if (!this.textRendering) {
       super.updateTransform();
+
       return;
     }
 
     const delta = Date.now() - this.m_lastTime;
 
-    if (delta < 1000 / this.textSpeed)
-      return;
+    if (delta < 1000 / this.textSpeed) { return; }
 
     this.m_lastTime = Date.now();
 
     let count = Math.floor(delta / 1000 * this.textSpeed);
 
-    if (this.textIndex + count >= this.text.length - 1)
-      count = this.text.length - this.textIndex;
+    if (this.textIndex + count >= this.text.length - 1) { count = this.text.length - this.textIndex; }
 
         // hide cursor (if exist)
-    if (this.textCursor)
-      this.textCursor.visible = false;
+    if (this.textCursor) { this.textCursor.visible = false; }
 
     for (let i = this.textIndex; i < this.textIndex + count; i++) {
       let character;
+
       if (this.text.codePointAt(i) > 0xFFFF) {
         character = this.text.at(i);
         i++;
@@ -466,8 +455,9 @@ class TextWindow extends PIXI.Container {
       }
             // print characters, calculate delta
       this.textContext.fillText(character, this.m_currentTextWidth, this.m_currentTextHeight);
-      if (this.style.stroke) this.textContext.strokeText(character, this.m_currentTextWidth, this.m_currentTextHeight);
+      if (this.style.stroke) { this.textContext.strokeText(character, this.m_currentTextWidth, this.m_currentTextHeight); }
       const width = this.textContext.measureText(character).width;   // 字号已经*this.resolution，无需再乘
+
       this.m_currentTextWidth += width + this.style.xInterval * this.resolution;
       if (this.m_currentTextWidth + width >= this.textRectangle[2] * this.resolution) {
         this.m_currentTextWidth = 0;
@@ -493,8 +483,7 @@ class TextWindow extends PIXI.Container {
         this.textCursor.x = this.m_currentTextWidth;
         this.textCursor.y = this.m_currentTextHeight;
       }
-      if (this.textCursor)
-        this.textCursor.visible = true; // restore cursor
+      if (this.textCursor) { this.textCursor.visible = true; } // restore cursor
     }
   }
 
@@ -523,7 +512,12 @@ class TextWindow extends PIXI.Container {
       })
       .then(() => this.m_promise = null);
     }
-    return this.m_promise;
+
+    if (this.visible && this.renderable) {
+      return this.m_promise;
+    } else {
+      return Promise.resolve();
+    }
   }
 
   removeChildren() {
@@ -534,7 +528,7 @@ class TextWindow extends PIXI.Container {
      * When .destroy() was called, it will call .removeChildren()
      * because of the implement of Container.destory(),
      * but that time `this.background` had been destroyed, so .addChild() will throw an error.
-     * 
+     *
      * TODO: find reason
      */
     try {
@@ -561,7 +555,8 @@ class TextWindow extends PIXI.Container {
 
 function clone(origin) {
   const originProto = Object.getPrototypeOf(origin);
+
   return Object.assign(Object.create(originProto), origin);
 }
 
-module.exports = TextWindow;
+// module.exports = TextWindow;

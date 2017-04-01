@@ -18,17 +18,14 @@
  * limitations under the License.
  */
 
-import core from 'core/core';
-
-const PIXI = require('pixi.js');
-
 function resizeImage(dataurl, width, height) {
   const sourceImage = new Image();
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     sourceImage.onload = function () {
       // Create a canvas with the desired dimensions
       const canvas = document.createElement('canvas');
+
       canvas.width = width;
       canvas.height = height;
 
@@ -42,74 +39,76 @@ function resizeImage(dataurl, width, height) {
   });
 }
 
-
-class Screenshot {
-  constructor() {
-    this.initialed = false;
-
+/**
+ * Screen shot plugin
+ *
+ * You can visit it via `core.plugins.shot`
+ *
+ * @export
+ * @class Screenshot
+ */
+export default class Screenshot {
+  constructor(core) {
+    this.core = core;
     this.store = {};
 
-    core.use('screenshot-init', this.init.bind(this));
+    core.plugins.shot = this;
   }
-  async init(ctx, next) {
-    if (!this.initialed) {
-      core.use('screenshot-shot', this.shot.bind(this));
-      core.use('screenshot-get', this.get.bind(this));
-      this.initialed = true;
-    }
-  }
+
   /**
   * Supply screenshot signals
   * Shot current screen to a texture and pass it through `ctx`.
   *
   * @event shot
-  * @param  {object}   ctx  middleware context
-  * @param  {string}   [ctx.type='base64']  type of returned data, 'base64', 'canvas', 'image', 'pixels'
-  * @param  {number}   [ctx.width]  width of screen shot, default to current screen width
-  * @param  {number}   [ctx.height]  height of screen shot, default to current screen height
-  * @param  {Function} next execute next middleware
-  * @return {Promise}
+  * @async
+  * @param  {number}   [width]  width of screen shot, default to 0, current screen width
+  * @param  {number}   [height]  height of screen shot, default to 0, current screen height
+  * @param  {string}   [name='default]  name of the shot
+  * @param  {string}   [type='base64']  type of returned data, 'base64', 'canvas', 'image', 'pixels'
+  * @returns {string|HTMLCanvasElement|HTMLImageElement|ArrayBuffer} shot data
+  *
+  * @memberOf Screenshot
   */
-  async shot(ctx, next) {
-    const renderer = core.getRenderer();
+  async shot(width, height, name = 'default', type = 'base64') {
+    const renderer = this.core.getRenderer();
+    const stage = this.core.getStage();
 
-    const width = ctx.width || renderer.width;
-    const height = ctx.height || renderer.height;
-
-    // const targetTexture = PIXI.RenderTexture.create(width, height);
-    // const CONTEXT_UID = renderer.CONTEXT_UID;
-    // targetTexture.baseTexture._glRenderTargets[CONTEXT_UID] = {
-    //   resolution: renderer.resolution
-    // };
+    const _width = width || renderer.width;
+    const _height = height || renderer.height;
 
     // TODO: renderer.extract seems to have bugs, now using a custom implementation;
     let base64;
-    if (ctx.type === 'canvas') {
-      base64 = renderer.extract.canvas();
-    } else if (ctx.type === 'image') {
-      base64 = renderer.extract.image();
-    } else if (ctx.type === 'pixels') {
-      base64 = renderer.extract.pixels();
+
+    if (type === 'canvas') {
+      base64 = renderer.extract.canvas(stage);
+    } else if (type === 'image') {
+      base64 = renderer.extract.image(stage);
+    } else if (type === 'pixels') {
+      base64 = renderer.extract.pixels(stage);
     } else {
-      base64 = renderer.extract.base64(window.stage);
+      base64 = renderer.extract.base64(stage);
     }
 
-    ctx.data = await resizeImage(base64, width, height);
+    const data = await resizeImage(base64, _width, _height);
 
-    const name = ctx.name || 'default';
-    this.store[name] = ctx.data;
+    const _name = name || 'default';
 
-    await next();
+    this.store[_name] = data;
+
+    return data;
   }
 
-  async get(ctx, next) {
-    const name = ctx.name || 'default';
-    ctx.data = this.store[name];
-    
-    await next();
+  /**
+   * Get a previous shot by its name
+   *
+   * @param {string} [name='default'] name of the shot
+   * @returns {string|HTMLCanvasElement|HTMLImageElement|ArrayBuffer}
+   *
+   * @memberOf Screenshot
+   */
+  get(name = 'default') {
+    const _name = name || 'default';
+
+    return this.store[_name];
   }
 }
-
-const screenshot = new Screenshot();
-
-export default screenshot;

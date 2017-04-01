@@ -22,10 +22,12 @@ export default function combineProps(props, filter) {
   const validKeys = Object.keys(filter);
   const keys = Object.keys(props);
   const newProps = {};
-  for (let key of keys) {
+
+  for (const key of keys) {
     if (validKeys.includes(key) && key !== 'children') {
       newProps[key] = props[key];
     }
   }
+
   return newProps;
 }

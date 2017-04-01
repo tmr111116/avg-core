@@ -23,13 +23,14 @@ import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
-import PixiTextwindow from 'classes/Textwindow';
-import TransitionPlugin from 'plugins/transition';
+import PixiTextwindow from 'classes/TextWindow';
 import pixiPropTypes from './pixi/propTypes';
+import { Transition } from 'components/transition';
+import transition from 'plugins/transition';
 
 const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new PixiTextwindow();
   },
   mountNode(props) {
@@ -51,6 +52,7 @@ const RawTextwindow = createComponent('RawTextwindow', ContainerMixin, NodeMixin
     props.text && layer.drawText(props.text, true);
     layer.x = props.x || 0;
     layer.y = props.y || 0;
+
     return layer;
   },
   updateNode(prevProps, props) {
@@ -82,7 +84,6 @@ export class Textwindow extends React.Component {
   constructor(props) {
     super(props);
 
-    this.execute = this.execute.bind(this);
     this.handleScriptExec = this.handleScriptExec.bind(this);
     this.handleScriptTrigger = this.handleScriptTrigger.bind(this);
     this.handleArchiveSave = this.handleArchiveSave.bind(this);
@@ -97,14 +98,18 @@ export class Textwindow extends React.Component {
   componentWillMount() {
     this.setState({
       props: this.props,
+      clickCallback: false,
+      switchPageAfterClick: false,
+      waitClick: false
     });
   }
   componentDidMount() {
-    this.transitionHandler = TransitionPlugin.wrap(this.layer, this.execute);
     core.use('script-trigger', this.handleScriptTrigger);
     core.use('script-exec', this.handleScriptExec);
     core.use('save-archive', this.handleArchiveSave);
     core.use('load-archive', this.handleArchiveLoad);
+
+    this.execute = transition(this.transLayer, this.execute.bind(this));
   }
   componentWillUnmount() {
     core.unuse('script-trigger', this.handleScriptTrigger);
@@ -119,6 +124,7 @@ export class Textwindow extends React.Component {
     let waitClick = false;
     let clickCallback = false;
     let switchPageAfterClick = false;
+
     if (command === 'r') {
       // waitClick = true;
       promise = layer.drawText('\n', false);
@@ -132,7 +138,8 @@ export class Textwindow extends React.Component {
       switchPageAfterClick = true;
     } else if (flags.includes('clear')) {
       // layer.clearText();
-      layer.drawText('', true); // it is a hack
+      // it is a hack
+      layer.drawText('', true);
     } else if (flags.includes('set')) {
       params.bgfile && (params.bgFile = params.bgfile);
       params.textrect && (params.textRect = params.textrect);
@@ -148,6 +155,7 @@ export class Textwindow extends React.Component {
     } else if (flags.includes('show')) {
       layer.setVisible(true);
     } else if (flags.includes('hide')) {
+      this.reshowWhenScriptTrigger = flags.includes('soft');
       layer.setVisible(false);
     } else if (flags.includes('continue')) {
       waitClick = true;
@@ -169,6 +177,13 @@ export class Textwindow extends React.Component {
     await next();
   }
   async handleScriptTrigger(ctx, next) {
+    const layer = this.layer;
+
+    if (!layer.visible && this.reshowWhenScriptTrigger) {
+      layer.setVisible(true);
+
+      return;
+    }
     if (this.state.switchPageAfterClick) {
       await this.layer.drawText('', true);
       this.state.switchPageAfterClick = false;
@@ -182,27 +197,34 @@ export class Textwindow extends React.Component {
   }
   async handleScriptExec(ctx, next) {
     if (['text', 'r', 'l', 'p', '*'].includes(ctx.command)) {
-      if (ctx.params.raw) {
+      if (typeof ctx.params.raw === 'string') {
         ctx.params.text = ctx.params.raw;
       }
-      await this.transitionHandler(ctx, next);
+      await this.execute(ctx, next);
     } else {
       await next();
     }
   }
   async handleArchiveSave(ctx, next) {
     const layer = this.layer;
-    ctx.data.textwindow = { ...this.state.props, text: layer.text, children: null };
+
+    ctx.data.textwindow = { props: { ...this.state.props, children: null }, text: layer.text, children: null, switchPageAfterClick: this.state.switchPageAfterClick };
     await next();
   }
   async handleArchiveLoad(ctx, next) {
+    const { props, text, children, switchPageAfterClick } = ctx.data.textwindow;
+
     this.setState({
       props: {
         ...this.props,
-        ...ctx.data.textwindow
-      }
+        ...props,
+        text,
+        children
+      },
+      switchPageAfterClick
     });
     const layer = this.layer;
+
     layer.setVisible(true);
     layer.drawText(ctx.data.textwindow.text, true);
     // layer.completeText();
@@ -210,9 +232,11 @@ export class Textwindow extends React.Component {
   }
   render() {
     return (
-      <RawTextwindow {...this.state.props} ref={layer => this.layer = layer}>
-        {this.props.children}
-      </RawTextwindow>
+      <Transition ref={transLayer => (this.transLayer = transLayer)}>
+        <RawTextwindow {...this.state.props} ref={layer => (this.layer = layer)}>
+          {this.props.children}
+        </RawTextwindow>
+      </Transition>
     );
   }
 }

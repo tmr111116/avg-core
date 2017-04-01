@@ -1,7 +1,7 @@
 /**
- * @file        General image component
+ * @file        Particle component
  * @author      Icemic Jia <bingfeng.web@gmail.com>
- * @copyright   2015-2016 Icemic Jia
+ * @copyright   2015-2017 Icemic Jia
  * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
@@ -18,47 +18,42 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import deepEqual from 'deep-equal';
+import Logger from 'core/logger';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
-import Sprite from 'classes/Sprite';
-import pixiPropTypes from './pixi/propTypes';
-import { mountNode, updateNode, setValue, updateValue } from './pixi/properties';
+import { mountNode, updateNode, setValue, updateValue } from '../pixi/properties';
 
-const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
+import ParticleContainer from './ParticleContainer';
+
+const logger = Logger.create('Particle');
+
+const Particle = createComponent('Particle', ContainerMixin, NodeMixin, {
 
   createNode() {
-    this.node = new Sprite();
+    this.node = new ParticleContainer();
   },
   mountNode(props) {
     const node = this.node;
 
-    setValue.call(node, 'rectangle', props.rectangle);
+    setValue.call(node, 'interactiveChildren', props.interactiveChildren, false);
     mountNode(node, props);
+
+    props.art && node.init(props.art, props.config);
 
     return node;
   },
   updateNode(prevProps, props) {
     const node = this.node;
 
-    updateValue.call(node, 'rectangle', prevProps.rectangle, props.rectangle);
+    updateValue.call(node, 'interactiveChildren', prevProps.interactiveChildren, props.interactiveChildren);
     updateNode(node, prevProps, props);
-  },
 
+    if (!deepEqual(prevProps.art, props.art) || !deepEqual(prevProps.config, props.config)) {
+      node.init(props.art, props.config);
+    }
+  }
 });
 
-export const Image = React.createClass({
-  displayName: 'Image',
-  propTypes: {
-    file: React.PropTypes.string,
-    dataUri: React.PropTypes.string,
-    rect: React.PropTypes.arrayOf(React.PropTypes.number),
-    ...pixiPropTypes,
-  },
-  render() {
-    return React.createElement(RawImage, this.props, this.props.children);
-  },
-});
-
-// module.exports = Image;
+export default Particle;

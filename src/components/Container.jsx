@@ -27,19 +27,22 @@ import pixiPropTypes from './pixi/propTypes';
 
 const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, {
 
-  createNode(element) {
+  createNode() {
     this.node = new PixiContainer();
   },
   mountNode(props) {
     // color, opacity, width, height, x, y, etc.
     const layer = this.node;
+
     layer.x = props.x || 0;
     layer.y = props.y || 0;
     layer.alpha = props.opactiy || 1;
+
     return layer;
   },
   updateNode(prevProps, props) {
     const layer = this.node;
+
     layer.x = props.x || 0;
     layer.y = props.y || 0;
     layer.alpha = props.opactiy || 1;

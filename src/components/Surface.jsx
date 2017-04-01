@@ -31,12 +31,15 @@ import core from 'core/core';
  */
 export const Surface = React.createClass({
   mixins: [ContainerMixin],
-
+  propTypes: {
+    children: React.PropTypes.any
+  },
   componentDidMount() {
     this.node = core.getStage();
 
     // This is the integration point between custom canvas components and React
     const transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+
     transaction.perform(
       this.mountAndInjectChildren,
       this,
@@ -47,10 +50,10 @@ export const Surface = React.createClass({
     ReactUpdates.ReactReconcileTransaction.release(transaction);
   },
 
-
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     // We have to manually apply child reconciliation since child are not
     const transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
+
     transaction.perform(
       this.updateChildren,
       this,

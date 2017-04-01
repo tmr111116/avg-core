@@ -1,28 +1,34 @@
 export default function fetchLocal(url) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve) {
     resolve({
-      json: function() {
-        return new Promise(function(resolve, reject) {
-          var xhr = new XMLHttpRequest();
-          xhr.onload = function() {
-            resolve(JSON.parse(xhr.responseText));
-          }
-          xhr.onerror = function() {
+      json() {
+        return new Promise(function (resolve, reject) {
+          const xhr = new XMLHttpRequest();
+
+          xhr.onload = function () {
+            try {
+              resolve(JSON.parse(xhr.responseText));
+            } catch (e) {
+              reject(e);
+            }
+          };
+          xhr.onerror = function () {
             reject(new TypeError('Local request failed'));
-          }
+          };
           xhr.open('GET', url);
           xhr.send(null);
         });
       },
-      text: function() {
-        return new Promise(function(resolve, reject) {
-          var xhr = new XMLHttpRequest();
-          xhr.onload = function() {
+      text() {
+        return new Promise(function (resolve, reject) {
+          const xhr = new XMLHttpRequest();
+
+          xhr.onload = function () {
             resolve(xhr.responseText);
-          }
-          xhr.onerror = function() {
+          };
+          xhr.onerror = function () {
             reject(new TypeError('Local request failed'));
-          }
+          };
           xhr.open('GET', url);
           xhr.send(null);
         });
