@@ -155,6 +155,9 @@ class Core {
    * @param {string} [options.tryWebp=false] auto replace image file extension with .webp format when webp is supported by browser
    */
   async init(width, height, options = {}) {
+    if (this._init) {
+      return;
+    }
     const _options = {
       fitWindow: false,
       assetsPath: '/',
