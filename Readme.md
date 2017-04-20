@@ -2,8 +2,6 @@
 
 ![](https://img.shields.io/badge/version-Setsumi-blue.svg?style=flat) ![](https://img.shields.io/npm/v/avg-core.svg?style=flat)
 
-[查看中文版（View Chinese Edition）](https://avgjs.github.io/docs/#/zh/)
-
 > The project is in Alpha stage, not recommended for large projects, but may be enough for a shorter one.
 > Welcome to discuss any related topics, but non-functional Pull Request will not be accepted for the time being. (e.g. fix a wrong spelling in code, but except for fixes or updates for documents.)
 
@@ -34,7 +32,7 @@ npm install -g avg-cli
 avg create mygame
 ```
 
-For more details, refer to [Quickstart](https://avgjs.github.io/docs/#/quick_start)
+For more details, refer to [Quickstart](quick_start.md)
 
 ## Live Demo (Chinese language)
 
@@ -69,8 +67,20 @@ We hope to receive donation/sponsorship for the continuation of the project. The
 
 If you wish to donate/sponsor, please contact Icemic(#)bakery.moe
 
+Or donate to Alipay or Paypal (Please attach your name)
+
+<a href='https://ko-fi.com/A742BTX' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+<img height='142' style='border:0px;height:142px;' src='https://cloud.githubusercontent.com/assets/837432/19645521/a71da460-9a27-11e6-9605-aed9e251dd7a.png' border='0' alt='Alipay QRCode' />
+
 ## License
 
 If not otherwise stated  
 All the source code of this project is distributed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).  
 All the documentation of this project is distributed under [CC-BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+
+
+
+
+
