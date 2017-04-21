@@ -2,6 +2,8 @@
 
 ![](https://img.shields.io/badge/version-Setsumi-blue.svg?style=flat) ![](https://img.shields.io/npm/v/avg-core.svg?style=flat)
 
+[查看中文版（View Chinese Edition）](https://avgjs.github.io/docs/#/zh/)
+
 > The project is in Alpha stage, not recommended for large projects, but may be enough for a shorter one.
 > Welcome to discuss any related topics, but non-functional Pull Request will not be accepted for the time being. (e.g. fix a wrong spelling in code, but except for fixes or updates for documents.)
 
@@ -32,7 +34,7 @@ npm install -g avg-cli
 avg create mygame
 ```
 
-For more details, refer to [Quickstart](quick_start.md)
+For more details, refer to [Quickstart](https://avgjs.github.io/docs/#/quick_start.md)
 
 ## Live Demo (Chinese language)
 
