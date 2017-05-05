@@ -18,22 +18,22 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import PropTypes from 'prop-types';
 
 export default {
-  alpha: React.PropTypes.number,
-  visible: React.PropTypes.bool,
-  cacheAsBitmap: React.PropTypes.bool,
-  x: React.PropTypes.number,
-  y: React.PropTypes.number,
-  position: React.PropTypes.arrayOf(React.PropTypes.number),
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  pivot: React.PropTypes.arrayOf(React.PropTypes.number),
-  anchor: React.PropTypes.arrayOf(React.PropTypes.number),
-  rotation: React.PropTypes.number,
-  scale: React.PropTypes.arrayOf(React.PropTypes.number),
-  skew: React.PropTypes.arrayOf(React.PropTypes.number),
-  tint: React.PropTypes.oneOf([React.PropTypes.number, React.PropTypes.string]),
-  children: React.PropTypes.any,
+  alpha: PropTypes.number,
+  visible: PropTypes.bool,
+  cacheAsBitmap: PropTypes.bool,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  position: PropTypes.arrayOf(PropTypes.number),
+  width: PropTypes.number,
+  height: PropTypes.number,
+  pivot: PropTypes.arrayOf(PropTypes.number),
+  anchor: PropTypes.arrayOf(PropTypes.number),
+  rotation: PropTypes.number,
+  scale: PropTypes.arrayOf(PropTypes.number),
+  skew: PropTypes.arrayOf(PropTypes.number),
+  tint: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
+  children: PropTypes.any,
 };

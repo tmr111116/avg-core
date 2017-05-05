@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from './Layer';
 import { Image } from './Image';
@@ -27,8 +28,8 @@ import transition from 'plugins/transition';
 
 export class FGImage extends React.Component {
   static propTypes = {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
   };
   constructor(props) {
     super(props);

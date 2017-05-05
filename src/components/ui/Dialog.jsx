@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from '../Layer';
 import combineProps from 'utils/combineProps';
@@ -30,10 +31,10 @@ function getValidValueInRange(min, max, value) {
 export default class Dialog extends React.Component {
   static propTypes = {
     ...Layer.propTypes,
-    modal: React.PropTypes.bool,
-    dragable: React.PropTypes.bool,
-    dragArea: React.PropTypes.arrayOf(React.PropTypes.number),
-    children: React.PropTypes.any,
+    modal: PropTypes.bool,
+    dragable: PropTypes.bool,
+    dragArea: PropTypes.arrayOf(PropTypes.number),
+    children: PropTypes.any,
   }
   static defaultProps = {
     x: 0,

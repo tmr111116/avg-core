@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
@@ -199,17 +200,14 @@ const RawScroller = createComponent('RawScroller', ContainerMixin, NodeMixin, {
   }
 });
 
-export const Scroller = React.createClass({
-  displayName: 'Scroller',
-  propTypes: {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    visible: React.PropTypes.bool,
-    children: React.PropTypes.any,
-  },
+export default class Scroller extends React.PureComponent {
+  static propTypes = {
+    x: PropTypes.number,
+    y: PropTypes.number,
+    visible: PropTypes.bool,
+    children: PropTypes.any,
+  };
   render() {
     return React.createElement(RawScroller, this.props, this.props.children);
-  },
-});
-
-// module.exports = Layer;
+  }
+}

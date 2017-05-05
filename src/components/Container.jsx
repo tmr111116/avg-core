@@ -50,12 +50,9 @@ const RawContainer = createComponent('RawContainer', ContainerMixin, NodeMixin, 
 
 });
 
-export const Container = React.createClass({
-  displayName: 'Container',
-  propTypes: pixiPropTypes,
+export class Container extends React.PureComponent {
+  static propTypes = pixiPropTypes;
   render() {
     return React.createElement(RawContainer, this.props, this.props.children);
-  },
-});
-
-// module.exports = Container;
+  }
+}

@@ -212,12 +212,9 @@ const RawCheckbox = createComponent('RawCheckbox', ContainerMixin, NodeMixin, {
   }
 });
 
-const Checkbox = React.createClass({
-  displayName: 'Checkbox',
-  propTypes: pixiPropTypes,
+export default class Checkbox extends React.PureComponent {
+  static propTypes = pixiPropTypes;
   render() {
     return React.createElement(RawCheckbox, this.props, this.props.children);
-  },
-});
-
-export default Checkbox;
+  }
+}

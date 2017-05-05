@@ -29,6 +29,7 @@
     "koa-compose": "^3.2.1",
     "pixi-particles": "^2.1.1",
     "pixi.js": "^4.4.3",
+    "prop-types": "^15.5.8",
     "raw-loader": "^0.5.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

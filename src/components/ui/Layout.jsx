@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from '../Layer';
 import { Scroller } from './Scroller';
@@ -34,20 +35,20 @@ function getValidValueInRange(min, max, value) {
 export default class Layout extends React.Component {
   static propTypes = {
     ...Layer.propTypes,
-    padding: React.PropTypes.arrayOf(React.PropTypes.number),
-    direction: React.PropTypes.string,
-    baseline: React.PropTypes.number,
-    interval: React.PropTypes.number,
-    maxWidth: React.PropTypes.number,
-    maxHeight: React.PropTypes.number,
-    overflowX: React.PropTypes.string,
-    overflowY: React.PropTypes.string,
-    scrollerOffsetX: React.PropTypes.number,
-    scrollerOffsetY: React.PropTypes.number,
-    onScroll: React.PropTypes.func,
-    vertical: React.PropTypes.number,
-    horizental: React.PropTypes.number,
-    children: React.PropTypes.any,
+    padding: PropTypes.arrayOf(PropTypes.number),
+    direction: PropTypes.string,
+    baseline: PropTypes.number,
+    interval: PropTypes.number,
+    maxWidth: PropTypes.number,
+    maxHeight: PropTypes.number,
+    overflowX: PropTypes.string,
+    overflowY: PropTypes.string,
+    scrollerOffsetX: PropTypes.number,
+    scrollerOffsetY: PropTypes.number,
+    onScroll: PropTypes.func,
+    vertical: PropTypes.number,
+    horizental: PropTypes.number,
+    children: PropTypes.any,
   }
   static defaultProps = {
     x: 0,

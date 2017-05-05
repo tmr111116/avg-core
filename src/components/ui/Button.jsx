@@ -106,12 +106,9 @@ const RawButton = createComponent('RawButton', ContainerMixin, NodeMixin, {
   }
 });
 
-const Button = React.createClass({
-  displayName: 'Button',
-  propTypes: pixiPropTypes,
+export default class Button extends React.PureComponent {
+  static propTypes = pixiPropTypes;
   render() {
     return React.createElement(RawButton, this.props, this.props.children);
-  },
-});
-
-export default Button;
+  }
+}

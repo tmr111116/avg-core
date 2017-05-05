@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactUpdates from 'react-dom/lib/ReactUpdates';
 import ReactInstanceMap from 'react-dom/lib/ReactInstanceMap';
 import ContainerMixin from 'components/ContainerMixin';
@@ -29,11 +30,16 @@ import core from 'core/core';
  * Surface is a standard React component and acts as the main drawing canvas.
  * ReactCanvas components cannot be rendered outside a Surface.
  */
-export const Surface = React.createClass({
-  mixins: [ContainerMixin],
-  propTypes: {
-    children: React.PropTypes.any
-  },
+export class Surface extends React.PureComponent {
+  // mixins: [ContainerMixin],
+  static propTypes = {
+    children: PropTypes.any
+  };
+  constructor(props) {
+    super(props);
+
+    Object.assign(this, ContainerMixin);
+  }
   componentDidMount() {
     this.node = core.getStage();
 
@@ -48,7 +54,7 @@ export const Surface = React.createClass({
       ReactInstanceMap.get(this)._context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
-  },
+  }
 
   componentDidUpdate() {
     // We have to manually apply child reconciliation since child are not
@@ -62,17 +68,17 @@ export const Surface = React.createClass({
       ReactInstanceMap.get(this)._context
     );
     ReactUpdates.ReactReconcileTransaction.release(transaction);
-  },
+  }
 
   componentWillUnmount() {
     // Implemented in ReactMultiChild.Mixin
     this.unmountChildren();
     this.node.removeChildren();
-  },
+  }
 
   render() {
     return null;
-  },
-});
+  }
+}
 
 // module.exports = Surface;

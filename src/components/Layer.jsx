@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import core from 'core/core';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
@@ -48,18 +49,17 @@ const RawLayer = createComponent('RawLayer', ContainerMixin, NodeMixin, {
   },
 });
 
-export const Layer = React.createClass({
-  displayName: 'Layer',
-  propTypes: {
+export class Layer extends React.PureComponent {
+  static propTypes = {
     ...pixiPropTypes,
     // TODO: check: rename to alpha
-    // opacity: React.PropTypes.number,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    fillColor: React.PropTypes.number,
-    fillAlpha: React.PropTypes.number,
-    clip: React.PropTypes.bool,
-  },
+    // opacity: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    fillColor: PropTypes.number,
+    fillAlpha: PropTypes.number,
+    clip: PropTypes.bool,
+  };
   render() {
     const renderer = core.getRenderer();
     const props = {
@@ -69,7 +69,5 @@ export const Layer = React.createClass({
     };
 
     return React.createElement(RawLayer, props, this.props.children);
-  },
-});
-
-// module.exports = Layer;
+  }
+}

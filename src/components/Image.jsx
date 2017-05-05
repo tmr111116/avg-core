@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
@@ -48,17 +49,14 @@ const RawImage = createComponent('RawImage', ContainerMixin, NodeMixin, {
 
 });
 
-export const Image = React.createClass({
-  displayName: 'Image',
-  propTypes: {
-    file: React.PropTypes.string,
-    dataUri: React.PropTypes.string,
-    rect: React.PropTypes.arrayOf(React.PropTypes.number),
+export class Image extends React.PureComponent {
+  static propTypes = {
+    file: PropTypes.string,
+    dataUri: PropTypes.string,
+    rect: PropTypes.arrayOf(PropTypes.number),
     ...pixiPropTypes,
-  },
+  };
   render() {
     return React.createElement(RawImage, this.props, this.props.children);
-  },
-});
-
-// module.exports = Image;
+  }
+}

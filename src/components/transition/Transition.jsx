@@ -43,11 +43,3 @@ export const Transition = createComponent('Transition', ContainerMixin, NodeMixi
   },
 
 });
-
-// export const Transition = React.createClass({
-//   displayName: 'Transition',
-//   propTypes: pixiPropTypes,
-//   render() {
-//     return React.createElement(RawTransitionContainer, this.props, this.props.children);
-//   },
-// });

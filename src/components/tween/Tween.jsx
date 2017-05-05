@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from '../Layer';
 import tweenGenerator from './perform';
@@ -27,8 +28,8 @@ const logger = core.getLogger('Tween');
 
 class Tween extends React.Component {
   static propTypes = {
-    schemes: React.PropTypes.object,
-    children: React.PropTypes.any
+    schemes: PropTypes.object,
+    children: PropTypes.any
   }
   constructor(props) {
     super(props);

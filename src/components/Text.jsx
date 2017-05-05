@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import createComponent from 'components/createComponent';
 import ContainerMixin from 'components/ContainerMixin';
 import NodeMixin from 'components/NodeMixin';
@@ -89,7 +90,7 @@ const RawText = createComponent('RawText', ContainerMixin, NodeMixin, {
 export class Text extends React.Component {
   static displayName = 'Text';
   static propTypes = {
-    text: React.PropTypes.string,
+    text: PropTypes.string,
     ...pixiPropTypes,
   }
   render() {
