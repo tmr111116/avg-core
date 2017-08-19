@@ -28,3 +28,5 @@ export * from 'components/FGImage';
 export * from 'components/transition';
 export * from 'components/tween';
 export * from 'components/particle';
+
+export * from './base/RichText';
