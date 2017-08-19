@@ -22,8 +22,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from '../Layer';
-import { Scroller } from './Scroller';
+import Scroller from './Scroller';
 import combineProps from 'utils/combineProps';
+import findPixiNode from '../findPixiNode';
 import deepEqual from 'deep-equal';
 
 const PIXI = require('pixi.js');
@@ -113,12 +114,12 @@ export default class Layout extends React.Component {
   calcPosition() {
     let maxWidth = 0;
     let maxHeight = 0;
-    const refs = Object.keys(this.children);
-    let count = refs.length;
+    const refKeys = Object.keys(this.children);
+    let count = refKeys.length;
 
-    for (const ref of refs) {
-      const child = this.children[ref];
-      const node = child._reactInternalInstance._mountImage;
+    for (const refKey of refKeys) {
+      const ref = this.children[refKey];
+      const node = findPixiNode(ref);
 
       if (!node.texture || node.texture === PIXI.Texture.EMPTY || node.texture.valid) {
         const bound = node.getBounds();
@@ -162,12 +163,12 @@ export default class Layout extends React.Component {
     let lastBottom = paddingTop;
     let lastRight  = paddingLeft;
 
-    const refs = Object.keys(this.children);
+    const refKeys = Object.keys(this.children);
     const childPositions = [];
 
-    for (const ref of refs) {
-      const child = this.children[ref];
-      const node = child._reactInternalInstance._mountImage;
+    for (const refKey of refKeys) {
+      const ref = this.children[refKey];
+      const node = findPixiNode(ref);
       const bound = node.getBounds();
       const anchorX = node.anchor ? node.anchor.x : 0;
       const anchorY = node.anchor ? node.anchor.y : 0;
@@ -395,7 +396,6 @@ export default class Layout extends React.Component {
 
     return (
       <Layer {...combineProps(this.props, Layer.propTypes)}
-        ref={node => (this.node = node)}
         width={this.props.maxWidth || this.state.width}
         height={this.props.maxHeight || this.state.height}
         onTouchStart={this.handleTouchStart}

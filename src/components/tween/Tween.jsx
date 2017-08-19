@@ -23,6 +23,7 @@ import PropTypes from 'prop-types';
 import core from 'core/core';
 import { Layer } from '../Layer';
 import tweenGenerator from './perform';
+import findPixiNode from '../findPixiNode';
 
 const logger = core.getLogger('Tween');
 
@@ -84,9 +85,9 @@ class Tween extends React.Component {
 
     tween.start();
   }
-  getNodes(key, element) {
-    if (element) {
-      this.nodes[key] = element._reactInternalInstance._mountImage;
+  getNodes(key, ref) {
+    if (ref) {
+      this.nodes[key] = findPixiNode(ref);
     }
   }
   render() {
@@ -96,7 +97,7 @@ class Tween extends React.Component {
       // const updatedState = this.shadowState[element.key];
     element && React.cloneElement(element, {
       // ...originState, ...updatedState,
-      ref: node => { element.ref && element.ref(node); this.getNodes(element.key, node); },
+      ref: ref => { element.ref && element.ref(ref); this.getNodes(element.key, ref); },
     }));
 
     return <Layer {...this.props}>{ elements }</Layer>;

@@ -1,7 +1,7 @@
 /**
- * @file        Main export of the AVG.js library
+ * @file        find PixiJS node from react instance
  * @author      Icemic Jia <bingfeng.web@gmail.com>
- * @copyright   2015-2016 Icemic Jia
+ * @copyright   2017 Icemic Jia
  * @link        https://www.avgjs.org
  * @license     Apache License 2.0
  *
@@ -18,23 +18,17 @@
  * limitations under the License.
  */
 
-/**
- * @namespace AVG
- */
-import * as components from 'components';
-import * as ui from 'components/ui';
-import * as plugins from 'plugins';
+const PIXI = require('pixi.js');
 
-import React, { Component } from 'react';
-import core from 'core/core';
-import findPixiNode from './components/findPixiNode';
+export default function findPixiNode(ref) {
+  const instance = ref._reactInternalInstance;
+  const node = instance._renderedComponent.node || instance._mountImage;
 
-export {
-  React,
-  Component,
-  core,
-  components,
-  ui,
-  plugins,
-  findPixiNode
-};
+  if (node) {
+    return node;
+  } else if (ref instanceof PIXI.DisplayObject) {
+    return ref;
+  }
+
+  return null;
+}
