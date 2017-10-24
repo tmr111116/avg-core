@@ -29,6 +29,10 @@ import React, { Component } from 'react';
 import core from 'core/core';
 import findPixiNode from './components/findPixiNode';
 
+import componentify from './components/pixi/componentify';
+import * as properties from './components/pixi/properties';
+const pixi = { componentify, properties };
+
 export {
   React,
   Component,
@@ -36,5 +40,6 @@ export {
   components,
   ui,
   plugins,
-  findPixiNode
+  findPixiNode,
+  pixi,
 };
