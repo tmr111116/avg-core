@@ -6,10 +6,17 @@ machine:
 
 dependencies:
   override:
+    - bundle install --path=vendor/bundle
     - yarn
   cache_directories:
     - ~/.cache/yarn
 
 test:
   override:
-    - yarn test
+    - echo OK
+
+deployment:
+  tukune:
+    branch: add_ci
+    commands:
+      - bundle exec tukune --title '[BOT] Update dist'
