@@ -3,3 +3,7 @@ node_modules
 /build
 /docs
 .DS_Store
+
+# ruby
+/.bundle/
+/vendor/bundle
