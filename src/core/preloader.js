@@ -106,7 +106,9 @@ export function getTexture(url = '') {
   let obj = TEXTURES[url];
 
   if (!obj) {
-    if (url.startsWith('data:')) {
+    if (url.startsWith('data:')
+      || url.startsWith('http:')
+      || url.startsWith('https:')) {
       obj = PIXI.Texture.fromImage(url);
     } else {
       let _url;
