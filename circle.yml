@@ -14,3 +14,9 @@ dependencies:
 test:
   override:
     - echo OK
+
+deployment:
+  tukune:
+    branch: dev
+    commands:
+      - bundle exec tukune --title '[BOT] Update dist'
